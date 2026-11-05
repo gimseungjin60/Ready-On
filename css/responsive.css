@@ -4,7 +4,7 @@
   .kit-grid { grid-template-columns: repeat(2, 1fr); }
   .kit-cta { min-height: 0; }
   .mini-kits { grid-template-columns: 1fr; }
-  .shelter-wrap { grid-template-columns: 360px 1fr; }
+  .map-panel { width: 360px; }
   .recipe-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -32,9 +32,11 @@
   .result-hero { grid-template-columns: 1fr; justify-items: start; }
   .diag { grid-template-columns: 1fr; }
   .diag-side { padding-left: 0; border-left: 0; }
-  .shelter-wrap { grid-template-columns: 1fr; min-height: 0; }
-  .shelter-map { height: 420px; order: -1; }
-  .shelter-list { max-height: none; }
+  .shelter-full { height: auto; min-height: 0; padding-top: var(--header-h); display: flex; flex-direction: column; }
+  .shelter-full .shelter-map { position: relative; inset: auto; height: 52vh; order: 1; }
+  .map-title { position: static; max-width: none; border-radius: 0; order: 0; }
+  .map-panel { position: static; width: auto; order: 2; border-radius: 0; box-shadow: none; }
+  .shelter-list { max-height: none; overflow: visible; }
   .card-wrap { grid-template-columns: 1fr; }
   .card-preview { position: static; max-height: none; overflow: visible; }
   .make-wrap { grid-template-columns: 1fr; }
@@ -82,9 +84,8 @@
   .test-nav .btn { min-width: 0; flex: 1; }
   .opt { padding: 16px; }
   .opt-label { font-size: 16px; }
-  .shelter-map { height: 340px; }
-  .search { padding-left: 42px; }
-  .search > svg { left: 15px; }
+  .shelter-full .shelter-map { height: 46vh; }
+  .type-chip small { display: none; }
   .contact-row { grid-template-columns: 1fr; }
   .recipe-grid { grid-template-columns: 1fr; }
   .pantry { grid-template-columns: repeat(3, 1fr); }

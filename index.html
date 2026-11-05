@@ -189,37 +189,33 @@
       </div>
     </section></div>
 
-    <!-- 07 SHELTER MAP -->
-    <div class="view" id="shelter" data-name="대피소 찾기"><section class="section section-light" aria-labelledby="shelterTitle">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">대피소 찾기</p>
-            <h2 class="display display-ink reveal" id="shelterTitle">KNOW YOUR<br>WAY <em>OUT.</em></h2>
-          </div>
-          <p class="lead lead-ink reveal">위험한 순간에 어디로 가야 하는지<br>미리 알아 두어요.</p>
-        </div>
+    <!-- 07 SHELTER MAP — 전체 화면 지도 + 오른쪽 위 패널 -->
+    <div class="view" id="shelter" data-name="대피소 찾기"><section class="shelter-full" aria-labelledby="shelterTitle">
+      <div class="shelter-map" id="shelterMap" aria-label="대피시설 지도"></div>
 
-        <div class="shelter-wrap">
-          <div class="shelter-side">
-            <form class="search" id="shelterForm" role="search">
-              <label class="sr-only" for="shelterQuery">주소 또는 장소 검색</label>
-              <i data-lucide="search" aria-hidden="true"></i>
-              <input id="shelterQuery" type="search" placeholder="도로명 주소, 동 이름 (예: 세종대로 110)" autocomplete="street-address">
-              <button class="btn btn-primary btn-sm" type="submit">검색</button>
-            </form>
-            <div class="shelter-tools">
-              <button class="btn btn-outline btn-sm" id="shelterGeo" type="button"><i data-lucide="locate-fixed" aria-hidden="true"></i>내 위치 사용</button>
-              <button class="btn btn-outline btn-sm" id="shelterDemo" type="button"><i data-lucide="flask-conical" aria-hidden="true"></i>DEMO 예시 보기</button>
-              <button class="btn btn-outline btn-sm" id="shelterPrint" type="button" disabled><i data-lucide="printer" aria-hidden="true"></i>목록 인쇄</button>
-            </div>
-            <p class="fine fine-ink">주소 검색 시 검색어만 OpenStreetMap(Nominatim)으로 전송됩니다. 위치 정보는 동의 후에만 이 기기에서 사용합니다.</p>
-            <div class="shelter-status" id="shelterStatus" role="status" aria-live="polite"></div>
-            <ul class="shelter-list" id="shelterList" aria-label="대피소 목록"></ul>
-          </div>
-          <div class="shelter-map" id="shelterMap" aria-label="대피소 지도"></div>
-        </div>
+      <div class="map-title">
+        <p class="eyebrow eyebrow-red">대피소 찾기</p>
+        <h2 class="map-title-h" id="shelterTitle">KNOW YOUR<br>WAY <em>OUT.</em></h2>
+        <p>위험한 순간에 어디로 가야 하는지 미리 알아 두어요.</p>
       </div>
+
+      <aside class="map-panel" aria-label="대피시설 검색">
+        <form class="search" id="shelterForm" role="search">
+          <label class="sr-only" for="shelterQuery">주소 또는 장소 검색</label>
+          <i data-lucide="search" aria-hidden="true"></i>
+          <input id="shelterQuery" type="search" placeholder="도로명 주소, 동 이름 (예: 세종대로 110)" autocomplete="street-address">
+          <button class="btn btn-primary btn-sm" type="submit">검색</button>
+        </form>
+        <div class="shelter-tools">
+          <button class="tool-btn" id="shelterGeo" type="button"><i data-lucide="locate-fixed" aria-hidden="true"></i>내 위치</button>
+          <button class="tool-btn" id="shelterSample" type="button"><i data-lucide="landmark" aria-hidden="true"></i>서울시청 예시</button>
+          <button class="tool-btn" id="shelterPrint" type="button" disabled><i data-lucide="printer" aria-hidden="true"></i>목록 인쇄</button>
+        </div>
+        <div class="type-chips" id="shelterTypes" role="group" aria-label="재난 종류별 대피시설"></div>
+        <div class="shelter-status" id="shelterStatus" role="status" aria-live="polite"></div>
+        <ul class="shelter-list" id="shelterList" aria-label="가까운 대피시설 목록"></ul>
+        <p class="map-source">출처: 행정안전부 국민안전24 안전지도 공개 데이터(<span id="shelterDate">2026-11-05</span> 수집) · <a id="shelterSource" href="https://www.safekorea.go.kr" target="_blank" rel="noopener">공식 안전지도에서 확인 ↗</a><br>주소 검색어만 OpenStreetMap으로 보내고, 위치는 동의 후 이 기기에서만 써요.</p>
+      </aside>
     </section></div>
 
     <!-- 07-2 MAKE AT HOME -->

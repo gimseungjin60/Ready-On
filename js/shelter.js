@@ -1,68 +1,53 @@
 /* READY : ON — 대피소 지도 (Leaflet + OpenStreetMap)
-   - 데이터 계층(ShelterService)과 UI를 분리: 실제 API 연결 시 SHELTER_CONFIG만 바꾸면 됩니다.
-   - DEMO 모드의 대피소는 검색 위치 주변에 생성한 "예시 데이터"이며 실제 대피소가 아닙니다.
+   데이터: 팀원 브랜치(readykit)의 행정안전부 국민안전24 안전지도 공개 데이터 스냅샷(2026-11-05 수집).
+   가까운 시설 계산과 시설 유형 정의는 readykit/dist/engine.mjs를 그대로 불러 씁니다.
+   - 실시간 개방·혼잡 여부는 알 수 없으며, 거리는 직선거리입니다.
    - 위치 정보는 사용자가 동의한 경우에만 브라우저에서 1회 조회하며 서버로 전송하지 않습니다. */
 (function (RO) {
   const SHELTER_CONFIG = {
-    mode: 'demo',              // 'demo' | 'api'
-    endpoint: '',              // 예: 공공데이터포털/재난안전데이터공유플랫폼 대피소 API URL
-    serviceKey: '',            // 발급받은 인증키 (프런트에 노출되므로 운영 시 백엔드 프록시 권장)
-    radiusKm: 2
+    dataUrl: 'readykit/dist/data/', // shelters-index.json + shelters-{위도}_{경도}.json
+    radiusKm: 30,
+    limit: 8
   };
-  const DEFAULT_CENTER = [37.5663, 126.9779]; // 지도 초기 화면용 (서울시청), 대피소 표시는 하지 않음
+  const SAMPLE = { lat: 37.5663, lng: 126.9779, label: '서울시청 (예시 기준점)' };
+  // 재난 → 시설 유형 (readykit shelterTypesFor 기준과 동일)
+  const TYPE_TABS = [
+    { type: 'earthquake', label: '지진' },
+    { type: 'temporary', label: '홍수·태풍·화재' },
+    { type: 'civil', label: '전쟁·공습' },
+    { type: 'heat', label: '폭염' },
+    { type: 'cold', label: '한파' }
+  ];
 
-  const TYPES = ['지진 옥외대피장소', '민방위 대피시설', '이재민 임시주거시설', '지진 겸용 임시주거시설'];
+  // .mjs를 text/plain으로 보내는 서버(파이썬 개발 서버, 일부 호스팅)에서도 동작하도록 직접 받아 JS 모듈로 불러옴.
+  // engine.mjs는 다른 파일을 import하지 않는 순수 모듈이라 이 방식이 안전합니다.
+  const engine = fetch('readykit/dist/engine.mjs')
+    .then((r) => { if (!r.ok) throw new Error('engine'); return r.text(); })
+    .then((code) => import(URL.createObjectURL(new Blob([code], { type: 'text/javascript' }))));
+  let index = null;
+  const cellCache = new Map();
+  const getJSON = async (url) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('데이터 오류 ' + res.status);
+    return res.json();
+  };
 
   const ShelterService = {
-    async search(lat, lng) {
-      return SHELTER_CONFIG.mode === 'api' && SHELTER_CONFIG.endpoint
-        ? this.fromApi(lat, lng)
-        : this.demo(lat, lng);
+    async index() {
+      index = index || await getJSON(SHELTER_CONFIG.dataUrl + 'shelters-index.json');
+      return index;
     },
-
-    // 실제 API 연결부: 응답 필드명은 데이터셋마다 다르므로 normalize()만 맞추면 됩니다.
-    async fromApi(lat, lng) {
-      const url = new URL(SHELTER_CONFIG.endpoint);
-      url.searchParams.set('serviceKey', SHELTER_CONFIG.serviceKey);
-      url.searchParams.set('lat', lat);
-      url.searchParams.set('lon', lng);
-      url.searchParams.set('radius', SHELTER_CONFIG.radiusKm * 1000);
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('대피소 API 응답 오류: ' + res.status);
-      const json = await res.json();
-      const rows = json?.response?.body?.items?.item || json?.items || json?.body || [];
-      return (Array.isArray(rows) ? rows : [rows]).map(this.normalize).filter((s) => s.lat && s.lng)
-        .map((s) => ({ ...s, dist: distKm(lat, lng, s.lat, s.lng) })).sort((a, b) => a.dist - b.dist);
-    },
-    normalize(row) {
-      return {
-        id: row.id || row.MNG_SN || row.FCLT_CD || Math.random().toString(36).slice(2),
-        name: row.name || row.FCLT_NM || row.REARE_NM || row.vt_acmdfclty_nm || '',
-        address: row.address || row.ROAD_NM_ADDR || row.LOTNO_ADDR || row.dtl_adres || '',
-        type: row.type || row.FCLT_SE_NM || row.SHLT_SE_NM || '대피시설',
-        capacity: row.capacity || row.ACMDT_PSBLTY_NOPE || null,
-        lat: parseFloat(row.lat || row.LAT || row.ycord),
-        lng: parseFloat(row.lng || row.LOT || row.xcord),
-        demo: false
-      };
-    },
-
-    // DEMO: 검색 위치 기준 고정 패턴으로 예시 지점 생성 (실제 시설 아님)
-    async demo(lat, lng) {
-      await new Promise((r) => setTimeout(r, 500)); // 로딩 상태 시연
-      const offsets = [[0.0031, 0.0018], [-0.0024, 0.0042], [0.0052, -0.0036], [-0.0047, -0.0029], [0.0011, 0.0071]];
-      return offsets.map(([dy, dx], i) => {
-        const s = {
-          id: 'demo-' + i,
-          name: `[예시] 대피장소 ${String.fromCharCode(65 + i)}`,
-          address: '예시 데이터 · 실제 주소가 아닙니다',
-          type: TYPES[i % TYPES.length],
-          capacity: [1200, 350, 180, 800, 260][i],
-          lat: lat + dy, lng: lng + dx, demo: true
-        };
-        s.dist = distKm(lat, lng, s.lat, s.lng);
-        return s;
-      }).sort((a, b) => a.dist - b.dist);
+    // 반경 안에 걸치는 1도 단위 구역 파일만 불러와서 가까운 순으로 정렬
+    async search(lat, lng, type) {
+      const [{ nearestShelters }, idx] = await Promise.all([engine, this.index()]);
+      const r = SHELTER_CONFIG.radiusKm;
+      const dLat = r / 111.2, dLng = r / (111.2 * Math.max(0.05, Math.cos(lat * Math.PI / 180)));
+      const cells = idx.cells.filter(({ bbox: [x1, y1, x2, y2] }) => lng + dLng >= x1 && lng - dLng <= x2 && lat + dLat >= y1 && lat - dLat <= y2);
+      const chunks = await Promise.all(cells.map((c) => {
+        if (!cellCache.has(c.id)) cellCache.set(c.id, getJSON(`${SHELTER_CONFIG.dataUrl}shelters-${c.id}.json`).catch((e) => { cellCache.delete(c.id); throw e; }));
+        return cellCache.get(c.id);
+      }));
+      return nearestShelters(chunks.flat(), { lat, lng }, { types: [type], limit: SHELTER_CONFIG.limit, radiusKm: r });
     }
   };
 
@@ -72,19 +57,15 @@
     const res = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!res.ok) throw new Error('geocode');
     const [hit] = await res.json();
-    return hit ? { lat: +hit.lat, lng: +hit.lon, label: hit.display_name } : null;
+    return hit ? { lat: +hit.lat, lng: +hit.lon } : null;
   }
 
-  function distKm(a, b, c, d) {
-    const R = 6371, toR = (x) => (x * Math.PI) / 180;
-    const h = Math.sin(toR(c - a) / 2) ** 2 + Math.cos(toR(a)) * Math.cos(toR(c)) * Math.sin(toR(d - b) / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(h));
-  }
   const fmtDist = (km) => (km < 1 ? Math.round(km * 1000) + 'm' : km.toFixed(1) + 'km');
 
   /* ---------- UI ---------- */
-  let map, layer, results = [], selected = null, origin = null;
+  let map, layer, results = [], selected = null, origin = null, type = 'earthquake', types = null;
   const $ = (id) => document.getElementById(id);
+  const typeInfo = () => types?.[type] || { name: '대피시설', for: '' };
 
   function setStatus(kind, html) {
     const el = $('shelterStatus');
@@ -96,55 +77,59 @@
 
   function initMap() {
     if (!window.L) {
-      $('shelterMap').innerHTML = '<div class="map-fallback"><i data-lucide="map" aria-hidden="true"></i><p>지도를 불러오지 못했습니다.<br>네트워크 연결을 확인해 주세요. 목록은 계속 이용할 수 있습니다.</p></div>';
+      $('shelterMap').innerHTML = '<div class="map-fallback"><i data-lucide="map" aria-hidden="true"></i><p>지도를 불러오지 못했어요.<br>목록은 계속 볼 수 있어요.</p></div>';
       RO.icons();
       return;
     }
-    map = L.map('shelterMap', { scrollWheelZoom: false }).setView(DEFAULT_CENTER, 14);
+    map = L.map('shelterMap', { zoomControl: false, scrollWheelZoom: true }).setView([SAMPLE.lat, SAMPLE.lng], 14);
+    L.control.zoom({ position: 'bottomleft' }).addTo(map);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+      maxZoom: 19, attribution: '&copy; OpenStreetMap contributors · 대피시설: 행정안전부 국민안전24'
     }).addTo(map);
     layer = L.layerGroup().addTo(map);
   }
 
-  const pin = (cls) => L.divIcon({ className: 'pin ' + cls, html: '<span></span>', iconSize: [28, 28], iconAnchor: [14, 28], popupAnchor: [0, -26] });
+  const pin = (html, cls) => L.divIcon({ className: 'pin ' + cls, html, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -28] });
+  // 오른쪽 패널에 가리지 않게 지도 범위 맞추기
+  const fitPad = () => {
+    const panel = document.querySelector('.map-panel');
+    const wide = window.matchMedia('(min-width: 1081px)').matches && panel;
+    return { paddingTopLeft: [60, 60], paddingBottomRight: [wide ? panel.offsetWidth + 60 : 40, 40], maxZoom: 16 };
+  };
 
   function draw() {
     const list = $('shelterList');
     if (layer) layer.clearLayers();
-    if (!results.length) { list.innerHTML = ''; return; }
-
-    list.innerHTML = results.map((s) => `
-      <li class="sh-item ${selected === s.id ? 'is-active' : ''}" data-id="${s.id}">
-        <button class="sh-main" data-focus="${s.id}" aria-label="${RO.esc(s.name)} 지도에서 보기">
-          <span class="sh-type">${RO.esc(s.type)}</span>
-          <span class="sh-name">${RO.esc(s.name)}${s.demo ? ' <em class="demo-tag">DEMO</em>' : ''}</span>
-          <span class="sh-addr">${RO.esc(s.address)}</span>
-          <span class="sh-meta">${origin ? '약 ' + fmtDist(s.dist) : ''}${s.capacity ? ' · 수용 ' + s.capacity.toLocaleString() + '명' : ''}</span>
+    list.innerHTML = results.map((s, i) => `
+      <li class="sh-item ${selected === s.id ? 'is-active' : ''}" data-id="${RO.esc(s.id)}">
+        <button class="sh-main" data-focus="${RO.esc(s.id)}" aria-label="${RO.esc(s.name)} 지도에서 보기">
+          <span class="sh-no">${i + 1}</span>
+          <span class="sh-text">
+            <span class="sh-name">${RO.esc(s.name)}</span>
+            <span class="sh-addr">${RO.esc(s.address || '상세주소 미제공 · 지도 위치로 확인')}</span>
+          </span>
+          <span class="sh-dist">${fmtDist(s.distanceKm)}</span>
         </button>
         <div class="sh-actions">
-          <a class="btn btn-outline btn-xs" target="_blank" rel="noopener"
+          <a class="link-act" target="_blank" rel="noopener"
              href="https://map.kakao.com/link/to/${encodeURIComponent(s.name)},${s.lat},${s.lng}"
              aria-label="${RO.esc(s.name)} 카카오맵 길찾기 (새 창)"><i data-lucide="navigation" aria-hidden="true"></i>길찾기</a>
-          <button class="btn btn-outline btn-xs" data-tocard="${s.id}"><i data-lucide="bookmark-plus" aria-hidden="true"></i>대피 카드에 저장</button>
+          <button class="link-act" data-tocard="${RO.esc(s.id)}"><i data-lucide="bookmark-plus" aria-hidden="true"></i>대피 카드에 저장</button>
         </div>
       </li>`).join('');
     RO.icons();
 
-    if (!map) return;
-    const bounds = [];
-    if (origin) {
-      L.marker([origin.lat, origin.lng], { icon: pin('pin-me'), title: '기준 위치' }).addTo(layer).bindPopup('기준 위치');
-      bounds.push([origin.lat, origin.lng]);
-    }
-    results.forEach((s) => {
-      const m = L.marker([s.lat, s.lng], { icon: pin(s.demo ? 'pin-demo' : 'pin-real'), title: s.name, keyboard: true }).addTo(layer);
-      m.bindPopup(`<b>${RO.esc(s.name)}</b><br>${RO.esc(s.type)}<br><small>${RO.esc(s.address)}</small>`);
+    if (!map || !origin) return;
+    const bounds = [[origin.lat, origin.lng]];
+    L.marker([origin.lat, origin.lng], { icon: pin('<span></span>', 'pin-me'), title: '기준 위치', zIndexOffset: 1000 }).addTo(layer).bindPopup(RO.esc(origin.label));
+    results.forEach((s, i) => {
+      const m = L.marker([s.lat, s.lng], { icon: pin(`<span>${i + 1}</span>`, 'pin-real'), title: s.name, keyboard: true }).addTo(layer);
+      m.bindPopup(`<b>${RO.esc(s.name)}</b><br>${RO.esc(typeInfo().name)} · ${fmtDist(s.distanceKm)}<br><small>${RO.esc(s.address || '상세주소 미제공')} · 개방 여부 미확인</small>`);
       m.on('click', () => select(s.id, false));
       s._m = m;
       bounds.push([s.lat, s.lng]);
     });
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+    map.fitBounds(bounds, fitPad());
   }
 
   function select(id, fromList) {
@@ -152,65 +137,57 @@
     document.querySelectorAll('.sh-item').forEach((li) => li.classList.toggle('is-active', li.dataset.id === id));
     const s = results.find((x) => x.id === id);
     if (!s) return;
-    if (fromList && map) { map.setView([s.lat, s.lng], 16); s._m.openPopup(); }
-    if (!fromList) document.querySelector(`.sh-item[data-id="${id}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (fromList && map) { map.flyTo([s.lat, s.lng], 16, { duration: 0.6 }); s._m.openPopup(); }
+    if (!fromList) document.querySelector(`.sh-item[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   async function load(lat, lng, label) {
     origin = { lat, lng, label };
-    setStatus('loading', '<span class="spinner" aria-hidden="true"></span>주변 대피소를 찾고 있습니다…');
+    setStatus('loading', '<span class="spinner" aria-hidden="true"></span>주변 대피시설을 찾고 있어요…');
     try {
-      results = await ShelterService.search(lat, lng);
-    } catch (e) {
+      results = await ShelterService.search(lat, lng, type);
+    } catch {
       results = [];
-      setStatus('error', '<i data-lucide="alert-circle" aria-hidden="true"></i>대피소 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
       draw();
+      setStatus('error', '<i data-lucide="alert-circle" aria-hidden="true"></i>대피시설 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.');
       return;
     }
     selected = null;
-    if (!results.length) setStatus('empty', '<i data-lucide="search-x" aria-hidden="true"></i>반경 내 대피소 정보가 없습니다. 다른 주소로 검색해 보세요.');
-    else setStatus(results[0].demo ? 'demo' : 'ok', results[0].demo
-      ? `<i data-lucide="flask-conical" aria-hidden="true"></i><span><b>DEMO 모드 · 예시 데이터</b> — 표시된 지점은 화면 확인용이며 실제 대피소가 아닙니다. 실제 대피소는 국민재난안전포털(safekorea.go.kr)에서 확인하세요.</span>`
-      : `<i data-lucide="check-circle" aria-hidden="true"></i>${RO.esc(label || '기준 위치')} 주변 대피소 ${results.length}곳`);
     draw();
     $('shelterPrint').disabled = !results.length;
+    if (!results.length) {
+      setStatus('empty', `<i data-lucide="search-x" aria-hidden="true"></i>반경 ${SHELTER_CONFIG.radiusKm}km 안에 ${RO.esc(typeInfo().name)}이(가) 없어요. 다른 종류나 주소로 찾아보세요.`);
+      return;
+    }
+    setStatus('ok', `<i data-lucide="map-pin" aria-hidden="true"></i><span><b>${RO.esc(label)}</b> 주변 ${RO.esc(typeInfo().name)} ${results.length}곳<br><small>직선거리 순 · 실제 개방 여부는 현장 안내를 확인하세요</small></span>`);
   }
 
   async function onSearch(e) {
     e.preventDefault();
     const q = $('shelterQuery').value.trim();
     if (!q) { setStatus('error', '<i data-lucide="alert-circle" aria-hidden="true"></i>주소나 장소 이름을 입력해 주세요.'); $('shelterQuery').focus(); return; }
-    setStatus('loading', '<span class="spinner" aria-hidden="true"></span>주소를 찾고 있습니다…');
+    setStatus('loading', '<span class="spinner" aria-hidden="true"></span>주소를 찾고 있어요…');
     try {
       const hit = await geocode(q);
       if (!hit) {
-        results = []; draw();
-        setStatus('empty', `<i data-lucide="search-x" aria-hidden="true"></i>"${RO.esc(q)}"에 대한 검색 결과가 없습니다. 도로명 주소나 동 이름으로 다시 검색해 보세요.`);
+        setStatus('empty', `<i data-lucide="search-x" aria-hidden="true"></i>"${RO.esc(q)}" 검색 결과가 없어요. 도로명 주소나 동 이름으로 다시 찾아보세요.`);
         return;
       }
       load(hit.lat, hit.lng, q);
     } catch {
-      setStatus('error', '<i data-lucide="wifi-off" aria-hidden="true"></i>주소 검색에 실패했습니다. 인터넷 연결을 확인하거나 "내 위치 사용"을 이용해 주세요.');
+      setStatus('error', '<i data-lucide="wifi-off" aria-hidden="true"></i>주소 검색에 실패했어요. 인터넷 연결을 확인하거나 "내 위치"를 눌러 주세요.');
     }
-  }
-
-  function askLocation() {
-    if (!('geolocation' in navigator)) {
-      setStatus('error', '<i data-lucide="alert-circle" aria-hidden="true"></i>이 브라우저는 위치 기능을 지원하지 않습니다. 주소를 직접 입력해 주세요.');
-      return;
-    }
-    $('geoDialog').showModal();
   }
 
   function useLocation() {
     $('geoDialog').close();
-    setStatus('loading', '<span class="spinner" aria-hidden="true"></span>현재 위치를 확인하고 있습니다…');
+    setStatus('loading', '<span class="spinner" aria-hidden="true"></span>현재 위치를 확인하고 있어요…');
     navigator.geolocation.getCurrentPosition(
       (pos) => load(pos.coords.latitude, pos.coords.longitude, '현재 위치'),
       (err) => {
         setStatus('denied', err.code === 1
-          ? '<i data-lucide="map-pin-off" aria-hidden="true"></i><span><b>위치 접근이 거부되었습니다.</b> 위 입력창에 주소를 직접 입력해 검색할 수 있어요.</span>'
-          : '<i data-lucide="map-pin-off" aria-hidden="true"></i>현재 위치를 확인하지 못했습니다. 주소를 직접 입력해 주세요.');
+          ? '<i data-lucide="map-pin-off" aria-hidden="true"></i><span><b>위치 접근이 거부되었어요.</b> 위 입력창에 주소를 직접 입력해 찾을 수 있어요.</span>'
+          : '<i data-lucide="map-pin-off" aria-hidden="true"></i>현재 위치를 확인하지 못했어요. 주소를 직접 입력해 주세요.');
         $('shelterQuery').focus();
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
@@ -219,42 +196,68 @@
 
   function printList() {
     if (!results.length) return;
-    const demo = results[0].demo;
     $('shelterPrintArea').innerHTML = `
-      <h1>READY : ON 대피소 목록</h1>
+      <h1>READY : ON 주변 대피시설 — ${RO.esc(typeInfo().name)}</h1>
       <p>기준: ${RO.esc(origin?.label || '')} · 출력일 ${new Date().toLocaleDateString('ko-KR')}</p>
-      ${demo ? '<p class="print-warn">※ DEMO 예시 데이터입니다. 실제 대피소가 아닙니다.</p>' : ''}
-      <table><thead><tr><th>이름</th><th>유형</th><th>주소</th><th>거리</th></tr></thead>
-      <tbody>${results.map((s) => `<tr><td>${RO.esc(s.name)}</td><td>${RO.esc(s.type)}</td><td>${RO.esc(s.address)}</td><td>${fmtDist(s.dist)}</td></tr>`).join('')}</tbody></table>
-      <p>실제 재난 시에는 정부·지자체의 안내를 우선 따르세요.</p>`;
+      <table><thead><tr><th>번호</th><th>이름</th><th>주소</th><th>직선거리</th></tr></thead>
+      <tbody>${results.map((s, i) => `<tr><td>${i + 1}</td><td>${RO.esc(s.name)}</td><td>${RO.esc(s.address || '상세주소 미제공')}</td><td>${fmtDist(s.distanceKm)}</td></tr>`).join('')}</tbody></table>
+      <p>출처: 행정안전부 국민안전24 안전지도 (${RO.esc(index?.retrievedAt || '')} 수집). 실제 개방 여부는 알 수 없으며, 재난 시에는 정부·지자체 안내를 먼저 따르세요.</p>`;
     RO.print('print-shelters');
   }
 
-  function init() {
+  function renderTypes() {
+    $('shelterTypes').innerHTML = TYPE_TABS.map((t) => `
+      <button type="button" class="type-chip ${t.type === type ? 'is-active' : ''}" aria-pressed="${t.type === type}" data-type="${t.type}">
+        ${t.label}<small>${types?.[t.type]?.name || ''}</small>
+      </button>`).join('');
+  }
+
+  async function init() {
     initMap();
+    renderTypes();
+    engine.then((m) => { types = m.SHELTER_TYPES; renderTypes(); $('shelterSource').href = m.officialShelterUrl(type); }).catch(() => {});
+    ShelterService.index().then((i) => { $('shelterDate').textContent = i.retrievedAt; }).catch(() => {});
     $('shelterForm').addEventListener('submit', onSearch);
-    $('shelterGeo').addEventListener('click', askLocation);
+    $('shelterGeo').addEventListener('click', () => {
+      if (!('geolocation' in navigator)) { setStatus('error', '<i data-lucide="alert-circle" aria-hidden="true"></i>이 브라우저는 위치 기능을 지원하지 않아요. 주소를 입력해 주세요.'); return; }
+      $('geoDialog').showModal();
+    });
     $('geoAllow').addEventListener('click', useLocation);
     $('geoDeny').addEventListener('click', () => {
       $('geoDialog').close();
-      setStatus('denied', '<i data-lucide="keyboard" aria-hidden="true"></i>위치 정보를 사용하지 않습니다. 주소를 직접 입력해 검색해 주세요.');
+      setStatus('denied', '<i data-lucide="keyboard" aria-hidden="true"></i>위치 정보를 쓰지 않아요. 주소를 직접 입력해 찾아 주세요.');
       $('shelterQuery').focus();
     });
-    $('shelterDemo').addEventListener('click', () => load(DEFAULT_CENTER[0], DEFAULT_CENTER[1], '서울시청 (예시 기준점)'));
+    $('shelterSample').addEventListener('click', () => load(SAMPLE.lat, SAMPLE.lng, SAMPLE.label));
     $('shelterPrint').addEventListener('click', printList);
+    $('shelterTypes').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-type]');
+      if (!b || b.dataset.type === type) return;
+      type = b.dataset.type;
+      renderTypes();
+      engine.then((m) => { $('shelterSource').href = m.officialShelterUrl(type); });
+      if (origin) load(origin.lat, origin.lng, origin.label);
+    });
     $('shelterList').addEventListener('click', (e) => {
       const f = e.target.closest('[data-focus]');
       if (f) select(f.dataset.focus, true);
       const c = e.target.closest('[data-tocard]');
       if (c) {
         const s = results.find((x) => x.id === c.dataset.tocard);
-        RO.emit('shelter', { name: s.name, address: s.address, type: s.type, demo: s.demo });
-        RO.toast('대피 카드에 대피소를 저장했습니다');
+        RO.emit('shelter', { name: s.name, address: s.address || '상세주소 미제공', type: typeInfo().name });
+        RO.toast('대피 카드에 대피소를 저장했어요');
       }
     });
-    setStatus('idle', '<i data-lucide="info" aria-hidden="true"></i>주소를 검색하거나 "내 위치 사용"을 눌러 주변 대피소를 확인하세요.');
-    // 숨겨진 화면에서 만든 지도는 크기가 0이므로, 화면에 들어올 때 다시 계산
-    RO.on('view', (id) => { if (id === 'shelter' && map) setTimeout(() => { map.invalidateSize(); if (results.length) draw(); }, 80); });
+    setStatus('idle', '<i data-lucide="info" aria-hidden="true"></i>주소를 검색하거나 "내 위치"를 눌러 주변 대피시설을 찾아보세요.');
+    // 화면에 들어올 때 지도 크기 재계산, 처음이면 예시 기준점 주변을 보여 줌
+    RO.on('view', (id) => {
+      if (id !== 'shelter' || !map) return;
+      setTimeout(() => {
+        map.invalidateSize();
+        if (!origin) load(SAMPLE.lat, SAMPLE.lng, SAMPLE.label);
+        else if (results.length) draw();
+      }, 80);
+    });
   }
 
   RO.shelter = { init, ShelterService, SHELTER_CONFIG };
