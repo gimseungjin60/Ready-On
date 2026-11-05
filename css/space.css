@@ -1,0 +1,230 @@
+/* BLACK-OUT : MARS — 우주 테마 (style.css 위에 덮어씀)
+   깊은 우주 배경 + 반짝이는 별 + 화성 주황 빛 + 반투명 유리 패널. 인쇄용 A4 비상 카드(.sheet)는 종이라서 흰색 유지. */
+:root {
+  --space: #05040A;
+  --glass: rgba(255, 255, 255, .045);
+  --glass-2: rgba(255, 255, 255, .08);
+  --glass-line: rgba(255, 255, 255, .11);
+  --glow: rgba(224, 64, 26, .45);
+  --txt: #F3EEE8;
+  --txt-2: #B9B1A8;
+  --txt-3: #8C847B;
+  --mars: #FF6A3D;
+}
+
+/* ---------- 우주 배경 ---------- */
+html { background: var(--space); }
+body { background: transparent; color: var(--txt); }
+body::before, body::after { content: ''; position: fixed; inset: 0; z-index: -10; pointer-events: none; }
+body::before {
+  background:
+    radial-gradient(1200px 700px at 110% -10%, rgba(224, 64, 26, .22), transparent 60%),
+    radial-gradient(900px 600px at -15% 110%, rgba(140, 50, 20, .22), transparent 60%),
+    radial-gradient(700px 500px at 50% 50%, rgba(60, 40, 90, .12), transparent 70%),
+    var(--space);
+}
+/* 별: 크기가 다른 세 겹의 점 패턴이 서로 다른 속도로 반짝임 */
+body::after {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, #fff, transparent), radial-gradient(1px 1px at 140px 80px, rgba(255, 255, 255, .8), transparent),
+    radial-gradient(1.5px 1.5px at 90px 160px, #fff, transparent), radial-gradient(1px 1px at 230px 210px, rgba(255, 230, 210, .9), transparent),
+    radial-gradient(1px 1px at 300px 40px, rgba(255, 255, 255, .7), transparent), radial-gradient(2px 2px at 380px 260px, rgba(255, 200, 170, .9), transparent),
+    radial-gradient(1px 1px at 60px 300px, rgba(255, 255, 255, .6), transparent), radial-gradient(1.5px 1.5px at 460px 120px, #fff, transparent);
+  background-size: 520px 340px;
+  animation: twinkle 7s ease-in-out infinite alternate;
+  opacity: .75;
+}
+@keyframes twinkle { from { opacity: .45; } to { opacity: .9; } }
+
+/* ---------- 섹션 ---------- */
+.section-light, .section-soft, .section-dark, .section-ink, .page-make, .final { background: transparent; color: var(--txt); }
+.view > .section { position: relative; overflow: hidden; }
+.view > .section::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 106, 61, .5), transparent); }
+.display-ink, .section-title, .problem-title, .stage-title h3, .kit-name, .mk-book-title, .mk-box-head h2, .rc-title, .act-title, .recipe-name, .book-name, .kl-name, .kit-price, .kit-total b, .kl-need b, .cart-total b, .cart-line-sum, .drawer-head h2, .modal-box h2 { color: var(--txt); }
+.display em, .final-title em, .hero-title em { color: var(--mars); text-shadow: 0 0 40px rgba(255, 90, 40, .45); }
+.section-title b { color: #fff; }
+.lead, .lead-ink, .problem-desc, .act-desc, .kit-desc, .fine-ink, .fine, .source-note, .stage-hint, .make-summary, .mk-book-note, .kit-fine, .kb-note { color: var(--txt-2); }
+.eyebrow, .section-dark .eyebrow, .eyebrow-red { color: var(--txt-2); }
+.eyebrow::before { background: var(--mars); box-shadow: 0 0 10px var(--mars); }
+.problem-ko { color: #fff; }
+.problem-msg { color: var(--txt); }
+.flow { border-top-color: rgba(255, 255, 255, .25); }
+.flow li { color: var(--txt); }
+.problem-media { border: 1px solid var(--glass-line); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .8); }
+
+/* ---------- 유리 패널 공통 ---------- */
+.act-card, .kit-card, .mk-box, .mk-bench, .book-card, .ing, .map-panel, .modal, .drawer, .rec-banner, .chip, .gtab, .step, .loc-now, .zone-pick, .tool-btn, .hz-chip, .type-chips, .shelter-status, .kit-basis, .notice, .stage-empty, .result-card, .mini-kit {
+  background: var(--glass);
+  border-color: var(--glass-line);
+  color: var(--txt);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.act-card, .kit-card, .book-card, .mk-box, .mk-bench, .ing { border: 1px solid var(--glass-line); }
+.act-card:hover, .kit-card:hover, .book-card:not(.is-locked):hover { border-color: rgba(255, 106, 61, .55); box-shadow: 0 0 0 1px rgba(255, 106, 61, .25), 0 24px 60px -30px var(--glow); }
+.act-card::before { background: linear-gradient(var(--mars), #FFB347); }
+
+/* 행동수칙 */
+.gtab { border: 1.5px solid var(--glass-line); color: var(--txt); }
+.gtab:hover { border-color: rgba(255, 255, 255, .5); }
+.gtab.is-active { background: linear-gradient(135deg, var(--red), #FF7A45); border-color: transparent; color: #fff; box-shadow: 0 10px 30px -10px var(--glow); }
+.gtab.is-active svg { color: #fff; }
+.guide-intro { color: var(--txt); }
+.stepper-track { background: rgba(255, 255, 255, .12); }
+.stepper-fill { background: linear-gradient(90deg, var(--red), #FFB347); box-shadow: 0 0 12px var(--glow); }
+.step { border: 1px solid transparent; }
+.step:hover { background: var(--glass-2); }
+.step-dot { background: #120E0C; border-color: rgba(255, 255, 255, .2); color: var(--txt-2); }
+.step-label { color: var(--txt-2); }
+.step.is-active { background: linear-gradient(160deg, rgba(224, 64, 26, .28), rgba(255, 255, 255, .04)); border-color: rgba(255, 106, 61, .5); }
+.step.is-active .step-label { color: #fff; }
+.act-num { background: rgba(255, 255, 255, .12); }
+.act-caution { background: rgba(224, 64, 26, .12); border: 1px solid rgba(255, 106, 61, .25); }
+.act-caution p { color: var(--txt); }
+.act-items li { background: var(--glass-2); color: var(--txt); }
+.act-foot { border-top-color: var(--glass-line); }
+.act-noitem { color: var(--txt-2); }
+.act-noitem svg { color: #5EEAD4; }
+.stage-empty b { color: #fff; }
+
+/* 키트 */
+.kit-media { background: #0B0908; }
+.kit-foot, .kit-items li { border-color: var(--glass-line); }
+.kit-items li { background: var(--glass-2); color: var(--txt); }
+.kit-target { color: var(--txt); }
+.kit-price small, .mini-kit-price small { color: var(--txt-3); }
+.kit-card.is-rec { box-shadow: inset 0 0 0 1.5px var(--mars), 0 0 40px -10px var(--glow); }
+.chip { border: 1.5px solid var(--glass-line); color: var(--txt); }
+.chip:hover { border-color: rgba(255, 255, 255, .5); }
+.chip.is-active { background: linear-gradient(135deg, var(--red), #FF7A45); border-color: transparent; }
+.rec-banner { border: 1px solid rgba(255, 106, 61, .35); }
+.kit-card.kit-cta { background: linear-gradient(160deg, rgba(224, 64, 26, .35), rgba(255, 255, 255, .03)); }
+
+/* 버튼 */
+.btn-primary { background: linear-gradient(135deg, var(--red), #FF7A45); box-shadow: 0 10px 30px -12px var(--glow); }
+.btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #C9360F, var(--red)); }
+.btn-outline { background: transparent; color: #FF8A5C; border-color: rgba(255, 106, 61, .7); }
+.btn-outline:hover:not(:disabled) { background: var(--red); color: #fff; border-color: var(--red); }
+.link-btn { color: var(--txt-2); }
+.link-btn:hover { color: var(--mars); }
+.text-link, .act-make { color: #FF8A5C; }
+.qty { border-color: var(--glass-line); }
+.qty button:hover { background: var(--glass-2); }
+.qty input { color: var(--txt); }
+
+/* 정착지 지도 패널 */
+.map-panel { background: rgba(14, 11, 9, .78); border: 1px solid var(--glass-line); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .9); }
+.zone-pick { border: 1.5px solid rgba(255, 106, 61, .6); }
+.zone-pick select { color: var(--txt); }
+.zone-pick select option { color: #111; }
+.loc-now span, .kl-formula, .kl-rule, .kl-need, .kl-sku, .kl-own, .kit-total, .sh-addr, .map-source, .kit-notes { color: var(--txt-2); }
+.hz-chip { border: 1.5px solid var(--glass-line); color: var(--txt); }
+.hz-chip.is-on { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .4); }
+.hz-chip[data-hz="all"].is-on { background: linear-gradient(135deg, var(--red), #FF7A45); border-color: transparent; }
+.mp-tabs { border-bottom-color: var(--glass-line); }
+.mp-tabs button { color: var(--txt-3); }
+.mp-tabs button.is-active { color: #fff; }
+.kit-people button, .kit-days select, .kl-own input { border-color: var(--glass-line); background: rgba(0, 0, 0, .25); color: var(--txt); }
+.kit-cat h4 { background: rgba(14, 11, 9, .96); }
+.kl { border-bottom-color: var(--glass-line); }
+.kl-diff { color: var(--txt); }
+.kit-foot { border-top-color: rgba(255, 106, 61, .5); }
+.kit-basis { background: linear-gradient(160deg, rgba(224, 64, 26, .22), rgba(255, 255, 255, .03)); border: 1px solid rgba(255, 106, 61, .3); }
+.type-chip { color: var(--txt); }
+.type-chip.is-active { background: linear-gradient(135deg, var(--red), #FF7A45); }
+.type-chip small, .type-chip.is-active small { color: rgba(255, 255, 255, .7); }
+.tool-btn { border: 1.5px solid var(--glass-line); color: var(--txt); }
+.sh-item { border-bottom-color: var(--glass-line); }
+.sh-item.is-active { background: rgba(255, 106, 61, .08); }
+.sh-no { background: rgba(255, 255, 255, .14); }
+.sh-name, .sh-dist { color: var(--txt); }
+.link-act { color: var(--txt-2); }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #15110E; color: var(--txt); }
+.leaflet-container .leaflet-control-attribution { background: rgba(0, 0, 0, .55); color: var(--txt-3); }
+.leaflet-container .leaflet-control-attribution a { color: var(--txt-2); }
+.leaflet-bar a { background: #15110E; color: var(--txt); border-color: var(--glass-line); }
+
+/* 장바구니·모달 */
+.drawer, .modal { background: rgba(16, 12, 10, .94); }
+.drawer-head, .drawer-foot, .cart-line { border-color: var(--glass-line); }
+.cart-icon, .cart-line img { background: var(--glass-2); }
+.cart-empty b { color: var(--txt); }
+.cart-line-name { color: var(--txt); }
+.modal-box p, .plain-list { color: var(--txt-2); }
+.order-table th, .order-table td { border-color: var(--glass-line); color: var(--txt); }
+.rd-formula { background: var(--glass); }
+.rd-ing { background: rgba(0, 0, 0, .3); border-color: var(--glass-line); color: var(--txt-2); }
+.rd-ing.has { border-color: rgba(255, 255, 255, .5); color: var(--txt); }
+.rd-steps li { color: var(--txt); }
+.rd-steps li::before { background: linear-gradient(135deg, var(--red), #FF7A45); }
+.rd-tip { background: rgba(224, 64, 26, .12); color: var(--txt); }
+.rd-src, .rd-use { color: var(--txt-2); }
+
+/* 거주구 DIY */
+.mk-hero { background: transparent; }
+.mk-box, .mk-bench { background: var(--glass); }
+.bench { background-color: rgba(0, 0, 0, .3); background-image: radial-gradient(rgba(255, 255, 255, .08) 1px, transparent 1.5px); border: 1px solid var(--glass-line); }
+.slot { background: rgba(255, 255, 255, .03); border-color: rgba(255, 255, 255, .2); color: var(--txt-3); }
+.slot.is-filled { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .6); color: var(--txt); }
+.bench-result .result { border-color: rgba(255, 255, 255, .2); color: var(--txt-3); }
+.bench-msg, .bench-msg b { color: var(--txt); }
+.ing { color: var(--txt); }
+.ing-icon { background: rgba(255, 255, 255, .08); color: var(--txt); }
+.ing:hover { border-color: rgba(255, 255, 255, .5); }
+.ing.is-on { background: linear-gradient(160deg, rgba(224, 64, 26, .5), rgba(224, 64, 26, .15)); border-color: var(--mars); }
+.pantry-cat, .mk-box-head p, .make-rule, .book-hint { color: var(--txt-2); }
+.make-rule { border-top-color: var(--glass-line); }
+.make-rule b { color: var(--txt); }
+.book-card.is-locked { background: transparent; border: 1px dashed rgba(255, 255, 255, .18); }
+.book-card.is-locked .book-icon { background: rgba(255, 255, 255, .08); color: var(--txt-3); }
+.book-card.is-locked .book-name { color: var(--txt-3); }
+.book-actions { border-top-color: var(--glass-line); }
+.card-toggle { border-color: var(--glass-line); color: var(--txt-2); }
+.card-toggle.is-on { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .4); color: #fff; }
+
+/* 결과·카드 폼은 원래 어두운 화면이라 유리감만 추가 */
+.result-kits .mini-kit, .card-form input, .card-form select, .card-form textarea { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+
+/* ---------- 회전하는 화성 (NASA 궤도 사진을 구체 표면으로) ---------- */
+.planet {
+  position: absolute; z-index: 0; pointer-events: none;
+  width: min(62vw, 820px); aspect-ratio: 1; border-radius: 50%;
+  right: -14vw; top: 50%; transform: translateY(-50%);
+  background: url('../assets/mars/gale-map.jpg') 0 0 / 200% 100% repeat-x;
+  filter: sepia(1) saturate(2.1) hue-rotate(-14deg) brightness(.92) contrast(1.15);
+  box-shadow: inset -90px -50px 140px 30px rgba(0, 0, 0, .95), inset 30px 20px 60px rgba(255, 190, 140, .25), 0 0 120px 10px rgba(224, 64, 26, .28);
+  animation: planet-spin 140s linear infinite;
+  opacity: .9;
+}
+.planet::after { content: ''; position: absolute; inset: -2%; border-radius: 50%; box-shadow: 0 0 60px 6px rgba(255, 120, 70, .35); pointer-events: none; }
+@keyframes planet-spin { to { background-position: -200% 0; } }
+.test-section .container, .final .container { position: relative; z-index: 1; }
+.final .planet { right: auto; left: 50%; top: 105%; transform: translate(-50%, -50%); width: min(120vw, 1500px); opacity: .75; animation-duration: 220s; }
+.final::before { display: none; }
+.final-bg { opacity: .18; }
+@media (max-width: 760px) { .planet { width: 110vw; right: -55vw; opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .planet { animation: none; } body::after { animation: none; } }
+
+/* 헤더·푸터도 우주 톤으로 */
+.header { background: rgba(6, 5, 9, .72); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--glass-line); }
+.footer { background: rgba(0, 0, 0, .4); }
+.page-make .header { background: rgba(6, 5, 9, .72); }
+
+/* 인쇄 카드는 종이 그대로 */
+.sheet, .sheet * { -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+/* 행동수칙: 구조 로봇 있을 때/없을 때 */
+.bot-toggle { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; padding: 6px; border-radius: 999px; border: 1px solid var(--glass-line); background: var(--glass); }
+.bot-toggle > span { display: inline-flex; align-items: center; gap: 6px; padding: 0 10px 0 8px; font-size: 13px; font-weight: 700; color: var(--txt-2); }
+.bot-toggle svg { width: 16px; height: 16px; color: #5EEAD4; }
+.bot-toggle button { min-height: 34px; padding: 0 16px; border-radius: 999px; font-size: 13px; font-weight: 800; color: var(--txt-2); transition: .2s; }
+.bot-toggle button.is-on { background: #fff; color: #120E0C; }
+.act-bot { display: flex; gap: 8px; padding: 10px 12px; border-radius: 8px; background: rgba(94, 234, 212, .08); border: 1px solid rgba(94, 234, 212, .25); font-size: 13.5px; line-height: 1.5; color: var(--txt); }
+.act-bot svg { flex: none; width: 16px; height: 16px; color: #5EEAD4; margin-top: 2px; }
+.act-bot b { display: block; font-size: 12px; color: #5EEAD4; }
+.act-bot.is-solo { background: rgba(255, 179, 71, .08); border-color: rgba(255, 179, 71, .3); }
+.act-bot.is-solo svg, .act-bot.is-solo b { color: #FFB347; }
+.guide-tabs { flex-wrap: wrap; overflow: visible; }
+.gtab { min-height: 44px; padding: 0 18px; font-size: 14px; }
+/* 테스트 화면: 행성이 글자를 덮지 않도록 더 오른쪽으로 */
+.test-section .planet { right: -32vw; opacity: .8; }
+.test-intro-side { position: relative; padding: 24px; border-radius: 16px; background: rgba(6, 5, 9, .55); border: 1px solid var(--glass-line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }

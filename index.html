@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BLACK-OUT : MARS — 화성 거주구 재난 대비</title>
   <meta name="description" content="BLACK-OUT : MARS는 화성 거주자를 위한 재난 대비 플랫폼입니다. 대비력 테스트, 기압 손실·먼지폭풍·태양폭풍 행동수칙, 거주구 맞춤 키트, 정착지 대피 지도, 오프라인 비상 카드를 제공합니다.">
-  <meta name="theme-color" content="#FFFFFF">
+  <meta name="theme-color" content="#0E0D0C">
   <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
-  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/space.css">
   <link rel="stylesheet" href="css/print.css" media="print">
 </head>
 <body>
@@ -65,8 +65,6 @@
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-dark" aria-hidden="true"></div>
       <div class="hero-noise" aria-hidden="true"></div>
-      <div class="moon-float mf-phobos" aria-hidden="true"><span class="moon phobos"></span><p><b>PHOBOS</b>화성의 첫째 위성 · 지름 약 22km</p></div>
-      <div class="moon-float mf-deimos" aria-hidden="true"><span class="moon deimos"></span><p><b>DEIMOS</b>둘째 위성 · 지름 약 12km</p></div>
       <aside class="hud" aria-label="거주구 상태 (시연용 가상 수치)">
         <p class="hud-head"><span class="hud-dot" aria-hidden="true"></span>GALE HAB-07 · 실시간 상태</p>
         <dl>
@@ -103,7 +101,6 @@
 
     <!-- 03 PROBLEM -->
     <div class="view" id="why" data-name="서비스 소개"><section class="section section-light" aria-labelledby="whyTitle">
-      <div class="moon-deco md-right" aria-hidden="true"><span class="moon phobos"></span><p><b>PHOBOS</b>화성 위 6,000km를 하루에 세 번 돌아요</p></div>
       <div class="container">
         <p class="eyebrow reveal">WHY BLACK-OUT : MARS</p>
         <h2 class="section-title reveal" id="whyTitle">지구에서 2억 km 떨어진 곳,<br><b>도움을 요청해도 답이 늦게 온다면?</b></h2>
@@ -143,11 +140,7 @@
 
     <!-- 04 SURVIVAL TEST -->
     <div class="view" id="test" data-name="대비력 테스트"><section class="section section-dark test-section" aria-labelledby="testSecTitle">
-      <div class="planet-sys" aria-hidden="true">
-        <div class="planet"></div>
-        <div class="orbit orbit-a"><span class="moon phobos"><i>PHOBOS</i></span></div>
-        <div class="orbit orbit-b"><span class="moon deimos"><i>DEIMOS</i></span></div>
-      </div>
+      <div class="planet" aria-hidden="true"></div>
       <div class="container test-intro">
         <div>
           <p class="eyebrow eyebrow-red reveal">화성 생존력 테스트</p>
@@ -196,7 +189,6 @@
 
     <!-- 06 CUSTOM SAFETY KIT -->
     <div class="view" id="kit" data-name="안전키트"><section class="section section-soft" aria-labelledby="kitTitle">
-      <div class="moon-deco md-left" aria-hidden="true"><span class="moon deimos"></span><p><b>DEIMOS</b>화성의 가장 바깥 위성</p></div>
       <div class="container">
         <div class="section-head">
           <div>
@@ -350,11 +342,7 @@
     <div class="view" id="end" data-name="마무리"><section class="final" aria-labelledby="finalTitle">
       <img class="final-bg" src="assets/mars/thin-air.jpg" alt="" loading="lazy">
       <div class="final-ring" aria-hidden="true"><span></span><span></span><span></span></div>
-      <div class="planet-sys" aria-hidden="true">
-        <div class="planet"></div>
-        <div class="orbit orbit-a"><span class="moon phobos"><i>PHOBOS</i></span></div>
-        <div class="orbit orbit-b"><span class="moon deimos"><i>DEIMOS</i></span></div>
-      </div>
+      <div class="planet" aria-hidden="true"></div>
       <div class="container final-inner">
         <h2 class="final-title reveal" id="finalTitle" lang="en">EARTH IS<br>22 MINUTES AWAY.<br><em>YOU ARE NOT.</em></h2>
         <p class="final-sub reveal">지구의 도움은 늦게 오지만, 내 준비는 지금 여기 있어요.</p>
