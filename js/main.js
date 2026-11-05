@@ -1,5 +1,5 @@
 /* READY : ON — 페이지(뷰) 라우터 + 공통 동작 + 모듈 초기화
-   발표용: 한 번에 한 화면만 보여 주고 메뉴·←/→ 키·하단 버튼으로 이동합니다. 주소의 #해시가 현재 화면입니다. */
+   발표용: 한 번에 한 화면만 보여 주고 상단 메뉴로 이동합니다. 주소의 #해시가 현재 화면입니다. */
 (function (RO) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -44,7 +44,6 @@
 
   /* ---------- 뷰 라우터 ---------- */
   let views = [], current = null, busy = false;
-  const visibleViews = () => views.filter((v) => !v.hidden);
 
   function resolve(id) {
     let v = document.getElementById(id);
@@ -83,21 +82,7 @@
   }
   RO.go = go;
 
-  function step(dir) {
-    const list = visibleViews();
-    const i = list.indexOf(current) + dir;
-    if (i >= 0 && i < list.length) go(list[i].id);
-  }
-
   function updateChrome() {
-    const list = visibleViews();
-    const i = list.indexOf(current);
-    document.getElementById('pagerCount').innerHTML = `<b>${String(i + 1).padStart(2, '0')}</b> / ${String(list.length).padStart(2, '0')}`;
-    document.getElementById('pagerName').textContent = current.dataset.name || '';
-    document.getElementById('pagerDots').innerHTML = list.map((v) => `<i class="${v === current ? 'is-on' : ''}"></i>`).join('');
-    document.getElementById('pagerPrev').disabled = i <= 0;
-    document.getElementById('pagerNext').disabled = i >= list.length - 1;
-    document.getElementById('viewProgress').style.width = ((i + 1) / list.length) * 100 + '%';
     document.querySelectorAll('#nav a[href^="#"]').forEach((a) => {
       const on = a.getAttribute('href') === '#' + current.id || (current.id === 'result' && a.getAttribute('href') === '#test');
       a.classList.toggle('is-current', on);
@@ -117,16 +102,6 @@
       go(a.getAttribute('href').slice(1));
     });
     window.addEventListener('popstate', () => go(location.hash.slice(1) || 'top', false));
-    document.getElementById('pagerPrev').addEventListener('click', () => step(-1));
-    document.getElementById('pagerNext').addEventListener('click', () => step(1));
-    document.addEventListener('keydown', (e) => {
-      if (document.querySelector('dialog[open]') || e.target.closest('input, textarea, select, [contenteditable], .leaflet-container')) return;
-      if (e.altKey || e.ctrlKey || e.metaKey) return;
-      if (['ArrowRight', 'PageDown'].includes(e.key)) { e.preventDefault(); step(1); }
-      if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); step(-1); }
-    });
-    // 결과가 생기면 페이지 수가 바뀌므로 갱신
-    RO.on('result', () => current && updateChrome());
     go(location.hash.slice(1) || 'top', false);
   }
 
