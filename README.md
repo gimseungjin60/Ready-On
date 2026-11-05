@@ -16,6 +16,18 @@ python -m http.server 5500      # 또는: npx serve .
 브라우저에서 http://127.0.0.1:5500 접속.
 VS Code의 Live Server 확장을 써도 됩니다.
 
+## 웹 업로드 (실습 호스팅 FTP)
+
+`scripts/deploy-ftp.ps1`이 사이트에 필요한 파일만 지정한 팀 폴더에 올립니다. 비밀번호는 파일에 저장하지 않고 실행할 때 환경변수로 넣습니다.
+
+```powershell
+$env:FTP_PASS='비밀번호'; powershell -ExecutionPolicy Bypass -File scripts\deploy-ftp.ps1 team2
+```
+
+- 팀 폴더(team1~team8)가 FTP 최상위나 `www/` 아래에 이미 있을 때만 올리고, 다른 조 폴더와 최상위 `index.html`은 건드리지 않습니다.
+- 올린 뒤 주소: `http://educnp.mycafe24.com/team2/`
+- "내 위치" 기능은 브라우저 정책상 HTTPS 주소에서만 동작합니다. HTTP로 열면 주소 검색을 사용하세요.
+
 ## 발표 모드 (페이지 넘기기)
 
 긴 스크롤 대신 한 번에 한 화면만 보여 줍니다.
@@ -38,7 +50,7 @@ js/products.js          키트·개별 물품 데이터, 키트 그리드, 결�
 js/disaster.js          재난 5종 × 3단계 행동수칙 데이터와 탭 UI, 오프라인 카드용 핵심 수칙
 js/cart.js              장바구니 (담기·수량·삭제·합계·비우기·주문 요약)
 js/test.js              10문항 테스트, 점수·유형·부족 TOP3·맞춤 수칙·추천 키트 산출, 결과 섹션
-js/shelter.js           Leaflet 지도, ShelterService(DEMO / API), 위치 권한, 길찾기, 목록 인쇄
+js/shelter.js           전체 화면 지도, 실제 대피시설 조회(readykit 데이터·엔진), 위치 권한, 길찾기, 목록 인쇄
 js/recipes.js           우리집 재료로 만들기 (재료 선택 → 만들 수 있는 생존 용품, 만드는 법, 대피 카드 연결)
 js/offline-card.js      대피 카드 입력·A4 2장 미리보기(실제 출력과 동일)·저장·PDF 인쇄
 js/hero.js              히어로 효과 (불씨·재 파티클 캔버스, 마우스를 따라가는 손전등 불빛)
