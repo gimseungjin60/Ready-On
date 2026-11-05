@@ -110,7 +110,6 @@
     const D = RO.disaster.DISASTERS;
     const result = RO.test.getResult();
     const recipes = RO.recipes.forCard();
-    const ing = (id) => RO.recipes.INGREDIENTS.find((i) => i.id === id).name;
     return `
       <article class="sheet" aria-label="대피 카드 뒷면">
         ${head('2 / 2 · 뒷면', '재난이 나면 이렇게')}
@@ -136,7 +135,7 @@
             ${recipes.map((r) => `
               <div class="sh-make">
                 <p class="sh-make-name"><i data-lucide="${r.icon}" aria-hidden="true"></i>${r.name}<span>${r.use}${r.adult ? ' · 어른과 함께' : ''}</span></p>
-                <p class="sh-make-need">재료: ${r.need.map(ing).join(' + ')}</p>
+                <p class="sh-make-need">재료: ${r.need.map(RO.recipes.slotName).join(' + ')}</p>
                 <ol>${r.steps.map((st) => `<li>${st}</li>`).join('')}</ol>
                 <p class="sh-make-tip">! ${r.tip}</p>
               </div>`).join('')}

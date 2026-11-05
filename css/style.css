@@ -634,14 +634,14 @@ dialog[open] { animation: fadeUp .3s var(--ease); }
 .mk-bar span { display: block; height: 100%; width: 0; background: var(--red); border-radius: 8px; transition: width .8s var(--ease); }
 
 .mk-lab { padding: 24px 0 16px; }
-.mk-lab-inner { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 24px; align-items: stretch; }
+.mk-lab-inner { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 24px; align-items: start; }
 .mk-box, .mk-bench { background: #fff; border-radius: var(--radius-lg); padding: 24px; }
 .mk-box-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 16px; }
 .mk-box-head h2 { font-size: 22px; font-weight: 800; letter-spacing: -.03em; }
 .mk-box-head p { font-size: 13px; color: var(--text-muted); }
 
-.mk-bench { display: flex; flex-direction: column; }
-.bench { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto 170px; align-items: center; gap: 16px; padding: 22px; border-radius: var(--radius-lg); background: var(--soft); background-image: radial-gradient(var(--line) 1px, transparent 1.5px); background-size: 18px 18px; }
+.mk-bench { display: flex; flex-direction: column; position: sticky; top: calc(var(--header-h) + 16px); }
+.bench { min-height: 260px; display: grid; grid-template-columns: minmax(0, 1fr) auto 170px; align-items: center; gap: 16px; padding: 22px; border-radius: var(--radius-lg); background: var(--soft); background-image: radial-gradient(var(--line) 1px, transparent 1.5px); background-size: 18px 18px; }
 .slots { display: flex; align-items: center; gap: 10px; }
 .slot { flex: 1; min-width: 0; aspect-ratio: 1; max-width: 140px; display: grid; place-content: center; justify-items: center; gap: 8px; border-radius: 16px; border: 2px dashed var(--gray-light); background: rgba(255, 255, 255, .6); font-size: 13px; font-weight: 700; color: var(--gray); text-align: center; padding: 8px; }
 .slot.is-filled { border: 2px solid var(--ink); background: #fff; color: var(--ink); animation: pop .35s var(--ease); cursor: pointer; transition: transform .2s; }
@@ -687,6 +687,15 @@ dialog[open] { animation: fadeUp .3s var(--ease); }
 .card-toggle.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
 .mk-book-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .page-make .footer { padding: 40px 0; }
+
+.pantry-cat { grid-column: 1 / -1; margin: 8px 0 0; font-size: 12px; font-weight: 800; letter-spacing: .04em; color: var(--text-muted); }
+.pantry-cat:first-child { margin-top: 0; }
+.mk-book-tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.rd-src { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.rd-src a { text-decoration: underline; text-underline-offset: 2px; }
+.act-make { flex-basis: 100%; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--red); }
+.act-make svg { width: 15px; height: 15px; }
+.act-make:hover { text-decoration: underline; }
 
 /* 만들기 방법 창 */
 .modal-recipe { width: min(620px, calc(100vw - 32px)); }

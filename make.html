@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
 </head>
 <body class="page-make">
   <a class="skip" href="#lab">본문 바로가기</a>
@@ -52,7 +53,7 @@
           <h1 class="display" id="mkTitle">MAKE IT<br>AT <em>HOME.</em></h1>
         </div>
         <div class="mk-hero-side">
-          <p class="lead">집에 있는 재료를 조합대에 올리고 <b>조합하기</b>를 눌러 보세요.<br>인터넷이 끊겨도 만들 수 있는 생존 용품이 완성돼요.</p>
+          <p class="lead">재료 19가지 · 조합법 18가지. 집에 있는 재료를 조합대에 올리고 <b>조합하기</b>를 눌러 보세요.<br>인터넷이 끊겨도 만들 수 있는 생존 용품이 완성돼요.</p>
           <div class="mk-progress" aria-live="polite">
             <p><span>나의 조합 도감</span><b id="bookCount">0 / 10</b></p>
             <span class="mk-bar" aria-hidden="true"><span id="bookBar"></span></span>
@@ -69,13 +70,13 @@
             <p>누르면 조합대에 올라가요</p>
           </div>
           <div class="pantry" id="pantry" role="group" aria-label="재료 상자"></div>
-          <p class="make-rule"><i data-lucide="shield-check" aria-hidden="true"></i><span>모두 3단계 이하예요. 불과 칼은 쓰지 않아요. 가위가 필요하면 <b>어른과 함께</b> 만들어요.</span></p>
+          <p class="make-rule"><i data-lucide="shield-check" aria-hidden="true"></i><span>모두 3단계 이하예요. 불과 칼은 쓰지 않아요. 가위가 필요하면 <b>어른과 함께</b> 만들어요. 만드는 법마다 근거 자료를 달았어요.</span></p>
         </div>
 
         <div class="mk-bench" aria-labelledby="benchTitle">
           <div class="mk-box-head">
             <h2 id="benchTitle">조합대</h2>
-            <p>재료는 최대 3개까지 올릴 수 있어요</p>
+            <p>재료는 최대 3개 · 비슷한 재료로 바꿔도 돼요</p>
           </div>
           <div class="bench" id="bench">
             <div class="slots" id="slots"></div>
@@ -102,7 +103,10 @@
         </div>
         <div class="book" id="book"></div>
         <div class="mk-book-foot">
-          <button class="link-btn" id="resetBook" type="button">도감 처음부터 다시 하기</button>
+          <div class="mk-book-tools">
+            <button class="btn btn-outline" id="printGuides" type="button"><i data-lucide="printer" aria-hidden="true"></i>만드는 법 모아 인쇄 · PDF</button>
+            <button class="link-btn" id="resetBook" type="button">도감 처음부터 다시 하기</button>
+          </div>
           <a class="btn btn-primary" href="index.html#offline-card"><i data-lucide="file-down" aria-hidden="true"></i>내 조합법으로 대피 카드 만들기</a>
         </div>
       </div>
@@ -120,6 +124,7 @@
     <div class="modal-box" id="recipeBody"></div>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="print-only" id="guidePrintArea"></div>
 
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <script src="js/storage.js"></script>

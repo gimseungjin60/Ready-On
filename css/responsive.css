@@ -38,6 +38,7 @@
   .shelter-list { max-height: none; overflow: visible; }
   .card-wrap { grid-template-columns: 1fr; }
   .mk-hero-inner, .mk-lab-inner { grid-template-columns: 1fr; }
+  .mk-bench { position: static; order: -1; }
   .book { grid-template-columns: repeat(3, 1fr); }
   .card-preview { position: static; max-height: none; overflow: visible; }
   .flow { grid-template-columns: repeat(3, 1fr); row-gap: 18px; }
