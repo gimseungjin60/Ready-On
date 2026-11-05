@@ -3,9 +3,9 @@
    공식 지침에 없는 행동은 만들지 않았고, 해당 시간 구간에 공식 지침이 없으면 비워 둡니다. */
 (function (RO) {
   const STAGES = [
-    { key: 'now', no: '01', label: '지금 해야 할 일' },
-    { key: 'min5', no: '02', label: '5분 후 해야 할 일' },
-    { key: 'hour1', no: '03', label: '1시간 후 해야 할 일' }
+    { key: 'now', no: '01', label: '지금 해야 할 일', time: '즉시', hint: '위험한 순간, 가장 먼저 할 일' },
+    { key: 'min5', no: '02', label: '5분 후 해야 할 일', time: '5분 후', hint: '몸을 지킨 다음 할 일' },
+    { key: 'hour1', no: '03', label: '1시간 후 해야 할 일', time: '1시간 후', hint: '상황이 가라앉은 뒤 할 일' }
   ];
 
   const DISASTERS = {
@@ -104,23 +104,66 @@
   };
 
   let active = 'earthquake';
+  let stage = 'now';
 
   function actionCard(a, i) {
     const prods = a.items.map(RO.products.find).filter(Boolean);
     return `
-      <article class="act-card" style="--i:${i + 2}">
-        <h4 class="act-title">${a.t}</h4>
+      <article class="act-card" style="--i:${i}">
+        <header class="act-head">
+          <span class="act-num" aria-hidden="true">${i + 1}</span>
+          <h4 class="act-title">${a.t}</h4>
+        </header>
         <p class="act-desc">${a.d}</p>
-        ${a.c ? `<p class="act-caution"><i data-lucide="alert-triangle" aria-hidden="true"></i><span>${a.c}</span></p>` : ''}
-        ${prods.length ? `
-          <div class="act-items">
-            <span class="act-items-label">필요한 물품</span>
-            <ul>${prods.map((p) => `<li>${p.name}</li>`).join('')}</ul>
-          </div>
-          <button class="btn btn-outline btn-sm act-add" data-add="${prods.map((p) => p.id).join(',')}"
-            aria-label="${a.t} 관련 물품 키트에 담기"><i data-lucide="plus" aria-hidden="true"></i>키트에 담기</button>`
-        : '<p class="act-noitem">별도 물품 없이 바로 실행하세요.</p>'}
+        ${a.c ? `<div class="act-caution"><span class="act-caution-label"><i data-lucide="alert-triangle" aria-hidden="true"></i>주의</span><p>${a.c}</p></div>` : ''}
+        <footer class="act-foot">
+          ${prods.length ? `
+            <div class="act-items">
+              <span class="act-items-label">필요한 물품</span>
+              <ul>${prods.map((p) => `<li><i data-lucide="${p.icon}" aria-hidden="true"></i>${p.name}</li>`).join('')}</ul>
+            </div>
+            <button class="btn btn-primary btn-xs act-add" data-add="${prods.map((p) => p.id).join(',')}"
+              aria-label="${a.t} 관련 물품 키트에 담기"><i data-lucide="plus" aria-hidden="true"></i>키트에 담기</button>`
+          : '<p class="act-noitem"><i data-lucide="check-circle-2" aria-hidden="true"></i>준비물 없이 바로 행동하면 돼요</p>'}
+        </footer>
       </article>`;
+  }
+
+  // 시간 단계 선택: 01 지금 → 02 5분 후 → 03 1시간 후
+  function stepperHTML(d) {
+    const idx = STAGES.findIndex((s) => s.key === stage);
+    return `
+      <div class="stepper" role="tablist" aria-label="시간 단계" style="--p:${idx}">
+        <span class="stepper-track" aria-hidden="true"><span class="stepper-fill"></span></span>
+        ${STAGES.map((s, i) => `
+          <button class="step ${s.key === stage ? 'is-active' : ''} ${i < idx ? 'is-past' : ''}" role="tab" id="step-${s.key}"
+            aria-selected="${s.key === stage}" aria-controls="stagePanel" data-stage="${s.key}">
+            <span class="step-dot" aria-hidden="true">${s.no}</span>
+            <span class="step-time">${s.time}</span>
+            <span class="step-label">${s.label}</span>
+            <span class="step-count">${d[s.key].length ? d[s.key].length + '가지 행동' : '관계기관 안내'}</span>
+          </button>`).join('')}
+      </div>`;
+  }
+
+  function stageHTML(d) {
+    const s = STAGES.find((x) => x.key === stage);
+    const list = d[stage];
+    const cols = list.length === 4 ? 2 : Math.min(list.length, 3);
+    return `
+      <div class="stage-panel" id="stagePanel" role="tabpanel" aria-labelledby="step-${stage}">
+        <header class="stage-title">
+          <span class="stage-big" aria-hidden="true">${s.no}</span>
+          <div>
+            <p class="stage-hint">${d.label} · ${s.hint}</p>
+            <h3>${s.label}</h3>
+          </div>
+        </header>
+        ${list.length
+          ? `<div class="act-grid cols-${cols}">${list.map(actionCard).join('')}</div>`
+          : `<div class="stage-empty"><i data-lucide="siren" aria-hidden="true"></i>
+             <p><b>이 단계는 소방·관계기관의 현장 안내를 따라요.</b><br>임의로 판단해서 다시 들어가거나 이동하지 마세요.</p></div>`}
+      </div>`;
   }
 
   function render() {
@@ -129,16 +172,8 @@
     panel.setAttribute('aria-labelledby', 'gtab-' + active);
     panel.innerHTML = `
       <p class="guide-intro"><span class="guide-en">${d.en}</span>${d.intro}</p>
-      <div class="stages">
-        ${STAGES.map((s, si) => `
-          <section class="stage" style="--i:${si * 2}">
-            <header class="stage-head"><span class="stage-no">${s.no}</span><h3>${s.label}</h3></header>
-            ${d[s.key].length
-              ? `<div class="stage-cards">${d[s.key].map((a, i) => actionCard(a, si * 2 + i)).join('')}</div>`
-              : `<div class="stage-empty"><i data-lucide="siren" aria-hidden="true"></i>
-                 <p>이 단계는 소방·관계기관의 현장 안내를 따릅니다.<br>임의로 판단해 다시 들어가거나 이동하지 마세요.</p></div>`}
-          </section>`).join('')}
-      </div>`;
+      ${stepperHTML(d)}
+      ${stageHTML(d)}`;
     RO.icons();
   }
 
@@ -163,6 +198,13 @@
     tabs.addEventListener('click', (e) => {
       const b = e.target.closest('[data-dis]');
       if (b) select(b.dataset.dis);
+    });
+    document.getElementById('guidePanel').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-stage]');
+      if (!b || b.dataset.stage === stage) return;
+      stage = b.dataset.stage;
+      render();
+      document.getElementById('step-' + stage).focus();
     });
     // 탭 키보드 이동 (←/→)
     tabs.addEventListener('keydown', (e) => {

@@ -26,8 +26,7 @@
   .nav-links a.is-current { box-shadow: none; color: var(--red); }
   .nav-cta-mobile { display: inline-flex; min-height: 56px; }
 
-  .stages { grid-template-columns: 1fr; gap: 40px; }
-  .stage-cards { grid-template-columns: repeat(2, 1fr); }
+  .act-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
   .test-intro { grid-template-columns: 1fr; }
   .result-hero { grid-template-columns: 1fr; justify-items: start; }
   .result-grid { grid-template-columns: 1fr; }
@@ -55,7 +54,15 @@
   .lead br { display: none; }
   .btn-row .btn { flex: 1 1 100%; }
   .kit-grid { grid-template-columns: 1fr; }
-  .stage-cards { grid-template-columns: 1fr; }
+  .act-grid.cols-2, .act-grid.cols-3 { grid-template-columns: 1fr; }
+  .stepper { gap: 6px; }
+  .stepper-track { top: 32px; }
+  .step { padding: 10px 4px 12px; }
+  .step-dot { width: 38px; height: 38px; font-size: 13px; }
+  .step-label { font-size: 13px; }
+  .step-count { display: none; }
+  .act-foot { flex-direction: column; align-items: stretch; }
+  .act-add { width: 100%; }
   .result-actions .btn { flex: 1 1 100%; }
   .mini-kit { grid-template-columns: 72px 1fr auto; }
   .mini-kit img { width: 72px; height: 60px; }
