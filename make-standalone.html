@@ -1,0 +1,1960 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>집 재료 제작 — 블랙아웃</title>
+<!-- ============================================================
+     블랙아웃 (BLACKOUT) · §03 집 재료 제작 — 단독 실행판
+     이 파일 하나로 끝납니다. 더블클릭하면 브라우저에서 바로 열리고
+     인터넷이 없어도 작동합니다. (웹폰트만 온라인일 때 적용)
+
+     원본 프로젝트: github.com/gimseungjin60/Ready-On (브랜치 khg/blackout)
+     고칠 곳: 재료·레시피는 아래 <script> 안의 MATCATS / RECIPES,
+             가이드 본문은 본문 HTML, 디자인은 <style>.
+     면책: 해커톤 시연용 교육 자료. 실제 재난 시 119 신고와
+          공식 지침(국민재난안전포털)이 항상 우선합니다.
+     ============================================================ -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* 블랙아웃 — 재난 안전 대응체계 · 스타일시트
+   단일 테마 커밋: 비상 운영 콘솔 + 공공 재난포털 */
+  :root{
+    --ink:#0C1014;
+    --panel:#141A21;
+    --panel-2:#1A222B;
+    --panel-3:#202A35;
+    --line:#27313D;
+    --line-soft:#1D2630;
+    --fg:#E8EDF3;
+    --fg-dim:#97A6B8;
+    --fg-faint:#6E7E91;
+    --amber:#FFB01F;
+    --amber-dim:#8A6111;
+    --amber-ink:#2A1E05;
+    --red:#FF4A3A;
+    --red-dim:#7A2A22;
+    --green:#35C07A;
+    --green-dim:#1C5E3E;
+    --blue:#5A95FF;
+    --blue-dim:#243F73;
+    --sans:'IBM Plex Sans KR','Malgun Gothic','Apple SD Gothic Neo',system-ui,sans-serif;
+    --mono:'IBM Plex Mono','Consolas',ui-monospace,monospace;
+    --wrap:1180px;
+    --hazard:repeating-linear-gradient(45deg,#FFB01F 0 9px,#0C1014 9px 18px);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--fg);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{margin:0;font-weight:700;text-wrap:balance;line-height:1.25}
+  p{margin:0}
+  ul,ol{margin:0;padding-left:1.15em}
+  a{color:var(--amber);text-decoration:none;border-bottom:1px solid var(--amber-dim)}
+  a:hover{border-bottom-color:var(--amber)}
+  button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  input,select,textarea{font-family:inherit;font-size:inherit}
+
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding-inline:20px}
+
+  /* ---------- 헤더 / 경보 ---------- */
+  .hazardbar{height:7px;background:var(--hazard);opacity:.85}
+  header.site{
+    position:sticky;top:0;z-index:50;
+    background:rgba(12,16,20,.94);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .topline{display:flex;align-items:center;gap:18px;padding-block:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+  .brand .mark{
+    font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;
+    color:var(--amber-ink);background:var(--amber);padding:3px 7px;border-radius:2px;
+    white-space:nowrap;
+  }
+  .brand b{font-size:19px;letter-spacing:-.01em}
+  .brand span{font-size:12px;color:var(--fg-faint);font-family:var(--mono)}
+  .alertpill{
+    display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
+    border:1px solid var(--red-dim);background:rgba(255,74,58,.09);
+    color:#FF8C7E;padding:5px 10px;border-radius:2px;letter-spacing:.04em;
+  }
+  .blip{width:7px;height:7px;border-radius:50%;background:var(--red);flex:none;animation:blip 1.6s infinite}
+  @keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
+
+  nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+  nav.tabs button{
+    background:none;border:0;border-bottom:2px solid transparent;
+    padding:11px 14px;white-space:nowrap;color:var(--fg-dim);font-weight:500;font-size:14px;
+  }
+  nav.tabs button:hover{color:var(--fg)}
+  nav.tabs button[aria-selected="true"]{color:var(--amber);border-bottom-color:var(--amber)}
+  nav.tabs .num{font-family:var(--mono);font-size:11px;color:var(--fg-faint);margin-right:6px}
+  nav.tabs button[aria-selected="true"] .num{color:var(--amber-dim)}
+
+  /* ---------- 공통 블록 ---------- */
+  main{padding-bottom:72px}
+  .panel[hidden]{display:none!important}
+  .sechead{display:flex;align-items:flex-end;gap:14px;border-bottom:1px solid var(--line);padding-block:34px 12px;margin-bottom:26px;flex-wrap:wrap}
+  .sechead .code{font-family:var(--mono);font-size:12px;color:var(--amber);letter-spacing:.1em;padding-bottom:4px}
+  .sechead h2{font-size:26px;letter-spacing:-.02em}
+  .sechead .sub{font-size:13px;color:var(--fg-dim);margin-left:auto;max-width:46ch;text-align:right;line-height:1.5}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:4px}
+  .pad{padding:20px}
+  .grid{display:grid;gap:14px}
+  .note{font-size:12.5px;color:var(--fg-faint);line-height:1.55}
+  .label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--fg-faint);text-transform:uppercase}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;justify-content:center;
+    background:var(--panel-2);border:1px solid var(--line);border-radius:3px;
+    padding:9px 14px;font-size:13.5px;font-weight:500;
+  }
+  .btn:hover{border-color:var(--fg-faint);background:var(--panel-3)}
+  .btn.primary{background:var(--amber);border-color:var(--amber);color:var(--amber-ink);font-weight:600}
+  .btn.primary:hover{background:#FFC24F}
+  .btn.ghost{background:none}
+  .btn.sm{padding:6px 10px;font-size:12.5px}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:2px;border:1px solid var(--line);color:var(--fg-dim);letter-spacing:.03em}
+  .tag.ok{color:#7FE0AC;border-color:var(--green-dim);background:rgba(53,192,122,.08)}
+  .tag.warn{color:#FFCF72;border-color:var(--amber-dim);background:rgba(255,176,31,.08)}
+  .tag.bad{color:#FF9385;border-color:var(--red-dim);background:rgba(255,74,58,.08)}
+  .tag.info{color:#9CBEFF;border-color:var(--blue-dim);background:rgba(90,149,255,.08)}
+
+  /* ---------- 홈 ---------- */
+  .hero{padding-block:44px 30px;border-bottom:1px solid var(--line-soft)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--amber);margin-bottom:14px}
+  .hero h1{font-size:clamp(30px,5.6vw,52px);letter-spacing:-.035em;line-height:1.12;max-width:20ch}
+  .hero h1 em{font-style:normal;color:var(--amber)}
+  .hero .lede{margin-top:18px;max-width:60ch;color:var(--fg-dim);font-size:16px}
+  .hero .lede b{color:var(--fg);font-weight:600}
+
+  /* 대응 4단계 */
+  .herocta{display:flex;gap:9px;flex-wrap:wrap;margin-top:26px}
+  .pdfhint{margin:0;padding:8px 0 10px;font-size:12.5px;color:var(--amber);font-family:var(--mono);border-top:1px solid var(--line-soft)}
+  .rsteps{display:grid;grid-template-columns:repeat(auto-fit,minmax(246px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .rstep{background:var(--panel);padding:18px;display:flex;flex-direction:column;gap:10px}
+  .rstep .rhead{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .rstep .rn{font-family:var(--mono);font-size:12px;color:var(--amber-ink);background:var(--amber);padding:2px 6px;border-radius:2px;font-weight:600}
+  .rstep .rhead b{font-size:18px;letter-spacing:-.01em}
+  .rstep .rw{font-family:var(--mono);font-size:11px;color:var(--fg-faint);margin-left:auto}
+  .rstep .rd{font-size:13px;color:var(--fg-dim);line-height:1.6}
+  .rstep .rk{list-style:none;padding:0;margin:0;display:grid;gap:5px;font-size:12.5px}
+  .rstep .rk li{display:flex;gap:7px;color:var(--fg)}
+  .rstep .rk li::before{content:'';width:5px;height:5px;margin-top:7px;flex:none;background:var(--amber);border-radius:50%}
+  .rstep .btn{margin-top:auto;align-self:flex-start}
+  .prins{display:grid;grid-template-columns:repeat(auto-fit,minmax(214px,1fr));gap:12px}
+  .prin{border:1px solid var(--line-soft);border-left:none;border-radius:0 3px 3px 0;background:var(--panel);padding:14px 16px;box-shadow:inset 3px 0 0 var(--amber-dim)}
+  .prin b{font-size:14px;display:block;margin-bottom:5px}
+  .prin p{font-size:12.5px;color:var(--fg-dim);line-height:1.55}
+
+  /* PDF 꾸러미 */
+  .pdfmenu{display:grid;grid-template-columns:repeat(auto-fit,minmax(252px,1fr));gap:12px;margin-bottom:22px}
+  .pdfcard{display:flex;flex-direction:column;gap:7px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px}
+  .pdfcard:hover{border-color:var(--amber-dim);background:var(--panel-2)}
+  .pdfcard.hl{border-color:var(--amber-dim);background:linear-gradient(180deg,rgba(255,176,31,.1),transparent)}
+  .pdfcard .pn{font-size:15.5px;font-weight:600}
+  .pdfcard .pd{font-size:12.5px;color:var(--fg-dim);line-height:1.55}
+  .pdfcard .pa{font-family:var(--mono);font-size:11.5px;color:var(--amber);letter-spacing:.04em;margin-top:3px}
+
+  .qbox{margin-top:46px;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .qbox .qhead{background:var(--panel-2);padding:16px 20px;border-bottom:1px solid var(--line)}
+  .qbox .qhead h3{font-size:19px}
+  .qbox .qhead p{font-size:13px;color:var(--fg-dim);margin-top:4px}
+  .dchoice{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;background:var(--line)}
+  .dchoice button{
+    background:var(--panel);border:0;text-align:left;padding:17px 18px;display:flex;flex-direction:column;gap:5px;
+  }
+  .dchoice button:hover{background:var(--panel-3)}
+  .dchoice button[aria-pressed="true"]{background:rgba(255,176,31,.1);box-shadow:inset 0 -3px 0 var(--amber)}
+  .dchoice .dn{font-weight:600;font-size:15px}
+  .dchoice .dd{font-size:12px;color:var(--fg-dim);line-height:1.45}
+  .dchoice .dc{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);letter-spacing:.08em}
+
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:34px}
+  .flow .step{border:1px solid var(--line-soft);border-radius:4px;padding:16px;background:var(--panel)}
+  .flow .sn{font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.1em}
+  .flow h4{font-size:15px;margin-top:8px}
+  .flow p{font-size:12.5px;color:var(--fg-dim);margin-top:6px}
+
+  /* ---------- 테스트 ---------- */
+  .quizwrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:22px;align-items:start}
+  .qitem{border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:16px 18px;margin-bottom:12px}
+  .qitem .qq{display:flex;gap:10px;font-weight:600;font-size:15px;align-items:baseline}
+  .qitem .qq .qn{font-family:var(--mono);font-size:12px;color:var(--amber);flex:none}
+  .qopts{display:grid;gap:7px;margin-top:12px}
+  .qopts label{
+    display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line-soft);
+    border-radius:3px;font-size:13.5px;color:var(--fg-dim);cursor:pointer;background:var(--panel-2)
+  }
+  .qopts label:hover{border-color:var(--fg-faint);color:var(--fg)}
+  .qopts input{margin:3px 0 0;accent-color:var(--amber);flex:none}
+  .qopts input:checked+span{color:var(--fg);font-weight:500}
+  .resultside{position:sticky;top:112px;display:grid;gap:14px}
+  .scorebar{height:7px;background:var(--panel-3);border-radius:4px;overflow:hidden}
+  .scorebar i{display:block;height:100%;background:var(--amber);transition:width .35s ease}
+  .axis{display:grid;gap:9px;margin-top:4px}
+  .axisrow{display:grid;grid-template-columns:78px 1fr 34px;gap:9px;align-items:center;font-size:12.5px}
+  .axisrow .an{color:var(--fg-dim)}
+  .axisrow .av{font-family:var(--mono);font-size:12px;text-align:right;color:var(--fg-dim)}
+  .mini{height:6px;background:var(--panel-3);border-radius:3px;overflow:hidden}
+  .mini i{display:block;height:100%;transition:width .35s ease}
+  .typecard{border:1px solid var(--amber-dim);background:linear-gradient(180deg,rgba(255,176,31,.12),rgba(255,176,31,.03));border-radius:4px;padding:18px}
+  .typecard .tt{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--amber)}
+  .typecard .td{font-size:13px;color:var(--fg-dim);margin-top:7px;line-height:1.55}
+
+  /* ---------- 행동수칙 ---------- */
+  .timecols{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
+  .tcol{border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden;display:flex;flex-direction:column}
+  .tcol .th{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:9px}
+  .tcol .th .tw{font-family:var(--mono);font-size:12px;letter-spacing:.1em}
+  .tcol .th b{font-size:16px}
+  .tcol.now .th{background:rgba(255,74,58,.12)}.tcol.now .tw{color:#FF8C7E}
+  .tcol.m5 .th{background:rgba(255,176,31,.1)}.tcol.m5 .tw{color:var(--amber)}
+  .tcol.h1 .th{background:rgba(90,149,255,.1)}.tcol.h1 .tw{color:#9CBEFF}
+  .acts{list-style:none;padding:0;margin:0;flex:1}
+  .acts li{border-bottom:1px solid var(--line-soft);padding:13px 16px;display:flex;gap:11px;align-items:flex-start}
+  .acts li:last-child{border-bottom:0}
+  .acts .ai{font-family:var(--mono);font-size:11px;color:var(--fg-faint);padding-top:3px;flex:none}
+  .acts .atx{flex:1;font-size:13.5px;line-height:1.55}
+  .acts .atx .why{display:block;font-size:12px;color:var(--fg-faint);margin-top:4px}
+  .acts .addwrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+  .acts .needs{font-family:var(--mono);font-size:11px;color:var(--fg-dim)}
+  .donthead{margin-top:28px}
+  .donts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .dont{border:1px solid var(--red-dim);background:rgba(255,74,58,.06);border-radius:4px;padding:14px 16px}
+  .dont b{color:#FF9385;font-size:13.5px;display:block;margin-bottom:4px}
+  .dont p{font-size:12.5px;color:var(--fg-dim)}
+
+  /* ---------- 재료 스캐너 ---------- */
+  .scanwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.85fr);gap:22px;align-items:start}
+  .matgroup{margin-bottom:18px}
+  .matgroup .mg{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+  .matgroup .mg b{font-size:13.5px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel-2);border-radius:3px;padding:6px 10px;font-size:13px;color:var(--fg-dim);cursor:pointer}
+  .chip:hover{border-color:var(--fg-faint)}
+  .chip input{accent-color:var(--amber);margin:0}
+  .chip:has(input:checked){background:rgba(255,176,31,.12);border-color:var(--amber-dim);color:var(--fg)}
+  .matchlist{display:grid;gap:9px}
+  .mrow{border:1px solid var(--line);border-radius:3px;background:var(--panel);padding:12px 14px}
+  .mrow .mt{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  .mrow .mt b{font-size:14px;flex:1;min-width:120px}
+  .mrow .miss{font-size:12px;color:var(--fg-faint);margin-top:6px}
+  .mrow .miss em{font-style:normal;color:#FFCF72}
+  .mrow.ok{border-color:var(--green-dim)}
+  .counter{display:flex;align-items:baseline;gap:10px}
+  .counter .big{font-family:var(--mono);font-size:38px;font-weight:600;letter-spacing:-.03em;color:var(--amber)}
+  .counter .of{font-family:var(--mono);font-size:14px;color:var(--fg-faint)}
+
+  /* ---------- 제작 가이드 ---------- */
+  .guides{display:grid;gap:12px}
+  details.guide{border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden}
+  details.guide[open]{border-color:var(--panel-3)}
+  details.guide>summary{
+    padding:15px 18px;display:flex;gap:12px;align-items:center;cursor:pointer;list-style:none;flex-wrap:wrap;
+  }
+  details.guide>summary::-webkit-details-marker{display:none}
+  details.guide>summary::after{content:'＋';font-family:var(--mono);color:var(--fg-faint);margin-left:auto;flex:none}
+  details.guide[open]>summary::after{content:'－'}
+  details.guide>summary:hover{background:var(--panel-2)}
+  .guide .gc{font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.08em;flex:none}
+  .guide .gn{font-size:15.5px;font-weight:600}
+  .guide .gmeta{display:flex;gap:6px;flex-wrap:wrap}
+  .gbody{border-top:1px solid var(--line);padding:18px;display:grid;gap:18px}
+  .gcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .gblock h5{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--fg-faint);margin:0 0 9px;text-transform:uppercase}
+  .steps{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:s}
+  .steps li{display:flex;gap:11px;font-size:13.5px;line-height:1.6}
+  .steps li::before{
+    counter-increment:s;content:counter(s);font-family:var(--mono);font-size:11px;
+    width:19px;height:19px;flex:none;border-radius:2px;display:grid;place-items:center;
+    background:var(--panel-3);color:var(--amber);margin-top:2px
+  }
+  .matlist{list-style:none;padding:0;margin:0;display:grid;gap:6px;font-size:13px}
+  .matlist li{display:flex;gap:8px;align-items:baseline}
+  .matlist .q{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint);flex:none;min-width:58px}
+  .spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .spec div{background:var(--panel-2);padding:10px 12px}
+  .spec .sk{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);letter-spacing:.08em}
+  .spec .sv{font-family:var(--mono);font-size:15px;margin-top:3px}
+  .danger{border:1px solid var(--red-dim);background:rgba(255,74,58,.07);border-radius:3px;padding:13px 15px}
+  .danger h5{color:#FF9385;letter-spacing:.1em}
+  .danger ul{font-size:13px;color:var(--fg-dim);display:grid;gap:5px;padding-left:1.1em}
+  .danger ul b{color:#FF9385;font-weight:600}
+  figure{margin:0}
+  figure svg{width:100%;height:auto;max-width:100%;display:block;color:var(--fg)}
+  figcaption{font-size:12px;color:var(--fg-faint);margin-top:9px;line-height:1.55}
+  .figbox{border:1px solid var(--line-soft);border-radius:3px;background:#0F141A;padding:16px}
+  .flash{animation:flash 1.3s ease}
+  @keyframes flash{0%,100%{box-shadow:none}25%{box-shadow:0 0 0 2px var(--amber)}}
+
+  /* ---------- 키트 ---------- */
+  .kitwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.8fr);gap:22px;align-items:start}
+  .kitsets{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin-bottom:26px}
+  .kitset{border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:16px;display:flex;flex-direction:column;gap:9px}
+  .kitset.rec{border-color:var(--amber-dim);background:linear-gradient(180deg,rgba(255,176,31,.09),transparent)}
+  .kitset b{font-size:15px}
+  .kitset .kp{font-family:var(--mono);font-size:13px;color:var(--amber)}
+  .kitset ul{font-size:12.5px;color:var(--fg-dim);padding-left:1.05em;display:grid;gap:3px}
+  .kitset .btn{margin-top:auto}
+  .itemtable{width:100%;border-collapse:collapse;font-size:13.5px}
+  .itemtable th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--fg-faint);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);text-transform:uppercase;font-weight:500}
+  .itemtable td{padding:11px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  .itemtable tr:hover td{background:var(--panel-2)}
+  .itemtable .nm{font-weight:500}
+  .itemtable .sp{font-size:12px;color:var(--fg-faint);display:block;margin-top:2px}
+  .itemtable .pr{font-family:var(--mono);white-space:nowrap;text-align:right}
+  .tblscroll{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+  .cart{position:sticky;top:112px;border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden}
+  .cart .ch{padding:14px 16px;border-bottom:1px solid var(--line);background:var(--panel-2);display:flex;align-items:center;gap:9px}
+  .cart .ch b{font-size:15px}
+  .cartlist{list-style:none;margin:0;padding:0;max-height:340px;overflow-y:auto}
+  .cartlist li{padding:11px 16px;border-bottom:1px solid var(--line-soft);display:flex;gap:9px;align-items:flex-start;font-size:13px}
+  .cartlist .cn{flex:1}
+  .cartlist .cq{font-family:var(--mono);font-size:12px;color:var(--fg-dim)}
+  .cartlist .rm{background:none;border:0;color:var(--fg-faint);padding:0 2px;font-size:15px;line-height:1}
+  .cartlist .rm:hover{color:var(--red)}
+  .carttotal{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+  .carttotal .big{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--amber)}
+  .cartfoot{padding:14px 16px;display:grid;gap:8px}
+  .empty{padding:26px 16px;text-align:center;color:var(--fg-faint);font-size:13px}
+
+  /* ---------- 대피 카드 ---------- */
+  .cardwrap{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1fr);gap:22px;align-items:start}
+  .form{display:grid;gap:13px}
+  .field{display:grid;gap:5px}
+  .field label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--fg-faint);text-transform:uppercase}
+  .field input,.field select,.field textarea{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:3px;color:var(--fg);padding:9px 11px;width:100%
+  }
+  .field input::placeholder,.field textarea::placeholder{color:var(--fg-faint)}
+  .field .hint{font-size:11.5px;color:var(--fg-faint)}
+  /* A4 미리보기 — 인쇄 결과와 같은 흑백 */
+  .sheet{
+    background:#FFFFFF;color:#111418;border-radius:3px;padding:26px;
+    box-shadow:0 0 0 1px var(--line);font-size:12.5px;line-height:1.55;
+  }
+  .sheet h3{font-size:19px;letter-spacing:-.02em;color:#111418}
+  .sheet .sheadr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #111418;padding-bottom:9px;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+  .sheet .sheadr .sm{font-family:var(--mono);font-size:10.5px;color:#55606D;letter-spacing:.08em;text-align:right}
+  .sheet .srow{display:grid;grid-template-columns:86px 1fr;gap:10px;padding:6px 0;border-bottom:1px solid #D8DEE6}
+  .sheet .srow .sl{font-family:var(--mono);font-size:10.5px;color:#55606D;letter-spacing:.06em;padding-top:2px}
+  .sheet .srow .sv{font-weight:500;color:#111418}
+  .sheet .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .sheet h4{font-size:12px;font-family:var(--mono);letter-spacing:.1em;color:#111418;border-bottom:1px solid #111418;padding-bottom:4px;margin:0 0 8px}
+  .sheet ol,.sheet ul{padding-left:1.15em;display:grid;gap:4px;color:#2A313A}
+  .sheet .scall{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:#111418;margin-top:14px;border-top:2px solid #111418;padding-top:9px}
+  .sheet .sfoot{margin-top:12px;font-size:10.5px;color:#55606D;line-height:1.5}
+  .sheet .cut{font-family:var(--mono);font-size:10px;color:#8A93A0;letter-spacing:.1em;text-align:center;border-top:1px dashed #8A93A0;margin-top:16px;padding-top:6px}
+
+  /* ---------- 푸터 ---------- */
+  footer.site{border-top:1px solid var(--line);background:var(--panel);padding-block:28px;margin-top:60px}
+  footer.site .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
+  footer.site h5{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--fg-faint);margin:0 0 9px;text-transform:uppercase}
+  footer.site ul{list-style:none;padding:0;margin:0;display:grid;gap:5px;font-size:13px;color:var(--fg-dim)}
+  footer.site .disc{margin-top:24px;padding-top:18px;border-top:1px solid var(--line-soft);font-size:12px;color:var(--fg-faint);line-height:1.6;max-width:90ch}
+
+  @media (max-width:860px){
+    .quizwrap,.scanwrap,.kitwrap,.cardwrap{grid-template-columns:minmax(0,1fr)}
+    .resultside,.cart{position:static}
+    .sechead .sub{text-align:left;margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  /* ---------- 안내 줄 ---------- */
+  .tipline{
+    margin:10px 0 0;font-family:var(--mono);font-size:12.5px;color:var(--amber);
+    border-left:2px solid var(--amber-dim);padding:5px 0 5px 10px
+  }
+  .kbd{
+    font-family:var(--mono);font-size:11.5px;background:var(--panel-3);
+    border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;
+    padding:1px 6px;color:var(--amber);letter-spacing:.06em;font-weight:600
+  }
+
+  /* ---------- three.js 3D 무대 ---------- */
+  .stage3d{
+    height:470px;background:#0a0e13;position:relative;outline:none;
+    border-bottom:1px solid var(--line);
+  }
+  .stage3d canvas{display:block;width:100%!important;height:100%!important}
+  .stage3d:focus-visible{box-shadow:inset 0 0 0 2px var(--amber)}
+  .dropb{
+    background:none;border:1px solid var(--line);border-radius:2px;
+    color:var(--fg-faint);font-family:var(--mono);font-size:10.5px;
+    padding:1px 6px;margin-left:auto;flex:none
+  }
+  .dropb:hover{border-color:var(--red-dim);color:#FF9385}
+  .baglist li{align-items:center}
+
+  @media (max-width:860px){
+    .stage3d{height:340px}
+  }
+
+  /* ---------- 60초 훈련 ---------- */
+  .drill{display:grid;grid-template-columns:minmax(0,1fr) minmax(272px,.72fr);gap:20px;align-items:start}
+  .dstage{border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden;position:relative;min-height:330px}
+  .dstart,.simstart{padding:30px 26px}
+  .dsn{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--amber);margin-bottom:10px}
+  .dstart h3,.simstart h3{font-size:22px;letter-spacing:-.02em;max-width:26ch}
+  .dstart p,.simstart p{font-size:13.5px;color:var(--fg-dim);margin-top:12px;max-width:56ch;line-height:1.65}
+  .dstart .btn{margin-top:20px}
+
+  .dq{padding:22px 24px;position:relative}
+  .dqtop{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .dqtop .dtag{font-family:var(--mono);font-size:11px;color:var(--amber);border:1px solid var(--amber-dim);padding:2px 7px;border-radius:2px}
+  .dqtop .dnum{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint);margin-left:auto}
+  .ringwrap{position:relative;display:grid;place-items:center;flex:none}
+  .ringwrap .rsec{position:absolute;font-family:var(--mono);font-size:13px;font-weight:600}
+  .ring{width:46px;height:46px;transform:rotate(-90deg)}
+  .ring circle{fill:none;stroke-width:4}
+  .ring .rbg{stroke:var(--panel-3)}
+  .ring .rfg{stroke:var(--amber);stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+  .ring.hot .rfg{stroke:var(--red)}
+  .dq h3{font-size:19px;line-height:1.45;max-width:34ch}
+  .dopts{display:grid;gap:9px;margin-top:18px}
+  .dopt{display:flex;gap:11px;align-items:flex-start;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:13px 15px;font-size:14px}
+  .dopt:hover{border-color:var(--amber-dim);background:var(--panel-3)}
+  .dopt .ok{font-family:var(--mono);font-size:11px;color:var(--fg-faint);flex:none;padding-top:2px}
+  .dopt[disabled]{opacity:.55}
+  .dres{padding:22px 24px}
+  .dres .rv{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .dres .rv b{font-size:20px}
+  .dres .rv.good b{color:#7FE0AC}
+  .dres .rv.bad b{color:#FF9385}
+  .dres .why{font-size:13.5px;color:var(--fg-dim);line-height:1.7;max-width:60ch}
+  .dres .rbtns{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+  .fx{position:absolute;inset:0;pointer-events:none;opacity:0}
+  .fx.flare{background:radial-gradient(circle at 50% 70%,rgba(255,74,58,.55),transparent 62%);animation:flare .9s ease-out}
+  .fx.smoke{background:linear-gradient(0deg,rgba(130,140,150,.5),transparent 70%);animation:smoke 1.3s ease-out}
+  .fx.ok{background:radial-gradient(circle at 50% 60%,rgba(53,192,122,.3),transparent 60%);animation:okf .8s ease-out}
+  @keyframes flare{0%{opacity:0;transform:scale(.7)}35%{opacity:1}100%{opacity:0;transform:scale(1.25)}}
+  @keyframes smoke{0%{opacity:0;transform:translateY(24px)}40%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
+  @keyframes okf{0%{opacity:0}40%{opacity:1}100%{opacity:0}}
+  .dside{display:grid;gap:14px;position:sticky;top:112px}
+  .dlogitem{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;border-top:1px solid var(--line-soft);padding-top:9px;margin-top:9px}
+  .dlogitem .lt{flex:1;color:var(--fg-dim)}
+
+  /* ---------- 72시간 시뮬레이터 ---------- */
+  .simtop{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:16px 18px;margin-bottom:16px}
+  .gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px}
+  .ga{display:grid;gap:5px}
+  .ga .gh{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px}
+  .ga .gv{font-family:var(--mono);font-size:12px;color:var(--fg-dim)}
+  .ga.crit .gv{color:#FF9385}
+  .gtrack{height:8px;background:var(--panel-3);border-radius:4px;overflow:hidden}
+  .gtrack i{display:block;height:100%;border-radius:4px;transition:width .6s cubic-bezier(.3,.8,.3,1)}
+  .simclock{text-align:right;border-left:1px solid var(--line);padding-left:18px}
+  .simclock .sct{font-family:var(--mono);font-size:27px;font-weight:600;letter-spacing:-.02em;color:var(--amber)}
+  .simclock .scm{font-size:11.5px;color:var(--fg-faint)}
+  .simbody{border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden}
+  .simturn{padding:24px 26px}
+  .simturn .sh{font-family:var(--mono);font-size:11.5px;color:var(--amber);letter-spacing:.1em}
+  .simturn h3{font-size:21px;margin-top:8px;letter-spacing:-.02em}
+  .simturn .ss{font-size:14px;color:var(--fg-dim);margin-top:11px;max-width:62ch;line-height:1.7}
+  .sopts{display:grid;gap:9px;margin-top:20px}
+  .sopt{display:flex;gap:12px;align-items:center;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:14px 16px;font-size:14px}
+  .sopt:hover{border-color:var(--amber-dim);background:var(--panel-3)}
+  .sopt.have{border-color:var(--green-dim);background:rgba(53,192,122,.07)}
+  .sopt.have:hover{border-color:var(--green)}
+  .sopt.risk:hover{border-color:var(--red-dim)}
+  .sopt .st{flex:1}
+  .sopt .sb{display:flex;gap:5px;flex-wrap:wrap;flex:none}
+  .simres{padding:22px 26px;border-top:1px solid var(--line)}
+  .simres .rr{font-size:14px;line-height:1.7;color:var(--fg-dim);max-width:62ch}
+  .deltas{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;font-family:var(--mono);font-size:12.5px}
+  .deltas span{border:1px solid var(--line);border-radius:2px;padding:3px 8px}
+  .deltas .up{color:#7FE0AC;border-color:var(--green-dim)}
+  .deltas .dn{color:#FF9385;border-color:var(--red-dim)}
+  .simend{padding:30px 26px}
+  .simend .et{font-size:28px;font-weight:700;letter-spacing:-.03em;color:var(--amber)}
+  .simend .ed{font-size:14px;color:var(--fg-dim);margin-top:10px;max-width:60ch;line-height:1.7}
+  .simend .ex{margin-top:18px;border-left:3px solid var(--amber-dim);padding-left:14px;font-size:13.5px;color:var(--fg-dim);line-height:1.7}
+  .simend .rbtns{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}
+
+  /* ---------- 도해 애니메이션 ---------- */
+  .an-flow{animation:flow 1.1s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-12}}
+  .an-spin{animation:spin 2.6s linear infinite;transform-box:fill-box;transform-origin:center}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .an-glow{animation:glow 1.8s ease-in-out infinite}
+  @keyframes glow{0%,100%{opacity:.5}50%{opacity:1}}
+  .an-cut{animation:cut 2.8s ease-in-out infinite}
+  @keyframes cut{0%,55%{opacity:1}70%,100%{opacity:.18}}
+  .an-fade{animation:tri 2.8s ease-in-out infinite}
+  @keyframes tri{0%,55%{opacity:.85}78%,100%{opacity:.3}}
+  .an-drip{animation:drip 1.6s linear infinite}
+  @keyframes drip{to{stroke-dashoffset:-11}}
+  .an-germ{animation:germ 2.4s linear infinite}
+  @keyframes germ{to{stroke-dashoffset:-18}}
+
+  @media (max-width:860px){
+    .drill,.simtop{grid-template-columns:minmax(0,1fr)}
+    .dside{position:static}
+    .simclock{text-align:left;border-left:0;border-top:1px solid var(--line);padding:12px 0 0}
+    .gb{align-items:flex-start}
+  }
+
+  /* ---------- 캐릭터 그림 (character.png 교체 가능) ---------- */
+  .character{width:300px;animation:floating 3s ease-in-out infinite}
+  .character img{width:100%;height:auto;display:block}
+  .character svg{width:100%;height:auto;display:block}
+  @keyframes floating{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-15px)}
+  }
+  .character.sm{width:64px}
+  .character.lg{width:180px}
+
+  /* ---------- 60초 대피 (수집 단계) ---------- */
+  .scav{border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden;margin-bottom:34px}
+  .scavhead{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(230px,.8fr);gap:20px;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+  .scavmeta h3{font-size:18px;margin-top:6px;letter-spacing:-.01em}
+  .scavmeta .note{margin-top:5px;max-width:48ch}
+  .ringwrap.big .ring.big{width:70px;height:70px}
+  .ringwrap.big .rsec{font-size:19px}
+  .ring.big circle{stroke-width:5}
+
+  .bagbox{border-left:1px solid var(--line);padding-left:18px}
+  .slots{display:flex;gap:3px;margin:8px 0 10px;flex-wrap:wrap}
+  .slots i{width:13px;height:13px;border:1px solid var(--line);border-radius:2px;background:var(--panel-3);display:block}
+  .slots i.on{background:var(--amber);border-color:var(--amber)}
+  .baglist{list-style:none;margin:0;padding:0;display:grid;gap:3px;max-height:104px;overflow-y:auto;font-size:12.5px}
+  .baglist li{display:flex;gap:7px;color:var(--fg-dim)}
+  .baglist li b{color:var(--fg);font-weight:500}
+  .baglist li.note{color:var(--fg-faint)}
+
+  .scavstage{min-height:280px}
+  .rooms{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto}
+  .rooms button{background:var(--panel-2);border:0;border-bottom:2px solid transparent;padding:12px 16px;white-space:nowrap;color:var(--fg-dim);font-size:13.5px;font-weight:500}
+  .rooms button:hover{color:var(--fg);background:var(--panel-3)}
+  .rooms button[aria-current="true"]{color:var(--amber);border-bottom-color:var(--amber);background:var(--panel)}
+  .rooms .rc{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);margin-left:7px}
+  .roomwrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;padding:20px}
+  .roomchar{display:grid;place-items:center;gap:8px}
+  .roomchar .rn{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);letter-spacing:.08em}
+  .loot{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:9px;align-content:start}
+  .lootitem{display:flex;flex-direction:column;gap:5px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:3px;padding:11px 13px}
+  .lootitem:hover{border-color:var(--amber-dim);background:var(--panel-3)}
+  .lootitem .ln{font-size:13.5px;font-weight:500}
+  .lootitem .lm{display:flex;gap:6px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;color:var(--fg-faint)}
+  .lootitem .le{font-size:11.5px;color:var(--amber)}
+  .lootitem.took{opacity:.4;pointer-events:none}
+  .lootitem.took .ln::after{content:' · 담음';color:var(--green);font-family:var(--mono);font-size:10.5px}
+  .lootitem.big{border-left:3px solid var(--amber-dim)}
+  .roomd{font-size:12.5px;color:var(--fg-faint);grid-column:1/-1;margin-bottom:-6px}
+  .scavbar{display:flex;gap:9px;flex-wrap:wrap;padding:0 20px 20px;align-items:center}
+  .scavbar .note{margin-right:auto}
+  .scavend{padding:28px 24px}
+  .scavend .et{font-size:24px;font-weight:700;letter-spacing:-.02em;color:var(--amber)}
+  .scavend .ed{font-size:13.5px;color:var(--fg-dim);margin-top:9px;max-width:58ch;line-height:1.7}
+  .missing{display:grid;gap:7px;margin-top:16px}
+  .missing div{border-left:3px solid var(--red-dim);padding:7px 0 7px 12px;font-size:12.5px;color:var(--fg-dim)}
+  .scavend .rbtns{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+  .startres{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-top:18px}
+  .startres div{background:var(--panel-2);padding:10px 12px}
+  .startres .sk{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);letter-spacing:.06em}
+  .startres .sv{font-family:var(--mono);font-size:17px;margin-top:3px}
+
+  /* 시간이 10초 아래로 떨어지면 전체가 붉게 */
+  .scav.panic .scavhead{background:rgba(255,74,58,.1)}
+  .scav.panic .ring .rfg{stroke:var(--red)}
+
+  @media (max-width:860px){
+    .scavhead{grid-template-columns:auto minmax(0,1fr)}
+    .bagbox{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);padding:14px 0 0}
+    .roomwrap{grid-template-columns:minmax(0,1fr)}
+    .roomchar{display:none}
+  }
+
+
+  /* ---------- 인쇄 / PDF 저장 ----------
+     재난 때는 이 페이지가 열리지 않는다. 종이와 PDF가 최종 매체다.
+     data-print 값으로 어느 범위를 뽑을지 결정한다. (app.js printMode) */
+  .printhead{display:none}
+
+  @media print{
+    :root{--fg:#000;--fg-dim:#2A313A;--fg-faint:#55606D;--line:#999;--line-soft:#C8CFD8}
+    body{background:#fff;color:#000;font-size:10.2pt;line-height:1.5}
+    header.site,nav.tabs,.hazardbar,.noprint,footer.site .fg,.pdfmenu,.pdfhint{display:none!important}
+    .printhead{
+      display:block;font-family:var(--mono);font-size:8.5pt;color:#55606D;
+      border-bottom:1.5pt solid #000;padding:0 0 5pt;margin-bottom:10pt;letter-spacing:.02em
+    }
+    main{padding-bottom:0}
+    .wrap{max-width:none;padding-inline:0}
+    .panel[hidden]{display:block!important}
+    .card,.mrow,.tcol,details.guide,.kitset,.qitem,.cart,.figbox,.rstep,.prin,.dont,.danger,.spec div,.board .cell{
+      background:#fff!important;border-color:#999!important;box-shadow:none!important
+    }
+    .rsteps,.spec,.board{background:#fff!important;border-color:#999!important}
+    .typecard{background:#fff!important;border-color:#999!important}
+    .tcol .th{background:#F0F2F5!important}
+    .tag{border-color:#999!important;background:#fff!important;color:#2A313A!important}
+    a{color:#000;border:0}
+    figure svg{color:#000}
+    .sheet{box-shadow:none;padding:0}
+    details.guide>summary::after{display:none}
+    details.guide>summary{padding-left:0}
+    .gbody{display:block!important}
+    .sechead{padding-top:14pt;break-after:avoid}
+    details.guide,.rstep,.dont,.prin,.kitset,.mrow{break-inside:avoid}
+    .acts li,.steps li,.matlist li{break-inside:avoid}
+    h1{font-size:20pt}.sechead h2{font-size:14pt}.guide .gn{font-size:12pt}
+
+    /* 전체 매뉴얼: 진단 문항과 조작 UI는 빼고 읽을 것만 */
+    body[data-print="all"] #p-quiz,
+    body[data-print="all"] #p-sim,
+    .scav,
+    body[data-print="all"] .qbox,
+    body[data-print="all"] .flow,
+    body[data-print="all"] #makeScan,
+    body[data-print="all"] #p-make>.wrap>.sechead:first-of-type,
+    body[data-print="all"] #p-card .form{display:none!important}
+
+    /* 범위 한정 모드 */
+    body[data-print="action"] .panel,
+    body[data-print="guides"] .panel,
+    body[data-print="kit"] .panel,
+    body[data-print="card"] .panel{display:none!important}
+    body[data-print="action"] #p-action{display:block!important}
+    body[data-print="guides"] #p-make{display:block!important}
+    body[data-print="guides"] #makeScan,
+    body[data-print="guides"] #p-make>.wrap>.sechead:first-of-type{display:none!important}
+    body[data-print="kit"] #p-kit{display:block!important}
+    body[data-print="kit"] #itemPanel,
+    body[data-print="kit"] #kitsets{display:none!important}
+    body[data-print="kit"] .kitwrap{display:block}
+    body[data-print="card"] #p-card{display:block!important}
+    body[data-print="card"] #p-card .sechead,
+    body[data-print="card"] #p-card .form,
+    body[data-print="card"] .printhead{display:none!important}
+    body[data-print="card"] #p-card .cardwrap{display:block}
+
+    @page{margin:14mm}
+  }
+
+  /* 단독판 추가 — 탭이 없으므로 패널을 항상 보이게 */
+  #p-make{display:block}
+  .solohead{border-bottom:1px solid var(--line);background:var(--panel)}
+  .solohead .sh{display:flex;align-items:center;gap:16px;padding-block:16px;flex-wrap:wrap}
+  .solohead .mark{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:.14em;color:var(--amber-ink);background:var(--amber);padding:3px 7px;border-radius:2px}
+  .solohead b{font-size:19px}
+  .solohead span.sub{font-size:12px;color:var(--fg-faint);font-family:var(--mono);margin-right:auto}
+</style>
+</head>
+<body>
+<div class="hazardbar"></div>
+<header class="solohead noprint">
+  <div class="wrap sh">
+    <span class="mark">BLACKOUT</span>
+    <b>집 재료 제작</b>
+    <span class="sub">재난 안전 대응체계 · 단독 실행판</span>
+    <button class="btn sm" id="printAll">전체 PDF로 저장</button>
+  </div>
+</header>
+
+<div class="printhead" aria-hidden="true">블랙아웃 · 집 재료 제작 — 오프라인 사본 (출처: 소방청·행정안전부 공개 지침 기반, 해커톤 시연용)</div>
+
+<main>
+<section id="p-make">
+    <div class="wrap">
+      <div class="sechead">
+        <div class="code">§ 03</div>
+        <h2 id="makeScanTitle">집 재료 스캐너</h2>
+        <p class="sub">키트가 없어도 집에는 재료가 있습니다. 가진 것을 체크하면 <b>지금 만들 수 있는 것</b>을 계산합니다.</p>
+      </div>
+
+      <div class="scanwrap" id="makeScan">
+        <div class="card pad">
+          <div style="display:flex;gap:9px;align-items:center;margin-bottom:16px;flex-wrap:wrap" class="noprint">
+            <div class="label" style="margin-right:auto">보유 재료 체크 · 35품목</div>
+            <button class="btn sm ghost" id="invPreset">일반 가정 기본값</button>
+            <button class="btn sm ghost" id="invClear">전체 해제</button>
+          </div>
+          <div id="matGroups"></div>
+        </div>
+
+        <aside style="display:grid;gap:14px">
+          <div class="card pad">
+            <div class="label">즉시 제작 가능</div>
+            <div class="counter"><span class="big" id="mkCount">0</span><span class="of" id="mkTotal">/ 10 종</span></div>
+            <div class="scorebar" style="margin-top:10px"><i id="mkBar" style="width:0%"></i></div>
+            <p class="note" style="margin-top:12px">부족한 재료는 따로 적어 두고, 다음 장보기 때 그것만 구입하십시오.</p>
+          </div>
+          <div class="matchlist" id="matchList"></div>
+        </aside>
+      </div>
+
+      <div class="sechead"><div class="code">§ 03-2</div><h2 style="font-size:22px">제작 가이드 10종</h2>
+        <p class="sub">모든 수치는 가정용 재료 기준입니다. 화재·전기 작업은 <b>안전 경고를 먼저</b> 읽으십시오.</p></div>
+
+      <div class="guides" id="guides">
+
+        <!-- G01 간이 소화기 -->
+        <details class="guide" id="g-fireext">
+          <summary>
+            <span class="gc">G01</span><span class="gn">간이 분말 소화기 (A·K급 초기 화재)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">5분</span><span class="tag bad">B·C급 사용 금지</span><span class="matchtag" data-for="fireext"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료</h5>
+                <ul class="matlist">
+                  <li><span class="q">주재료</span>베이킹소다(탄산수소나트륨) 300g 이상</li>
+                  <li><span class="q">보조</span>굵은 소금 200g — 분말 밀도를 높여 멀리 던져짐</li>
+                  <li><span class="q">용기</span>입구 넓은 페트병·유리병 또는 깡통</li>
+                  <li><span class="q">마감</span>청테이프, 랩 (습기 차단)</li>
+                </ul>
+                <h5 style="margin-top:16px">만드는 법</h5>
+                <ol class="steps">
+                  <li>용기를 완전히 말립니다. 습기가 들어가면 분말이 굳어 쏟아지지 않습니다.</li>
+                  <li>베이킹소다와 소금을 3:2로 섞어 용기의 80%까지 채웁니다.</li>
+                  <li>입구를 랩으로 덮고 테이프로 고정합니다. 던질 때 터지도록 <b>얇게</b> 한 겹만.</li>
+                  <li>용기 겉면에 <b>'A·K급 전용'</b>과 제조일을 적습니다. 6개월마다 교체.</li>
+                  <li>주방 싱크대 아래·현관처럼 <b>불이 날 곳에서 2m 이상 떨어진</b> 곳에 둡니다.</li>
+                </ol>
+                <h5 style="margin-top:16px">쓰는 법</h5>
+                <ol class="steps">
+                  <li>먼저 "불이야" 외치고 119. 그다음에 끕니다.</li>
+                  <li>불의 <b>밑동(연료 표면)</b>을 향해 뿌리거나 던집니다. 불꽃 끝이 아닙니다.</li>
+                  <li>30초 안에 안 꺼지면 포기하고 문을 닫고 대피합니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>작동 원리</h5>
+                <div class="figbox">
+                  <figure>
+                    <svg viewBox="0 0 440 290" role="img" aria-label="연료·산소·열로 이루어진 화재 삼각형과, 가정용 재료로 끊을 수 있는 변은 산소와 연료뿐임을 보여주는 그림">
+                      <polygon class="an-fade" points="220,38 388,248 52,248" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".85"/>
+                      <text x="220" y="26" text-anchor="middle" font-size="13" font-family="monospace" fill="currentColor">열</text>
+                      <text x="30" y="266" text-anchor="start" font-size="13" font-family="monospace" fill="currentColor">연료</text>
+                      <text x="410" y="266" text-anchor="end" font-size="13" font-family="monospace" fill="currentColor">산소</text>
+                      <!-- 산소 차단(오른쪽 변) -->
+                      <line class="an-cut" x1="304" y1="143" x2="336" y2="117" stroke="#FFB01F" stroke-width="3"/>
+                      <text x="344" y="112" font-size="12" fill="#FFB01F" font-family="monospace">질식</text>
+                      <text x="344" y="128" font-size="11" fill="currentColor" opacity=".7">베이킹소다·뚜껑</text>
+                      <!-- 연료 제거(왼쪽 변) -->
+                      <line x1="136" y1="143" x2="104" y2="117" stroke="#FFB01F" stroke-width="3"/>
+                      <text x="96" y="112" font-size="12" fill="#FFB01F" font-family="monospace" text-anchor="end">제거</text>
+                      <text x="96" y="128" font-size="11" fill="currentColor" opacity=".7" text-anchor="end">가스밸브·차단기</text>
+                      <!-- 냉각(아래 변) : 물, 조건부 -->
+                      <line x1="204" y1="248" x2="236" y2="248" stroke="#FF4A3A" stroke-width="3" stroke-dasharray="5 4"/>
+                      <text x="220" y="278" font-size="12" fill="#FF4A3A" font-family="monospace" text-anchor="middle">냉각 = 물</text>
+                      <text x="220" y="230" font-size="11" fill="currentColor" opacity=".7" text-anchor="middle">기름·전기엔 금지</text>
+                    </svg>
+                    <figcaption>불은 연료·산소·열 세 변이 모두 있어야 유지됩니다. 가정 재료로 안전하게 끊을 수 있는 변은 <b>산소(질식)</b>와 <b>연료(차단)</b> 둘뿐입니다. 기름·전기 화재에 물을 부으면 열은 못 내리고 불을 퍼뜨립니다.</figcaption>
+                  </figure>
+                </div>
+                <div class="spec" style="margin-top:16px">
+                  <div><div class="sk">유효 사거리</div><div class="sv">약 1 m</div></div>
+                  <div><div class="sk">대응 화재</div><div class="sv">A · K급</div></div>
+                  <div><div class="sk">유효 기간</div><div class="sv">6 개월</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>이것은 정식 소화기의 대체품이 아닙니다.</b> 쓰레기통·냄비 수준의 초기 불씨에만 씁니다.</li>
+                <li><b>B급(휘발유·시너)·C급(전기) 화재 금지.</b> 분말을 던지는 동작이 유증기를 퍼뜨리거나 감전을 유발합니다.</li>
+                <li>식초를 섞어 이산화탄소를 만드는 '분사형'은 만들지 마십시오. 밀폐 용기 파열 위험이 있고, 분사 압력이 1초면 끝납니다.</li>
+                <li>천장까지 불이 올라갔으면 소화 시도 중단. <b>대피가 유일한 정답</b>입니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G02 질식 소화 -->
+        <details class="guide" id="g-smother">
+          <summary>
+            <span class="gc">G02</span><span class="gn">질식 소화 덮개 (식용유 화재 · K급)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">즉시</span><span class="tag bad">물 사용 금지</span><span class="matchtag" data-for="smother"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료</h5>
+                <ul class="matlist">
+                  <li><span class="q">1순위</span>냄비보다 큰 뚜껑 또는 큰 접시</li>
+                  <li><span class="q">2순위</span>물에 적셔 꽉 짠 수건 (물이 흐르면 안 됨)</li>
+                  <li><span class="q">3순위</span>베이킹소다 한 통 / 마른 모래</li>
+                </ul>
+                <h5 style="margin-top:16px">순서</h5>
+                <ol class="steps">
+                  <li>불 끄기 전에 <b>가스·인덕션 전원을 먼저</b> 끕니다. 열원을 남기면 다시 붙습니다.</li>
+                  <li>뚜껑을 몸 쪽에서 반대쪽으로 <b>밀어 덮습니다.</b> 위에서 수직으로 내리면 화염이 손을 타고 올라옵니다.</li>
+                  <li>덮은 뒤 <b>최소 20분 열지 않습니다.</b> 기름 온도가 발화점 아래로 내려가야 합니다.</li>
+                  <li>뚜껑이 없으면 적신 수건을 같은 방향으로 밀어 덮고, 그 위에 베이킹소다를 붓습니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>왜 물을 부으면 폭발하는가</h5>
+                <div class="spec">
+                  <div><div class="sk">식용유 발화점</div><div class="sv">약 360 ℃</div></div>
+                  <div><div class="sk">물 끓는점</div><div class="sv">100 ℃</div></div>
+                  <div><div class="sk">수증기 팽창</div><div class="sv">약 1700 배</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">360℃ 기름에 물이 닿으면 즉시 수증기로 1700배 팽창하면서 기름을 공중으로 분무시킵니다. 분무된 기름은 표면적이 폭증해 한순간에 불덩이가 됩니다. 이것이 주방 화재 사망의 대표 경로입니다.</p>
+                <p class="note" style="margin-top:10px"><b>젖은 수건은 되는데 물은 안 되는 이유:</b> 수건에 머금은 소량의 물은 증기막을 만들어 산소를 덮지만, 쏟아지는 물은 기름 속으로 파고들어 분무를 만듭니다. 수건은 <b>꽉 짜서</b> 씁니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>불붙은 냄비를 들고 옮기지 마십시오.</b> 이동 중 쏟으면 동선 전체가 불바다가 됩니다.</li>
+                <li>밀가루·설탕을 뿌리면 <b>분진 폭발</b>합니다. 흰 가루라고 다 같지 않습니다.</li>
+                <li>환기팬을 켜면 불이 덕트로 올라갑니다. 끄십시오.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G03 자전거 발전기 -->
+        <details class="guide" id="g-bikegen">
+          <summary>
+            <span class="gc">G03</span><span class="gn">자전거 발전기 (휴대폰·LED 충전)</span>
+            <span class="gmeta"><span class="tag">난이도 상</span><span class="tag">2시간</span><span class="tag info">5V 출력</span><span class="matchtag" data-for="bikegen"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gblock">
+              <h5>구조</h5>
+              <div class="figbox">
+                <figure>
+                  <svg viewBox="0 0 760 230" role="img" aria-label="페달에서 DC모터, 정류 다이오드, 차량용 USB 충전기를 거쳐 휴대폰까지 전기가 전달되는 자전거 발전기 계통도">
+                    <defs>
+                      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <polygon points="0,0 10,5 0,10" fill="currentColor"/>
+                      </marker>
+                    </defs>
+                    <g font-family="monospace" font-size="12">
+                      <rect x="8" y="64" width="124" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <text x="70" y="88" text-anchor="middle" font-size="12.5" fill="currentColor">페달 · 뒷바퀴</text>
+                      <text x="70" y="106" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">60~80 rpm</text>
+                      <g class="an-spin" transform="translate(70 158)"><circle r="13" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"/><line x1="0" y1="-13" x2="0" y2="13" stroke="currentColor" stroke-width="1.2" opacity=".55"/><line x1="-13" y1="0" x2="13" y2="0" stroke="currentColor" stroke-width="1.2" opacity=".55"/></g>
+                      <text x="70" y="186" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".6">바퀴 회전</text>
+
+                      <rect x="196" y="64" width="124" height="60" rx="3" fill="none" stroke="#FFB01F" stroke-width="1.8"/>
+                      <text x="258" y="88" text-anchor="middle" font-size="12.5" fill="#FFB01F">DC 모터</text>
+                      <text x="258" y="106" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">폐프린터·전동완구</text>
+
+                      <rect x="384" y="64" width="112" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <text x="440" y="88" text-anchor="middle" font-size="12.5" fill="currentColor">정류 다이오드</text>
+                      <text x="440" y="106" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">역전류 차단</text>
+
+                      <rect x="560" y="64" width="124" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <text x="622" y="86" text-anchor="middle" font-size="12.5" fill="currentColor">차량용 USB</text>
+                      <text x="622" y="104" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">전압 안정화</text>
+
+                      <line x1="134" y1="94" x2="192" y2="94" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+                      <text x="163" y="84" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".8">벨트 1:8</text>
+
+                      <line class="an-flow" x1="322" y1="94" x2="380" y2="94" stroke="currentColor" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+                      <text x="351" y="84" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".8">3~14 V</text>
+
+                      <line class="an-flow" x1="498" y1="94" x2="556" y2="94" stroke="currentColor" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+                      <text x="527" y="84" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".8">맥류 DC</text>
+
+                      <line class="an-flow" x1="686" y1="94" x2="740" y2="94" stroke="#35C07A" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ar)"/>
+                      <text x="713" y="84" text-anchor="middle" font-size="10.5" fill="#35C07A">5V 0.5A</text>
+                      <text class="an-glow" x="713" y="120" text-anchor="middle" font-size="11.5" fill="currentColor">휴대폰</text>
+
+                      <line x1="258" y1="128" x2="258" y2="176" stroke="#FF4A3A" stroke-width="1.4" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+                      <text x="258" y="196" text-anchor="middle" font-size="11" fill="#FF4A3A">모터 직결 시 14V 급등 → 기기 소손</text>
+                    </g>
+                  </svg>
+                  <figcaption>모터를 휴대폰에 바로 꽂으면 안 됩니다. 회전수에 따라 전압이 3V에서 14V까지 요동치기 때문에, 전압을 5V로 묶어 주는 <b>차량용 USB 충전기</b>가 이 계통의 핵심 부품입니다.</figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료</h5>
+                <ul class="matlist">
+                  <li><span class="q">동력</span>자전거 (뒷바퀴를 띄울 수 있게 거꾸로 세움)</li>
+                  <li><span class="q">발전</span>DC 모터 — 폐프린터·전동드릴·RC카에서 회수. 12V 표기품이 좋음</li>
+                  <li><span class="q">전달</span>고무벨트 대용 노끈·고무밴드, 모터 고정용 각목과 테이프</li>
+                  <li><span class="q">회로</span>전선 2m, 정류 다이오드(1N4007 등) 1개, 차량용 USB 충전기 1개</li>
+                </ul>
+                <h5 style="margin-top:16px">조립</h5>
+                <ol class="steps">
+                  <li>자전거를 거꾸로 세우고 뒷바퀴가 공중에서 자유롭게 돌게 고정합니다.</li>
+                  <li>모터축을 뒷바퀴 타이어 측면에 <b>눌러 밀착</b>시키고 각목에 단단히 묶습니다. 헐거우면 미끄러져 발전이 안 됩니다.</li>
+                  <li>모터 단자 → 다이오드 → 차량용 USB 충전기 입력 단자 순서로 연결합니다. 극성(+/−)을 반대로 하면 충전기가 죽습니다.</li>
+                  <li>충전기에 USB 케이블을 꽂고, <b>싼 기기로 먼저 시험</b>합니다. LED 조명 → 보조배터리 → 휴대폰 순서.</li>
+                  <li>페달을 일정한 속도로 밟습니다. 급가속은 전압 스파이크를 만듭니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>현실적인 성능</h5>
+                <div class="spec">
+                  <div><div class="sk">실출력</div><div class="sv">2~5 W</div></div>
+                  <div><div class="sk">휴대폰 20%</div><div class="sv">25~40 분</div></div>
+                  <div><div class="sk">LED 전구</div><div class="sv">상시 가능</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">사람의 지속 출력은 약 75~100W이고, 이 구조의 전달 효율은 낮아 실제로는 2~5W만 나옵니다. <b>냉장고·전기장판은 불가능합니다.</b> 조명과 통신기기 충전에만 쓰십시오.</p>
+                <p class="note" style="margin-top:10px"><b>보조배터리를 중간에 두십시오.</b> 페달 속도가 흔들려도 보조배터리가 완충 역할을 해 휴대폰을 보호합니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li>젖은 손·젖은 바닥에서 작업 금지. 저전압이라도 회로 단락 시 <b>발열과 화상</b>이 생깁니다.</li>
+                <li>리튬 배터리가 <b>부풀거나 뜨거워지면</b> 즉시 분리해 불연성 바닥에 둡니다.</li>
+                <li>벽 콘센트·가정 배선에 절대 연결하지 마십시오. 복구 작업자 감전(역송전) 사고로 이어집니다.</li>
+                <li>회전부에 머리카락·끈·손가락이 말려 들어갑니다. 바퀴 옆에 사람이 없게 하십시오.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G04 소금물 배터리 -->
+        <details class="guide" id="g-saltcell">
+          <summary>
+            <span class="gc">G04</span><span class="gn">소금물 전지 비상등 (LED 점등)</span>
+            <span class="gmeta"><span class="tag">난이도 중</span><span class="tag">20분</span><span class="tag info">직렬 3개 = 2.1V</span><span class="matchtag" data-for="saltcell"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료</h5>
+                <ul class="matlist">
+                  <li><span class="q">전해질</span>물 500ml + 소금 2큰술 (진하게)</li>
+                  <li><span class="q">+극</span>구리선 또는 구리판 (10원 동전 아님 — 구리 피복선 속살)</li>
+                  <li><span class="q">−극</span>아연도금 못·철못 또는 알루미늄 조각</li>
+                  <li><span class="q">용기</span>유리컵 3개 이상, 전선, LED</li>
+                </ul>
+                <h5 style="margin-top:16px">만드는 법</h5>
+                <ol class="steps">
+                  <li>컵 3개에 소금물을 채우고, 각 컵에 구리와 못을 <b>서로 닿지 않게</b> 담급니다.</li>
+                  <li>1번 컵의 못(−) → 2번 컵의 구리(+)를 전선으로 잇습니다. 이것이 직렬입니다.</li>
+                  <li>3번 컵까지 같은 방식으로 잇고, 양쪽 끝의 구리(+)·못(−)에 LED 다리를 연결합니다.</li>
+                  <li>LED가 안 켜지면 다리를 바꿔 꽂습니다. LED는 극성이 있습니다.</li>
+                  <li>어두워지면 소금물을 갈거나 못을 사포로 닦습니다(산화막 제거).</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>성능과 한계</h5>
+                <div class="spec">
+                  <div><div class="sk">셀 1개</div><div class="sv">0.6~0.9 V</div></div>
+                  <div><div class="sk">전류</div><div class="sv">수 mA</div></div>
+                  <div><div class="sk">지속</div><div class="sv">6~20 시간</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">전류가 매우 작아 <b>LED 한두 개를 희미하게 켜는 수준</b>입니다. 휴대폰 충전은 불가능합니다. 쓸모는 '빛'이 아니라 <b>위치 표시</b>입니다 — 어두운 복도·화장실·대피 통로 표식, 가족 집결지 신호.</p>
+                <p class="note" style="margin-top:10px">레몬·감자도 같은 원리로 작동하지만, 소금물이 더 오래가고 재료를 먹을 수 있는 식량으로 남겨 둘 수 있습니다. <b>재난 중에 식량을 실험에 쓰지 마십시오.</b></p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li>소금물 전지는 <b>수소 가스</b>를 미량 발생시킵니다. 밀폐 용기에 담아 봉하지 말고 환기되는 곳에 두십시오.</li>
+                <li>전해질은 마시면 안 되고, 금속 이온이 섞인 물은 <b>식수·조리수로 전용 금지</b>입니다.</li>
+                <li>동전·배터리와 섞어 쓰지 마십시오. 폐배터리 단락은 발화합니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G05 정수 -->
+        <details class="guide" id="g-waterfilter">
+          <summary>
+            <span class="gc">G05</span><span class="gn">페트병 3단 여과기 + 소독</span>
+            <span class="gmeta"><span class="tag">난이도 중</span><span class="tag">30분</span><span class="tag bad">여과만으론 못 마심</span><span class="matchtag" data-for="waterfilter"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>구조</h5>
+                <div class="figbox">
+                  <figure>
+                    <svg viewBox="0 0 400 330" role="img" aria-label="거꾸로 세운 페트병 안에 천, 자갈, 모래, 숯을 층층이 쌓은 여과기 단면도와, 세균은 모든 층을 통과한다는 경고를 담은 그림">
+                      <defs>
+                        <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                          <polygon points="0,0 10,5 0,10" fill="currentColor"/>
+                        </marker>
+                      </defs>
+                      <g font-family="monospace" font-size="11.5">
+                        <path d="M138 30 L262 30 L262 54 L246 74 L246 268 L154 268 L154 74 L138 54 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <rect x="155" y="75" width="90" height="26" fill="currentColor" opacity=".16"/>
+                        <rect x="155" y="101" width="90" height="42" fill="currentColor" opacity=".3"/>
+                        <rect x="155" y="143" width="90" height="52" fill="currentColor" opacity=".2"/>
+                        <rect x="155" y="195" width="90" height="56" fill="currentColor" opacity=".42"/>
+                        <rect x="155" y="251" width="90" height="17" fill="currentColor" opacity=".16"/>
+
+                        <text x="276" y="92" fill="currentColor">천·커피필터</text>
+                        <text x="276" y="128" fill="currentColor">자갈 3 cm</text>
+                        <text x="276" y="174" fill="currentColor">모래 5 cm</text>
+                        <text x="276" y="228" fill="currentColor">숯·활성탄 6 cm</text>
+                        <text x="276" y="265" fill="currentColor">천 (받침)</text>
+
+                        <line x1="248" y1="88" x2="268" y2="88" stroke="currentColor" stroke-width="1"/>
+                        <line x1="248" y1="124" x2="268" y2="124" stroke="currentColor" stroke-width="1"/>
+                        <line x1="248" y1="170" x2="268" y2="170" stroke="currentColor" stroke-width="1"/>
+                        <line x1="248" y1="224" x2="268" y2="224" stroke="currentColor" stroke-width="1"/>
+                        <line x1="248" y1="261" x2="268" y2="261" stroke="currentColor" stroke-width="1"/>
+
+                        <text x="200" y="20" text-anchor="middle" fill="currentColor">흐린 물 투입</text>
+                        <line class="an-drip" x1="200" y1="36" x2="200" y2="70" stroke="#5A95FF" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#arw)"/>
+
+                        <path d="M196 268 L196 286 M204 268 L204 286" stroke="#5A95FF" stroke-width="2"/>
+                        <path d="M150 292 L250 292 L240 320 L160 320 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                        <text x="200" y="312" text-anchor="middle" fill="currentColor">맑아진 물</text>
+
+                        <line class="an-germ" x1="118" y1="76" x2="118" y2="286" stroke="#FF4A3A" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+                        <text x="108" y="160" text-anchor="end" fill="#FF4A3A">세균</text>
+                        <text x="108" y="176" text-anchor="end" fill="#FF4A3A">바이러스</text>
+                        <text x="108" y="192" text-anchor="end" fill="#FF4A3A">그대로</text>
+                        <text x="108" y="208" text-anchor="end" fill="#FF4A3A">통과</text>
+                      </g>
+                    </svg>
+                      <figcaption>여과는 <b>흙·냄새·기름기만</b> 걸러 냅니다. 세균과 바이러스는 모래 틈을 그대로 통과합니다. 맑아진 물은 마실 수 있는 물이 아니라 <b>소독할 준비가 된 물</b>입니다.</figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="gblock">
+                <h5>만드는 법</h5>
+                <ol class="steps">
+                  <li>페트병 바닥을 잘라 내고 <b>뚜껑 쪽을 아래로</b> 거꾸로 세웁니다. 뚜껑에 못으로 구멍 3~4개를 뚫습니다.</li>
+                  <li>아래부터 천 → 숯 → 모래 → 자갈 → 천 순으로 채웁니다. 숯은 잘게 부수고, 모래와 자갈은 먼저 물로 씻습니다.</li>
+                  <li>맑은 물이 나올 때까지 <b>처음 1~2L는 버립니다.</b> 초기 유출수에는 숯가루가 섞여 있습니다.</li>
+                  <li>통과한 물을 <b>반드시</b> 소독합니다 — 아래 2가지 중 하나.</li>
+                </ol>
+                <h5 style="margin-top:16px">소독 (둘 중 하나는 필수)</h5>
+                <div class="spec">
+                  <div><div class="sk">① 끓이기</div><div class="sv">1 분 이상</div></div>
+                  <div><div class="sk">고도 1000m↑</div><div class="sv">3 분</div></div>
+                  <div><div class="sk">② 락스</div><div class="sv">2 방울 / 1 L</div></div>
+                </div>
+                <p class="note" style="margin-top:12px"><b>락스 소독법:</b> 향·계면활성제가 없는 가정용 염소 표백제(차아염소산나트륨 4~6%)를 물 1L당 2방울 넣고 섞어 <b>30분</b> 기다립니다. 희미한 염소 냄새가 나야 정상이고, 냄새가 전혀 없으면 1방울 더 넣고 15분 더 기다립니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>절대 쓰면 안 되는 물:</b> 바닷물(염분으로 탈수 가속), 수영장물, 라디에이터·온수난방 배관물, 변기 탱크의 세정제 섞인 물, 공장·농경지 침출수. 이 물은 여과·소독으로 해결되지 않습니다.</li>
+                <li><b>향기 나는 표백제·주방세제형 락스 금지.</b> 계면활성제와 향료는 독성 물질입니다.</li>
+                <li>소독 후에도 화학물질(중금속·농약)은 남습니다. <b>소독은 미생물만</b> 처리합니다.</li>
+                <li>생존 수요는 1인당 하루 3L(음용 2L + 위생 1L)입니다. 여과기 하나로는 못 댑니다. <b>저장이 먼저</b>입니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G06 캔 램프 -->
+        <details class="guide" id="g-canlamp">
+          <summary>
+            <span class="gc">G06</span><span class="gn">식용유 캔 램프 (비상 조명)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">10분</span><span class="tag warn">환기 필수</span><span class="matchtag" data-for="canlamp"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료와 순서</h5>
+                <ul class="matlist">
+                  <li><span class="q">연료</span>식용유 (참치캔의 기름도 가능)</li>
+                  <li><span class="q">심지</span>면 수건·면 끈을 꼬아 만든 가닥 — 화학섬유는 녹으며 유독가스</li>
+                  <li><span class="q">용기</span>빈 깡통 또는 두꺼운 유리병</li>
+                  <li><span class="q">반사</span>알루미늄 포일 (뒤에 세우면 체감 밝기 상승)</li>
+                </ul>
+                <ol class="steps" style="margin-top:14px">
+                  <li>캔 뚜껑 중앙에 못으로 구멍을 뚫고, 꼰 면심지를 1cm만 올라오게 끼웁니다.</li>
+                  <li>캔을 식용유로 채우고 <b>10분간 심지가 기름을 빨아올리게</b> 둡니다. 바로 불을 붙이면 심지만 타 버립니다.</li>
+                  <li>불을 붙이고, 포일을 반원으로 접어 뒤에 세웁니다.</li>
+                  <li>타일·금속 트레이 같은 <b>불연 바닥</b>에 놓고, 커튼·종이에서 1m 이상 띄웁니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>성능</h5>
+                <div class="spec">
+                  <div><div class="sk">지속 시간</div><div class="sv">4~6 시간</div></div>
+                  <div><div class="sk">밝기</div><div class="sv">양초 1~2개</div></div>
+                  <div><div class="sk">난방 효과</div><div class="sv">없음</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">식용유는 등유보다 인화점이 높아 <b>쏟아져도 즉시 불바다가 되지 않습니다.</b> 그래서 양초나 알코올램프보다 가정에서 안전합니다. 다만 그을음이 많이 생깁니다.</p>
+                <p class="note" style="margin-top:10px"><b>조명이 급하면 더 안전한 방법:</b> 손전등 뒤에 물을 담은 투명 페트병을 올리면 빛이 산란해 방 전체가 밝아집니다. 불을 쓰지 않아 가장 먼저 시도할 방법입니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>실내 난방 목적의 연소는 절대 금지.</b> 화분 난로·숯불·부탄 버너는 일산화탄소를 만들고, 무색무취로 잠든 사람을 먼저 죽입니다. 추위는 옷·단열로 해결합니다(G10).</li>
+                <li>지진·가스 누출이 의심되면 <b>불을 켜지 말고</b> 스위치도 누르지 마십시오. 스파크가 점화원이 됩니다.</li>
+                <li>잘 때·방을 떠날 때 반드시 소화. 아이·반려동물 손이 닿는 높이에 두지 마십시오.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G07 간이 화장실 -->
+        <details class="guide" id="g-toilet">
+          <summary>
+            <span class="gc">G07</span><span class="gn">간이 화장실 (단수 시 위생 방어선)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">5분</span><span class="tag warn">물 내리기 금지</span><span class="matchtag" data-for="toilet"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>만드는 법</h5>
+                <ol class="steps">
+                  <li>단수·배관 손상이 확인되면 <b>변기 물을 내리지 않습니다.</b> 역류하면 집 안을 오염시킵니다.</li>
+                  <li>변기 물을 퍼내고 변기 안쪽에 비닐봉지를 두 겹 씌우거나, 양동이에 봉지를 씌워 테이프로 고정합니다.</li>
+                  <li>봉지 바닥에 흡수재를 한 컵 깔아 둡니다 — <b>고양이 모래 · 톱밥 · 마른 흙 · 신문지 조각</b> 순으로 좋습니다.</li>
+                  <li>사용 후 흡수재를 한 컵 덮습니다. 냄새의 원인은 수분과 공기 접촉입니다.</li>
+                  <li>2~3회 사용하면 봉지를 묶어 이중 봉투에 넣고, 집 밖 <b>햇빛 안 드는 곳</b>에 따로 모읍니다. 쓰레기와 섞지 마십시오.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>왜 이것이 1순위인가</h5>
+                <div class="spec">
+                  <div><div class="sk">1인 1일</div><div class="sv">5 회분</div></div>
+                  <div><div class="sk">4인·3일</div><div class="sv">봉지 60 장</div></div>
+                  <div><div class="sk">흡수재</div><div class="sv">3 kg</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">대규모 재난의 2차 피해 1위는 붕괴가 아니라 <b>위생 붕괴로 인한 감염</b>입니다. 설사 질환은 물 소비를 늘려 탈수를 가속시키고, 좁은 대피 공간에서 빠르게 번집니다.</p>
+                <p class="note" style="margin-top:10px">손 씻을 물이 없으면 알코올 손소독제 → 물티슈 → 마른 천 순으로 쓰고, <b>조리 담당자는 반드시</b> 소독 후 음식을 만집니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li>오염 봉지를 <b>실내에 보관하지 마십시오.</b> 여름철 2일이면 감염 위험이 급상승합니다.</li>
+                <li>락스를 직접 분뇨에 붓지 마십시오. 암모니아와 반응해 <b>유독가스(염소가스)</b>가 발생합니다.</li>
+                <li>소각 금지. 분뇨·플라스틱 연소 연기는 호흡기 손상을 일으킵니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G08 응급 지혈 -->
+        <details class="guide" id="g-firstaid">
+          <summary>
+            <span class="gc">G08</span><span class="gn">직접 압박 지혈 · 부목 고정</span>
+            <span class="gmeta"><span class="tag">난이도 중</span><span class="tag">즉시</span><span class="tag bad">지혈대는 최후수단</span><span class="matchtag" data-for="firstaid"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>출혈 — 순서가 생명입니다</h5>
+                <ol class="steps">
+                  <li>깨끗한 천·거즈를 상처에 대고 <b>체중을 실어 세게 누릅니다.</b> 5분간 떼지 않습니다.</li>
+                  <li>피가 배어 나오면 천을 <b>떼지 말고 위에 덧댑니다.</b> 떼면 막히던 응고가 풀립니다.</li>
+                  <li>가능하면 상처를 심장보다 높게 올립니다.</li>
+                  <li>압박으로 멈추지 않는 <b>팔다리의 분출성 출혈</b>에만 지혈대를 씁니다. 상처에서 5~7cm 심장 쪽, 관절은 피해서 폭 5cm 이상의 천으로 감고 막대로 조입니다.</li>
+                  <li>지혈대에 <b>조인 시각</b>을 반드시 적습니다. 이마에 적는 것이 관례입니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>부목 — 움직이지 않게만</h5>
+                <ol class="steps">
+                  <li>나무막대·철사 옷걸이·두꺼운 신문지 말이를 부목으로 씁니다.</li>
+                  <li><b>부러진 곳의 위·아래 관절까지</b> 함께 고정합니다. 뼈를 맞추려 하지 마십시오.</li>
+                  <li>천으로 묶고, 손끝·발끝의 <b>색·온도·감각</b>을 15분마다 확인합니다. 창백하고 차가워지면 즉시 느슨하게.</li>
+                  <li>척추·목 손상이 의심되면 <b>옮기지 않습니다.</b> 추가 위험이 없다면 그 자리에서 보온하며 구조를 기다립니다.</li>
+                </ol>
+                <div class="spec" style="margin-top:14px">
+                  <div><div class="sk">압박 유지</div><div class="sv">5 분</div></div>
+                  <div><div class="sk">지혈대 폭</div><div class="sv">5 cm↑</div></div>
+                  <div><div class="sk">순환 확인</div><div class="sv">15 분</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>지혈대를 풀었다 조였다 반복하지 마십시오.</b> 쌓인 대사산물이 한꺼번에 돌아 쇼크를 일으킵니다. 한 번 조이면 의료진이 풀 때까지 유지합니다.</li>
+                <li>끈·전선처럼 <b>얇은 것으로 조르면</b> 신경과 혈관을 끊습니다. 반드시 넓은 천을 쓰십시오.</li>
+                <li>상처에 소독약을 들이붓거나 박힌 물체를 빼지 마십시오. 출혈이 폭증합니다. 고정만 하고 이송합니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G09 신호 -->
+        <details class="guide" id="g-signal">
+          <summary>
+            <span class="gc">G09</span><span class="gn">구조 신호 (호루라기 · 반사판 · 표식)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">10분</span><span class="tag info">통신 마비 대응</span><span class="matchtag" data-for="signal"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>소리 — 가장 확실한 신호</h5>
+                <ol class="steps">
+                  <li>소리치지 말고 <b>두드리십시오.</b> 목은 몇 분이면 쉬고, 금속·콘크리트 타격음은 더 멀리 갑니다.</li>
+                  <li>규칙을 만드십시오: <b>3회 두드림 → 1분 침묵 → 반복.</b> 3회 반복은 국제적인 구조 요청 신호입니다.</li>
+                  <li>구조대 소리가 들릴 때 집중적으로 두드립니다. 체력을 아끼십시오.</li>
+                </ol>
+                <h5 style="margin-top:16px">빛 — 포일 반사판</h5>
+                <ol class="steps">
+                  <li>골판지에 알루미늄 포일을 반듯하게 붙이고 가운데에 작은 구멍을 냅니다.</li>
+                  <li>구멍으로 목표(헬기·구조대)를 보면서 판을 기울여 <b>반사광을 목표에 겹칩니다.</b></li>
+                  <li>햇빛이 있는 낮에는 수 km까지 보입니다. 밤에는 손전등으로 같은 리듬을 씁니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>표식 — 내가 떠난 뒤를 위해</h5>
+                <ol class="steps">
+                  <li>집을 떠날 때 현관 바깥에 <b>떠난 시각 · 인원 · 목적지 · 연락처</b>를 적어 붙입니다.</li>
+                  <li>구조대가 수색을 반복하지 않도록, 확인이 끝난 집은 그 사실이 보이게 적습니다.</li>
+                  <li>가족 집결지는 <b>집 근처 한 곳 + 동네 밖 한 곳</b> 두 군데를 미리 정합니다. 통신이 끊기면 약속만 남습니다.</li>
+                </ol>
+                <p class="note" style="margin-top:12px">통신 마비 때 휴대폰은 아직 쓸모가 있습니다. 통화는 안 되어도 <b>문자는 늦게라도 전송</b>되는 경우가 많고, 비행기 모드로 배터리를 아끼며 정시에만 켜 보는 전략이 유효합니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li>붕괴 공간에서 <b>소리치며 체력과 산소를 쓰지 마십시오.</b> 먼지를 들이마시면 호흡기가 막힙니다. 천으로 입을 가리고 두드리십시오.</li>
+                <li>헬기 조종사에게 레이저 포인터를 쏘지 마십시오. 시야를 잃게 만들어 구조를 방해합니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G10 단열 -->
+        <details class="guide" id="g-thermal">
+          <summary>
+            <span class="gc">G10</span><span class="gn">난방 없이 체온 지키기 (단열 텐트)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">30분</span><span class="tag ok">연료 불필요</span><span class="matchtag" data-for="thermal"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>집 안에 작은 방을 만드십시오</h5>
+                <ol class="steps">
+                  <li>집 전체를 데우려 하지 말고 <b>가장 작은 방 하나</b>를 고릅니다. 창이 적고 외벽이 적은 방이 좋습니다.</li>
+                  <li>식탁·의자에 담요를 덮어 <b>사람 몸 크기의 텐트</b>를 만듭니다. 공간이 작을수록 체온으로 데워집니다.</li>
+                  <li>바닥에 골판지 → 신문지 → 담요를 깝니다. <b>열은 바닥으로 가장 많이 빠집니다.</b></li>
+                  <li>창문에 골판지를 대고 테이프로 붙이고, 틈새는 수건으로 막습니다. 유리는 가장 큰 열 손실 경로입니다.</li>
+                  <li>알루미늄 포일을 텐트 안쪽 천장에 붙여 복사열을 되돌립니다.</li>
+                  <li>옷은 두꺼운 한 겹보다 <b>얇은 여러 겹</b>. 머리·목·발을 먼저 덮습니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>효과</h5>
+                <div class="spec">
+                  <div><div class="sk">체감 상승</div><div class="sv">5~10 ℃</div></div>
+                  <div><div class="sk">필요 연료</div><div class="sv">0</div></div>
+                  <div><div class="sk">CO 위험</div><div class="sv">없음</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">성인 한 명은 가만히 있어도 약 100W의 열을 냅니다. 작은 텐트에서는 이 열이 빠져나가지 않아 난방기 없이도 버틸 수 있습니다. <b>두 명 이상이 함께 있으면 두 배가 됩니다.</b></p>
+                <p class="note" style="margin-top:10px">따뜻한 물을 페트병에 담아 수건으로 감싸면 간이 온수팩이 됩니다. 뜨거운 물을 직접 피부에 대면 화상을 입습니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>실내에서 숯·가스·장작을 태우지 마십시오.</b> 일산화탄소 중독은 추위보다 훨씬 빠르게 사람을 죽입니다. 매년 반복되는 사망 원인입니다.</li>
+                <li>술은 혈관을 확장시켜 <b>체온을 더 빨리 빼앗습니다.</b> 따뜻해지는 느낌은 착각입니다.</li>
+                <li>젖은 옷은 즉시 갈아입습니다. 젖은 상태의 열 손실은 마른 상태의 25배입니다.</li>
+                <li>영아·고령자는 체온 조절이 약합니다. <b>가장 안쪽, 가장 따뜻한 자리</b>에 두고 자주 확인하십시오.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p class="disc">
+      <b>면책 및 안내</b> — 해커톤 시연을 위한 교육용 자료입니다. 실제 재난 시에는 119 신고와 공식 재난 지침(국민재난안전포털·재난문자)이 항상 우선합니다.
+      여기의 자가 제작물은 정식 장비의 대체품이 아니라 <b>아무것도 없을 때의 차선책</b>이며, 화재·전기·의료 항목은 각 안전 경고를 반드시 함께 읽어야 합니다.
+      수칙은 소방청·행정안전부·대한적십자사의 공개 지침과 일반 응급처치 원칙을 바탕으로 정리했습니다.
+    </p>
+  </div>
+</footer>
+
+<script>
+
+(function () {
+  'use strict';
+  var D = {
+ "MATCATS": [
+  {
+   "id": "kitchen",
+   "n": "주방",
+   "items": [
+    [
+     "bakingsoda",
+     "베이킹소다"
+    ],
+    [
+     "vinegar",
+     "식초"
+    ],
+    [
+     "salt",
+     "소금"
+    ],
+    [
+     "oil_cooking",
+     "식용유"
+    ],
+    [
+     "foil",
+     "알루미늄 포일"
+    ],
+    [
+     "can_tin",
+     "빈 깡통·참치캔"
+    ],
+    [
+     "jar_glass",
+     "유리병·유리컵"
+    ],
+    [
+     "bottle_pet",
+     "페트병"
+    ],
+    [
+     "pot_lid",
+     "냄비·뚜껑"
+    ],
+    [
+     "plastic_bag",
+     "비닐봉지"
+    ],
+    [
+     "coffee_filter",
+     "커피필터·거름망"
+    ]
+   ]
+  },
+  {
+   "id": "clean",
+   "n": "청소 · 욕실",
+   "items": [
+    [
+     "bleach",
+     "가정용 락스"
+    ],
+    [
+     "towel",
+     "수건·헌 옷"
+    ],
+    [
+     "bucket",
+     "양동이"
+    ],
+    [
+     "tape",
+     "청테이프"
+    ],
+    [
+     "newspaper",
+     "신문지"
+    ],
+    [
+     "cardboard",
+     "골판지 박스"
+    ],
+    [
+     "rope",
+     "노끈·빨래줄"
+    ],
+    [
+     "sawdust",
+     "톱밥·반려동물 모래"
+    ]
+   ]
+  },
+  {
+   "id": "tools",
+   "n": "공구 · 전기",
+   "items": [
+    [
+     "wire_copper",
+     "전선·구리선"
+    ],
+    [
+     "nail",
+     "못·나사"
+    ],
+    [
+     "dc_motor",
+     "폐전자기기 DC모터"
+    ],
+    [
+     "bicycle",
+     "자전거"
+    ],
+    [
+     "car_usb",
+     "차량용 USB 충전기"
+    ],
+    [
+     "led",
+     "LED·손전등"
+    ],
+    [
+     "lighter",
+     "라이터·성냥"
+    ],
+    [
+     "scissors",
+     "가위·칼"
+    ],
+    [
+     "hanger",
+     "철사 옷걸이"
+    ],
+    [
+     "stick",
+     "나무막대"
+    ]
+   ]
+  },
+  {
+   "id": "misc",
+   "n": "야외 · 기타",
+   "items": [
+    [
+     "sand",
+     "모래·흙"
+    ],
+    [
+     "gravel",
+     "자갈"
+    ],
+    [
+     "charcoal",
+     "숯·활성탄"
+    ],
+    [
+     "gauze",
+     "거즈·생리대"
+    ],
+    [
+     "blanket",
+     "담요"
+    ],
+    [
+     "rubberband",
+     "고무밴드"
+    ]
+   ]
+  }
+ ],
+ "PRESET": [
+  "salt",
+  "oil_cooking",
+  "foil",
+  "can_tin",
+  "jar_glass",
+  "bottle_pet",
+  "pot_lid",
+  "plastic_bag",
+  "coffee_filter",
+  "bleach",
+  "towel",
+  "bucket",
+  "tape",
+  "newspaper",
+  "cardboard",
+  "rope",
+  "scissors",
+  "lighter",
+  "led",
+  "hanger",
+  "gauze",
+  "blanket",
+  "rubberband"
+ ],
+ "RECIPES": [
+  {
+   "id": "fireext",
+   "g": "g-fireext",
+   "n": "간이 분말 소화기",
+   "req": [
+    {
+     "l": "베이킹소다",
+     "any": [
+      "bakingsoda"
+     ]
+    },
+    {
+     "l": "소금",
+     "any": [
+      "salt"
+     ]
+    },
+    {
+     "l": "용기",
+     "any": [
+      "bottle_pet",
+      "jar_glass",
+      "can_tin"
+     ]
+    },
+    {
+     "l": "테이프",
+     "any": [
+      "tape"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "smother",
+   "g": "g-smother",
+   "n": "질식 소화 덮개",
+   "req": [
+    {
+     "l": "덮을 것",
+     "any": [
+      "pot_lid",
+      "towel",
+      "blanket"
+     ]
+    },
+    {
+     "l": "분말·모래",
+     "any": [
+      "bakingsoda",
+      "salt",
+      "sand"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bikegen",
+   "g": "g-bikegen",
+   "n": "자전거 발전기",
+   "req": [
+    {
+     "l": "자전거",
+     "any": [
+      "bicycle"
+     ]
+    },
+    {
+     "l": "DC 모터",
+     "any": [
+      "dc_motor"
+     ]
+    },
+    {
+     "l": "전선",
+     "any": [
+      "wire_copper"
+     ]
+    },
+    {
+     "l": "차량용 USB",
+     "any": [
+      "car_usb"
+     ]
+    },
+    {
+     "l": "벨트용 끈",
+     "any": [
+      "rope",
+      "rubberband"
+     ]
+    },
+    {
+     "l": "테이프",
+     "any": [
+      "tape"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "saltcell",
+   "g": "g-saltcell",
+   "n": "소금물 전지 비상등",
+   "req": [
+    {
+     "l": "소금",
+     "any": [
+      "salt"
+     ]
+    },
+    {
+     "l": "구리선",
+     "any": [
+      "wire_copper"
+     ]
+    },
+    {
+     "l": "못",
+     "any": [
+      "nail"
+     ]
+    },
+    {
+     "l": "유리컵",
+     "any": [
+      "jar_glass",
+      "bottle_pet"
+     ]
+    },
+    {
+     "l": "LED",
+     "any": [
+      "led"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "waterfilter",
+   "g": "g-waterfilter",
+   "n": "페트병 3단 여과기",
+   "req": [
+    {
+     "l": "페트병",
+     "any": [
+      "bottle_pet"
+     ]
+    },
+    {
+     "l": "자갈",
+     "any": [
+      "gravel"
+     ]
+    },
+    {
+     "l": "모래",
+     "any": [
+      "sand"
+     ]
+    },
+    {
+     "l": "숯·활성탄",
+     "any": [
+      "charcoal"
+     ]
+    },
+    {
+     "l": "천·필터",
+     "any": [
+      "coffee_filter",
+      "towel",
+      "gauze"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "chlorine",
+   "g": "g-waterfilter",
+   "n": "염소 소독수 (락스)",
+   "req": [
+    {
+     "l": "가정용 락스",
+     "any": [
+      "bleach"
+     ]
+    },
+    {
+     "l": "용기",
+     "any": [
+      "bottle_pet",
+      "bucket",
+      "jar_glass"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "canlamp",
+   "g": "g-canlamp",
+   "n": "식용유 캔 램프",
+   "req": [
+    {
+     "l": "식용유",
+     "any": [
+      "oil_cooking"
+     ]
+    },
+    {
+     "l": "용기",
+     "any": [
+      "can_tin",
+      "jar_glass"
+     ]
+    },
+    {
+     "l": "면 심지",
+     "any": [
+      "towel",
+      "rope",
+      "gauze"
+     ]
+    },
+    {
+     "l": "점화구",
+     "any": [
+      "lighter"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "toilet",
+   "g": "g-toilet",
+   "n": "간이 화장실",
+   "req": [
+    {
+     "l": "양동이",
+     "any": [
+      "bucket"
+     ]
+    },
+    {
+     "l": "비닐봉지",
+     "any": [
+      "plastic_bag"
+     ]
+    },
+    {
+     "l": "흡수재",
+     "any": [
+      "sawdust",
+      "sand",
+      "newspaper"
+     ]
+    },
+    {
+     "l": "테이프",
+     "any": [
+      "tape"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "firstaid",
+   "g": "g-firstaid",
+   "n": "지혈대 · 부목",
+   "req": [
+    {
+     "l": "천·거즈",
+     "any": [
+      "towel",
+      "gauze"
+     ]
+    },
+    {
+     "l": "막대",
+     "any": [
+      "stick",
+      "hanger"
+     ]
+    },
+    {
+     "l": "고정재",
+     "any": [
+      "tape",
+      "rope"
+     ]
+    },
+    {
+     "l": "가위",
+     "any": [
+      "scissors"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "thermal",
+   "g": "g-thermal",
+   "n": "단열 텐트",
+   "req": [
+    {
+     "l": "골판지",
+     "any": [
+      "cardboard"
+     ]
+    },
+    {
+     "l": "신문지",
+     "any": [
+      "newspaper"
+     ]
+    },
+    {
+     "l": "포일",
+     "any": [
+      "foil"
+     ]
+    },
+    {
+     "l": "담요",
+     "any": [
+      "blanket"
+     ]
+    },
+    {
+     "l": "테이프",
+     "any": [
+      "tape"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "signal",
+   "g": "g-signal",
+   "n": "반사판 구조 신호",
+   "req": [
+    {
+     "l": "포일",
+     "any": [
+      "foil"
+     ]
+    },
+    {
+     "l": "골판지",
+     "any": [
+      "cardboard"
+     ]
+    },
+    {
+     "l": "가위",
+     "any": [
+      "scissors"
+     ]
+    }
+   ]
+  }
+ ]
+};
+  var MATCATS = D.MATCATS, PRESET = D.PRESET, RECIPES = D.RECIPES;
+  var KEY = 'blackout.make.v1';
+  var inv = {};
+
+  function $(s) { return document.querySelector(s); }
+  function el(t, c, h) { var e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  var smooth = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) inv = JSON.parse(raw) || {};
+    } catch (e) {}
+    if (!inv || !Object.keys(inv).length) { inv = {}; PRESET.forEach(function (id) { inv[id] = true; }); }
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(inv)); } catch (e) {} }
+
+  function renderMats() {
+    var w = $('#matGroups'); w.innerHTML = '';
+    MATCATS.forEach(function (g) {
+      var box = el('div', 'matgroup');
+      box.appendChild(el('div', 'mg', '<b>' + esc(g.n) + '</b><span class="tag" data-cnt="' + g.id + '"></span>'));
+      var chips = el('div', 'chips');
+      g.items.forEach(function (m) {
+        var id = 'm-' + m[0];
+        var lab = el('label', 'chip');
+        lab.setAttribute('for', id);
+        lab.innerHTML = '<input type="checkbox" id="' + id + '"' + (inv[m[0]] ? ' checked' : '') + '><span>' + esc(m[1]) + '</span>';
+        lab.querySelector('input').addEventListener('change', function (ev) {
+          if (ev.target.checked) inv[m[0]] = true; else delete inv[m[0]];
+          save(); matchAll();
+        });
+        chips.appendChild(lab);
+      });
+      box.appendChild(chips);
+      w.appendChild(box);
+    });
+  }
+
+  function evalRecipe(r) {
+    var missing = [];
+    r.req.forEach(function (g) {
+      if (!g.any.some(function (id) { return !!inv[id]; })) missing.push(g.l);
+    });
+    return { ok: missing.length === 0, missing: missing, have: r.req.length - missing.length, total: r.req.length };
+  }
+
+  function openGuide(gid) {
+    var g = document.getElementById(gid);
+    if (!g) return;
+    g.open = true;
+    g.classList.remove('flash');
+    requestAnimationFrame(function () {
+      g.scrollIntoView({ behavior: smooth, block: 'start' });
+      g.classList.add('flash');
+    });
+  }
+
+  function matchAll() {
+    var ok = 0;
+    var list = $('#matchList'); list.innerHTML = '';
+    var rows = RECIPES.map(function (r) { return { r: r, e: evalRecipe(r) }; });
+    rows.sort(function (a, b) { return (b.e.have / b.e.total) - (a.e.have / a.e.total); });
+    rows.forEach(function (x) {
+      if (x.e.ok) ok++;
+      var row = el('div', 'mrow' + (x.e.ok ? ' ok' : ''));
+      var t = el('div', 'mt', '<b>' + esc(x.r.n) + '</b>' +
+        (x.e.ok ? '<span class="tag ok">제작 가능</span>' : '<span class="tag warn">' + x.e.missing.length + '개 부족</span>'));
+      var btn = el('button', 'btn sm ghost');
+      btn.type = 'button'; btn.textContent = '가이드';
+      btn.addEventListener('click', function () { openGuide(x.r.g); });
+      t.appendChild(btn);
+      row.appendChild(t);
+      if (!x.e.ok) row.appendChild(el('div', 'miss', '부족: <em>' + x.e.missing.map(esc).join(' · ') + '</em>'));
+      list.appendChild(row);
+    });
+
+    $('#mkCount').textContent = ok;
+    $('#mkTotal').textContent = '/ ' + RECIPES.length + ' 종';
+    $('#mkBar').style.width = Math.round(ok / RECIPES.length * 100) + '%';
+
+    MATCATS.forEach(function (g) {
+      var n = g.items.filter(function (m) { return !!inv[m[0]]; }).length;
+      var tag = document.querySelector('[data-cnt="' + g.id + '"]');
+      if (tag) tag.textContent = n + ' / ' + g.items.length;
+    });
+
+    document.querySelectorAll('.matchtag').forEach(function (t) {
+      var r = null;
+      for (var i = 0; i < RECIPES.length; i++) { if (RECIPES[i].id === t.dataset.for) { r = RECIPES[i]; break; } }
+      if (!r) return;
+      var ev = evalRecipe(r);
+      t.className = 'matchtag tag ' + (ev.ok ? 'ok' : 'warn');
+      t.textContent = ev.ok ? '재료 있음' : '재료 ' + ev.missing.length + '개 부족';
+    });
+  }
+
+  $('#invPreset').addEventListener('click', function () {
+    inv = {}; PRESET.forEach(function (id) { inv[id] = true; });
+    save(); renderMats(); matchAll();
+  });
+  $('#invClear').addEventListener('click', function () { inv = {}; save(); renderMats(); matchAll(); });
+  var pb = $('#printAll');
+  if (pb) pb.addEventListener('click', function () {
+    document.querySelectorAll('details.guide').forEach(function (g) { g.open = true; });
+    window.setTimeout(function () { window.print(); }, 60);
+  });
+
+  load();
+  renderMats();
+  matchAll();
+})();
+
+</script>
+</body>
+</html>
