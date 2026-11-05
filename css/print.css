@@ -49,4 +49,4 @@ body:not(.print-guides) #guidePrintArea { display: none !important; }
 
 /* 우주 배경·별·행성은 인쇄하지 않음 */
 html { background: #fff !important; }
-body::before, body::after, .planet { display: none !important; }
+body::before, body::after, .planet, .planet-sys, .moon-float, .moon-deco { display: none !important; }

@@ -1,0 +1,256 @@
+/* BLACK-OUT : MARS — 라이트 사이파이 테마 (style.css 위에 덮어씀)
+   흰색 → 연파랑 캔버스 + 일렉트릭 블루 하나의 강조색 + 딥블루 슬랩.
+   버튼 4px · 카드 16px · 부드러운 그림자 · 히어로 양옆의 파란 사선. 검정 배경은 쓰지 않습니다. */
+:root {
+  --red: #024AD8;            /* 강조색 (변수 이름은 기존 코드 호환) */
+  --red-dark: #0E3191;
+  --ink: #101828;            /* 본문 글자 */
+  --ink-deep: #061A4D;       /* 딥블루 슬랩 */
+  --soft: #F3F7FD;           /* 클라우드 밴드 */
+  --gray: #667085;
+  --gray-light: #A9B4C6;
+  --text-muted: #3D4657;
+  --line: #E3E8F0;
+  --line-dark: rgba(255, 255, 255, .18);
+  --radius: 8px;
+  --radius-lg: 16px;
+  --sky: #7CC4FF;            /* 슬랩 안의 밝은 강조색 */
+  --warn: #B3262B;
+  --font: 'Pretendard Variable', Pretendard, 'Manrope', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-display: 'Manrope', 'Pretendard Variable', Pretendard, sans-serif;
+  --lift: 0 2px 8px rgba(16, 24, 40, .08);
+  --float: 0 8px 24px rgba(16, 24, 40, .12);
+  --grid: linear-gradient(rgba(2, 74, 216, .055) 1px, transparent 1px), linear-gradient(90deg, rgba(2, 74, 216, .055) 1px, transparent 1px);
+  --slab: radial-gradient(900px 500px at 85% 0%, rgba(41, 110, 249, .55), transparent 60%), linear-gradient(160deg, #061A4D 0%, #0A2E8A 55%, #1450D8 100%);
+}
+
+/* ---------- 캔버스 ---------- */
+html { background: #fff; }
+body { color: var(--ink); background: linear-gradient(180deg, #FFFFFF 0%, #EEF4FF 100%) fixed; }
+.section-light { background: var(--grid), radial-gradient(900px 500px at 100% 0%, rgba(41, 110, 249, .10), transparent 60%), #fff; background-size: 48px 48px, 48px 48px, auto, auto; }
+.section-soft { background: var(--grid), linear-gradient(180deg, #F3F7FD, #E8F0FC); background-size: 48px 48px, 48px 48px, auto; }
+
+/* ---------- 딥블루 슬랩 (그 안에서는 강조색을 밝은 하늘색으로) ---------- */
+.section-dark, .section-ink, .test-dialog, .final, .mk-hero, .rec-banner, .kit-card.kit-cta, .kit-basis, .step.is-active {
+  --red: var(--sky); --red-dark: #4FA8FF;
+  background: var(--grid), var(--slab); background-size: 48px 48px, 48px 48px, auto, auto;
+  color: #fff;
+}
+.section-dark .lead, .section-ink .lead { color: #DCE6F7; }
+.section-dark .fine, .final .fine { color: #B9C7E3; }
+.section-dark .btn-primary, .section-ink .btn-primary, .final .btn-primary, .test-dialog .btn-primary, .mk-hero .btn-primary, .rec-banner .btn-primary, .kit-cta .btn-primary {
+  background: #fff; color: #024AD8; box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .35);
+}
+.section-dark .btn-primary:hover:not(:disabled), .section-ink .btn-primary:hover:not(:disabled), .final .btn-primary:hover:not(:disabled), .test-dialog .btn-primary:hover:not(:disabled) { background: #E7F0FF; }
+
+/* ---------- 타이포 ---------- */
+.display, .final-title, .hero-title, .map-title-h, .problem-title, .test-facts b span, .gauge-num b, .kit-price, .kb-days b { font-family: var(--font-display); font-weight: 700; letter-spacing: -.035em; }
+.display, .final-title { line-height: 1.0; }
+.section-title { font-weight: 400; }
+.section-title b { font-weight: 700; color: var(--ink); }
+.display em, .final-title em { text-shadow: none; }
+.eyebrow { font-family: var(--font-display); letter-spacing: .14em; }
+
+/* ---------- 버튼: 4px, 대문자, 자간 ---------- */
+.btn { border-radius: 4px; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; min-height: 46px; }
+.btn-lg { min-height: 54px; }
+.btn-sm { min-height: 40px; }
+.btn-xs { min-height: 34px; }
+.btn-primary { background: var(--red); box-shadow: 0 8px 20px -10px rgba(2, 74, 216, .6); }
+.btn-primary:hover:not(:disabled) { background: var(--red-dark); }
+.btn-outline { border-width: 1px; }
+.icon-btn-red { border-radius: 4px; }
+@keyframes ctaPulse { 0% { box-shadow: 0 0 0 0 rgba(2, 74, 216, .45); } 70%, 100% { box-shadow: 0 0 0 16px rgba(2, 74, 216, 0); } }
+.section-dark .btn-pulse, .final .btn-pulse { animation-name: ctaPulseLight; }
+@keyframes ctaPulseLight { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .55); } 70%, 100% { box-shadow: 0 0 0 16px rgba(255, 255, 255, 0); } }
+@keyframes pulse { 70% { box-shadow: 0 0 0 12px rgba(2, 74, 216, 0); } 100% { box-shadow: 0 0 0 0 rgba(2, 74, 216, 0); } }
+
+/* ---------- 헤더 ---------- */
+.header, .header.is-scrolled, .header.is-open, body.on-home .header:not(.is-open), .page-make .header { background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: var(--ink); box-shadow: 0 1px 0 var(--line); }
+.cart-btn, .nav-toggle { color: var(--ink); }
+.nav-links a { opacity: 1; color: var(--text-muted); }
+.nav-links a:hover { background: var(--soft); color: var(--ink); }
+.nav-links a.is-current { color: var(--ink); }
+.logo-sub { border-radius: 3px; }
+@media (max-width: 1080px) {
+  .nav { background: #fff; }
+  .nav-links a { color: var(--ink); border-bottom-color: var(--line); }
+}
+
+/* ---------- 히어로: 밝은 캔버스 + 둥근 사진 프레임 + 파란 사선 ---------- */
+.hero { background: var(--grid), radial-gradient(1100px 650px at 78% 30%, #D6E5FF, transparent 65%), linear-gradient(180deg, #FFFFFF, #EAF2FF); background-size: 48px 48px, 48px 48px, auto, auto; color: var(--ink); }
+.hero-siren, .hero-shade, .hero-dark, .hero-noise { display: none; }
+.hero-media { z-index: 1; inset: auto; right: var(--gutter); top: calc(var(--header-h) + 40px); bottom: 56px; width: 46%; border-radius: 16px; overflow: hidden; animation: none; box-shadow: var(--float); }
+.hero-bg { filter: saturate(1.15) contrast(1.05); animation: kenburns 28s ease-in-out infinite alternate; }
+.hero-media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6, 26, 77, 0) 55%, rgba(6, 26, 77, .45)); }
+.hero::before, .hero::after { content: ''; position: absolute; z-index: 0; background: var(--red); clip-path: polygon(55% 0, 100% 0, 45% 100%, 0 100%); }
+.hero::before { top: calc(var(--header-h) + 110px); bottom: 140px; width: 64px; right: calc(var(--gutter) + 46% - 30px); }
+.hero::after { top: calc(var(--header-h) + 20px); bottom: 220px; width: 64px; right: calc(var(--gutter) - 34px); opacity: .9; }
+.hero-fx { z-index: 0; }
+.hero-inner { z-index: 2; }
+.hero-title { color: var(--ink); font-size: clamp(48px, 6.4vw, 108px); line-height: .98; text-shadow: none; max-width: 50%; }
+.hero-title em { color: var(--red); }
+.glitch::before { color: var(--sky); }
+.glitch::after { color: var(--red-dark); }
+.hero-status { color: var(--text-muted); }
+.hero-status b { color: var(--red); }
+.hero-signal i { background: rgba(16, 24, 40, .2); }
+.hero-bottom { flex-direction: column; align-items: flex-start; gap: 24px; max-width: 50%; }
+.hero-sub { color: var(--text-muted); }
+.hero .btn-ghost-dark { color: var(--ink); border: 1px solid var(--ink); }
+.hero .btn-ghost-dark:hover { background: var(--ink); color: #fff; }
+.hero-note { border-top-color: var(--line); color: var(--text-muted); max-width: 50%; flex-direction: column; }
+.hero-note-fine { color: var(--gray); }
+/* 거주구 상태 HUD: 사진 위 흰 유리 카드 */
+.hud { z-index: 3; right: calc(var(--gutter) + 24px); top: calc(var(--header-h) + 64px); background: rgba(255, 255, 255, .86); color: var(--ink); border: 1px solid rgba(255, 255, 255, .9); box-shadow: var(--float); border-radius: 16px; }
+.hud::before { display: none; }
+.hud-head { color: var(--red); }
+.hud dt { color: var(--gray); }
+.hud dl > div { border-bottom-color: var(--line); }
+.hud dd small, .hud-foot { color: var(--gray); }
+.hud .hud-warn dd, .hud .hud-warn dd small { color: var(--warn); }
+.hud-bar { background: var(--line); }
+.hud-bar span { background: linear-gradient(90deg, var(--red), var(--sky)); }
+.hud-foot b { color: var(--ink); }
+.hud-dot { background: var(--red); box-shadow: 0 0 10px var(--red); }
+@media (max-width: 1080px) {
+  .hero::before, .hero::after { display: none; }
+  .hero-media { inset: 0; width: auto; border-radius: 0; opacity: .16; box-shadow: none; }
+  .hero-title, .hero-bottom, .hero-note { max-width: none; }
+}
+
+/* ---------- 카드: 16px + 부드러운 그림자 ---------- */
+.kit-card, .act-card, .book-card, .mk-box, .mk-bench, .result-card { border-radius: 16px; box-shadow: var(--lift); border: 1px solid var(--line); }
+.kit-card:hover, .act-card:hover { box-shadow: var(--float); border-color: #C9E0FC; }
+.kit-media, .mini-kit img { background: #EEF4FF; }
+.kit-card.is-rec { box-shadow: inset 0 0 0 2px var(--red), var(--lift); }
+.kit-card.kit-cta { border: 0; }
+.kit-items li, .act-items li { background: var(--soft); }
+.problem-media { border-radius: 16px; box-shadow: var(--lift); }
+.problem-no span { color: var(--gray); }
+
+/* 행동수칙 */
+.act-caution { background: #FFF2F1; }
+.act-caution-label { color: var(--warn); }
+.gtab.is-active, .chip.is-active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.gtab.is-active svg { color: var(--sky); }
+.step.is-active .step-dot { background: #fff; border-color: #fff; color: var(--ink-deep); box-shadow: 0 0 0 6px rgba(255, 255, 255, .2); }
+.step.is-active .step-time { color: var(--sky); }
+.stepper-fill { background: linear-gradient(90deg, var(--red), var(--sky)); }
+.bot-toggle { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; padding: 5px; border-radius: 999px; border: 1px solid var(--line); background: #fff; box-shadow: var(--lift); }
+.bot-toggle > span { display: inline-flex; align-items: center; gap: 6px; padding: 0 10px 0 8px; font-size: 13px; font-weight: 700; color: var(--text-muted); }
+.bot-toggle svg { width: 16px; height: 16px; color: var(--red); }
+.bot-toggle button { min-height: 34px; padding: 0 16px; border-radius: 999px; font-size: 13px; font-weight: 800; color: var(--text-muted); transition: .2s; }
+.bot-toggle button.is-on { background: var(--red); color: #fff; }
+.act-bot { display: flex; gap: 8px; padding: 10px 12px; border-radius: 8px; background: #EEF4FF; border: 1px solid #C9E0FC; font-size: 13.5px; line-height: 1.5; color: var(--ink); }
+.act-bot svg { flex: none; width: 16px; height: 16px; color: var(--red); margin-top: 2px; }
+.act-bot b { display: block; font-size: 12px; color: var(--red); }
+.act-bot.is-solo { background: #FFF7ED; border-color: #FED7AA; }
+.act-bot.is-solo svg, .act-bot.is-solo b { color: #C2410C; }
+.guide-tabs { flex-wrap: wrap; overflow: visible; }
+.gtab { min-height: 44px; padding: 0 18px; font-size: 14px; background: #fff; }
+.kl.is-short .kl-diff b { color: var(--warn); }
+
+/* 테스트·결과 (슬랩) */
+.opt:has(input:checked) { background: rgba(124, 196, 255, .14); }
+.opt:has(input:checked) .opt-key { color: var(--ink-deep); }
+.test-nav { background: rgba(6, 26, 77, .92); }
+.test-intro-side { position: relative; padding: 24px; border-radius: 16px; background: rgba(6, 26, 77, .45); border: 1px solid rgba(255, 255, 255, .16); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+
+/* 정착지 지도 */
+.map-title { background: rgba(255, 255, 255, .92); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--float); border-radius: 16px; }
+.map-title p:last-child { color: var(--text-muted); }
+.map-title .eyebrow { color: var(--text-muted); }
+.map-panel { border-radius: 16px; border: 1px solid var(--line); }
+.shelter-full .leaflet-container { background: #E6EDF8; }
+.kit-cat h4 { color: var(--red); }
+
+/* 마무리·푸터 */
+.final::before { background: linear-gradient(180deg, rgba(6, 26, 77, .55), rgba(6, 26, 77, .92)); display: block; }
+.final-bg { opacity: .3; }
+.final-ring span { border-color: rgba(124, 196, 255, .7); }
+.footer { background: #061A4D; }
+.toast { background: var(--ink-deep); }
+.toast::before { background: var(--sky); }
+.curtain-logo b { color: var(--sky); }
+
+/* 거주구 DIY */
+.page-make { background: var(--grid), linear-gradient(180deg, #F3F7FD, #E8F0FC); background-size: 48px 48px, 48px 48px, auto; }
+.ing.is-on { background: var(--red); border-color: var(--red); }
+.slot.is-filled { border-color: var(--red); }
+.bench-result .result.is-done { box-shadow: 0 18px 36px -18px rgba(2, 74, 216, .7); }
+
+/* ---------- 회전하는 화성 (슬랩 위) ---------- */
+.planet {
+  position: absolute; z-index: 0; pointer-events: none;
+  width: min(62vw, 820px); aspect-ratio: 1; border-radius: 50%;
+  right: -32vw; top: 50%; transform: translateY(-50%);
+  background: url('../assets/mars/gale-map.jpg') 0 0 / 200% 100% repeat-x;
+  filter: sepia(1) saturate(2.1) hue-rotate(-14deg) brightness(.95) contrast(1.15);
+  box-shadow: inset -90px -50px 140px 30px rgba(6, 26, 77, .95), inset 30px 20px 60px rgba(255, 220, 190, .3), 0 0 120px 10px rgba(124, 196, 255, .35);
+  animation: planet-spin 140s linear infinite;
+}
+@keyframes planet-spin { to { background-position: -200% 0; } }
+.test-section .container, .final .container { position: relative; z-index: 1; }
+.final .planet { right: auto; left: 50%; top: 105%; transform: translate(-50%, -50%); width: min(120vw, 1500px); opacity: .85; animation-duration: 220s; }
+@media (max-width: 760px) { .planet { width: 110vw; right: -55vw; opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .planet { animation: none; } }
+
+/* ---------- 화성의 위성 포보스·데이모스 ---------- */
+/* 회전하는 화성 + 궤도 시스템 (기존 .planet 위치를 감싸는 .planet-sys로 옮김) */
+.planet-sys { position: absolute; z-index: 0; pointer-events: none; width: min(62vw, 820px); aspect-ratio: 1; right: -32vw; top: 50%; transform: translateY(-50%); }
+.planet-sys .planet { position: absolute; inset: 0; width: 100%; right: auto; top: 0; transform: none; }
+.final .planet-sys { right: auto; left: 62%; top: 118%; transform: translate(-50%, -50%); width: min(100vw, 1250px); }
+.final .planet-sys .planet { left: 0; top: 0; transform: none; width: 100%; opacity: .85; }
+.orbit { position: absolute; left: 50%; top: 50%; aspect-ratio: 1; border-radius: 50%; border: 1px dashed rgba(124, 196, 255, .35); }
+.orbit-a { width: 135%; animation: orbit-a 60s linear infinite; }
+.orbit-b { width: 175%; animation: orbit-b 150s linear infinite; }
+@keyframes orbit-a { from { transform: translate(-50%, -50%) rotate(-70deg); } to { transform: translate(-50%, -50%) rotate(290deg); } }
+@keyframes orbit-b { from { transform: translate(-50%, -50%) rotate(-40deg); } to { transform: translate(-50%, -50%) rotate(320deg); } }
+.orbit .moon { position: absolute; left: 50%; top: 0; }
+.orbit-a .moon { animation: moon-spin 24s linear infinite, counter-a 60s linear infinite; }
+.orbit-b .moon { animation: moon-spin 40s linear infinite, counter-b 150s linear infinite; }
+@keyframes counter-a { from { transform: translate(-50%, -50%) rotate(70deg); } to { transform: translate(-50%, -50%) rotate(-290deg); } }
+@keyframes counter-b { from { transform: translate(-50%, -50%) rotate(40deg); } to { transform: translate(-50%, -50%) rotate(-320deg); } }
+.final .orbit-a { width: 118%; } .final .orbit-b { width: 140%; }
+.final .moon.phobos { width: 120px; } .final .moon.deimos { width: 70px; }
+
+/* 위성 공통: NASA 크레이터 사진을 회색으로 입혀 울퉁불퉁한 작은 위성처럼 */
+.moon {
+  display: block; width: 84px; aspect-ratio: 1;
+  background: url('../assets/mars/gale-map.jpg') 0 0 / 300% 100% repeat-x;
+  filter: grayscale(1) sepia(.35) brightness(1.05) contrast(1.25);
+  box-shadow: inset -16px -10px 26px rgba(6, 26, 77, .92), inset 6px 4px 12px rgba(255, 255, 255, .35), 0 0 28px rgba(124, 196, 255, .45);
+  animation: moon-spin 24s linear infinite;
+}
+.moon.phobos { border-radius: 54% 46% 52% 48% / 46% 54% 46% 54%; }
+.moon.deimos { width: 48px; border-radius: 48% 52% 45% 55% / 55% 45% 55% 45%; }
+@keyframes moon-spin { to { background-position: -300% 0; } }
+.moon i { position: absolute; left: 110%; top: 50%; transform: translateY(-50%); font-style: normal; font-family: var(--font-display); font-size: 11px; font-weight: 800; letter-spacing: .2em; color: #fff; white-space: nowrap; filter: none; }
+
+/* 히어로: 사진 프레임 옆에 떠 있는 위성 + 이름표 */
+.moon-float { position: absolute; z-index: 3; display: flex; align-items: center; gap: 12px; pointer-events: none; animation: bob 7s ease-in-out infinite; }
+.moon-float p { display: grid; font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+.moon-float b { font-family: var(--font-display); font-size: 12px; letter-spacing: .2em; color: var(--red); }
+.mf-phobos { right: calc(var(--gutter) + 46% - 70px); top: calc(var(--header-h) + 36px); flex-direction: row-reverse; text-align: right; }
+.mf-phobos .moon { width: 96px; }
+.mf-deimos { right: calc(var(--gutter) + 46% - 30px); bottom: 70px; flex-direction: row-reverse; text-align: right; animation-delay: -3s; animation-duration: 9s; }
+.mf-deimos .moon { width: 52px; }
+@keyframes bob { 50% { transform: translateY(-14px); } }
+
+/* 밝은 섹션 모서리의 큰 위성 */
+.view > .section { position: relative; overflow: hidden; }
+.moon-deco { position: absolute; z-index: 0; display: flex; align-items: center; gap: 14px; pointer-events: none; }
+.moon-deco .moon { box-shadow: inset -28px -18px 40px rgba(6, 26, 77, .55), inset 10px 6px 18px rgba(255, 255, 255, .5), 0 20px 60px -20px rgba(2, 74, 216, .35); }
+.moon-deco p { display: grid; font-size: 12px; color: var(--text-muted); }
+.moon-deco b { font-family: var(--font-display); font-size: 12px; letter-spacing: .2em; color: var(--red); }
+.md-right { right: max(var(--gutter), calc((100vw - var(--max)) / 2)); top: calc(var(--header-h) + 30px); flex-direction: row-reverse; text-align: right; animation: bob 8s ease-in-out infinite; }
+.md-right .moon { width: 150px; }
+.md-left { right: max(var(--gutter), calc((100vw - var(--max)) / 2)); top: calc(var(--header-h) + 8px); animation: bob 10s ease-in-out infinite; }
+.md-left .moon { width: 90px; }
+.view > .section > .container { position: relative; z-index: 1; }
+.test-intro-side { background: rgba(6, 26, 77, .72); }
+
+@media (max-width: 1080px) { .moon-float, .moon-deco { display: none; } }
+@media (prefers-reduced-motion: reduce) { .orbit, .moon, .moon-float, .moon-deco { animation: none !important; } .orbit .moon { transform: translate(-50%, -50%); } }
+@media (max-width: 760px) { .planet-sys { width: 110vw; right: -55vw; opacity: .55; } .planet-sys .planet { width: 100%; right: auto; opacity: 1; } }

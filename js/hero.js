@@ -1,4 +1,4 @@
-/* BLACK-OUT : MARS — 히어로 효과: 바람에 날리는 화성 먼지 + 마우스를 따라가는 헬멧 조명 + 거주구 상태 HUD
+/* BLACK-OUT : MARS — 히어로 효과: 바람에 흐르는 파란 입자 + 거주구 상태 HUD
    마우스가 없거나 멈춰 있으면 불빛이 천천히 스스로 움직입니다(발표 화면용). */
 (function (RO) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -33,7 +33,7 @@
     function frame(t) {
       if (!running) return;
       ctx.clearRect(0, 0, w, h);
-      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalCompositeOperation = 'source-over';
       for (const p of parts) {
         p.life += 0.03;
         p.x += p.vx + Math.sin(p.life) * 0.4; // 강한 바람에 옆으로 날림
@@ -42,13 +42,13 @@
         const a = p.ember ? 0.55 + Math.sin(p.life * 3) * 0.35 : 0.18;
         if (p.ember) {
           const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-          g.addColorStop(0, `rgba(255,190,120,${a})`);
-          g.addColorStop(0.4, `rgba(230,40,0,${a * 0.6})`);
-          g.addColorStop(1, 'rgba(230,0,0,0)');
+          g.addColorStop(0, `rgba(124,196,255,${a})`);
+          g.addColorStop(0.4, `rgba(2,74,216,${a * 0.45})`);
+          g.addColorStop(1, 'rgba(2,74,216,0)');
           ctx.fillStyle = g;
           ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2); ctx.fill();
         } else {
-          ctx.fillStyle = `rgba(214,140,92,${a + 0.12})`;
+          ctx.fillStyle = `rgba(2,74,216,${a * 0.9})`;
           ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
         }
       }
