@@ -1,0 +1,888 @@
+<title>블랙아웃</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+
+<div class="hazardbar"></div>
+<header class="site">
+  <div class="wrap">
+    <div class="topline">
+      <div class="brand">
+        <span class="mark">BLACKOUT</span>
+        <b>블랙아웃</b>
+        <span>재난 안전 대응체계</span>
+      </div>
+      <button class="btn sm primary noprint" data-pdf="all">전체 PDF로 저장</button>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="주요 메뉴">
+      <button role="tab" data-tab="home" aria-selected="true"><span class="num">00</span>대응체계</button>
+      <button role="tab" data-tab="quiz" aria-selected="false"><span class="num">01</span>대비력 진단</button>
+      <button role="tab" data-tab="action" aria-selected="false"><span class="num">02</span>행동수칙</button>
+      <button role="tab" data-tab="make" aria-selected="false"><span class="num">03</span>집 재료 제작</button>
+      <button role="tab" data-tab="kit" aria-selected="false"><span class="num">04</span>내 키트</button>
+      <button role="tab" data-tab="card" aria-selected="false"><span class="num">05</span>오프라인 꾸러미</button>
+    </nav>
+    <p class="pdfhint noprint" id="pdfHint" hidden></p>
+  </div>
+</header>
+
+<div class="printhead" aria-hidden="true">블랙아웃 · 재난 안전 대응체계 — 오프라인 사본 (출처: 소방청·행정안전부 공개 지침 기반, 해커톤 시연용)</div>
+
+<main>
+  <!-- ======================= 00 대응체계 ======================= -->
+  <section class="panel" id="p-home" role="tabpanel">
+    <div class="wrap">
+      <div class="hero">
+        <div class="eyebrow">재난 안전 대응체계 · 시민 행동 지침</div>
+        <h1>재난이 나면,<br>처음 <em>72시간</em>은 내 손에 달려 있습니다.</h1>
+        <p class="lede">구조대가 모든 집에 동시에 도착할 수는 없습니다. 전기와 통신이 끊기면 검색도, 안내 방송도, 결제도 함께 멈춥니다.
+          이 포털은 그 공백 동안 <b>무엇을 먼저 하고 무엇을 절대 하지 말아야 하는지</b>만 담았습니다.
+          인터넷이 끊긴 뒤에는 열리지 않으니, <b>지금 PDF로 뽑아 두는 것</b>이 이 페이지의 목적입니다.</p>
+        <div class="herocta noprint">
+          <button class="btn primary" data-pdf="all">전체 매뉴얼 PDF 저장</button>
+          <button class="btn" data-pdf="card">대피 카드 1장만</button>
+        </div>
+      </div>
+
+      <div class="sechead">
+        <div class="code">대응 4단계</div>
+        <h2>재난이 나면 이 순서로 움직입니다</h2>
+        <p class="sub">순서를 건너뛰면 사고가 커집니다. 지진 뒤 화재, 정전 뒤 복전 화재는 모두 <b>2단계를 생략한 결과</b>입니다.</p>
+      </div>
+      <div class="rsteps" id="respSteps"></div>
+
+      <div class="sechead">
+        <div class="code">공통 원칙</div>
+        <h2>어떤 재난에도 똑같이 적용되는 다섯 가지</h2>
+      </div>
+      <div class="prins" id="respPrin"></div>
+
+      <div class="qbox">
+        <div class="qhead">
+          <h3>어떤 재난이 걱정되나요?</h3>
+          <p>하나만 고르면 행동수칙 · 필요 물품 · 제작 가이드 · 대피 카드가 그 재난에 맞게 전부 바뀝니다.</p>
+        </div>
+        <div class="dchoice" id="dchoice"></div>
+      </div>
+
+      <div class="flow">
+        <div class="step"><div class="sn">STEP 1</div><h4>진단</h4><p>10문항으로 내 대비력의 구멍을 찾습니다. 물·전력·연락·손기술 4축 점수로 나옵니다.</p></div>
+        <div class="step"><div class="sn">STEP 2</div><h4>행동수칙</h4><p>지금 / 5분 후 / 1시간 후 세 장의 카드. 수칙 옆에서 필요한 물품을 바로 키트에 담습니다.</p></div>
+        <div class="step"><div class="sn">STEP 3</div><h4>자가 제작</h4><p>집에 있는 재료를 체크하면 지금 당장 만들 수 있는 소화기·발전기·정수기를 골라 줍니다.</p></div>
+        <div class="step"><div class="sn">STEP 4</div><h4>PDF로 남기기</h4><p>전기와 통신이 끊기면 이 페이지도 열리지 않습니다. PDF로 저장해 휴대폰에 넣고, 한 장은 인쇄해 현관에 붙이십시오.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 01 대비력 진단 ======================= -->
+  <section class="panel" id="p-quiz" role="tabpanel" hidden>
+    <div class="wrap">
+      <div class="sechead">
+        <div class="code">§ 01</div>
+        <h2>AI 없이 생존력 테스트</h2>
+        <p class="sub">물건을 먼저 팔지 않습니다. 10문항을 풀면 <b>나에게 없는 것</b>만 추려 추천합니다.</p>
+      </div>
+      <div class="quizwrap">
+        <div>
+          <div id="quizlist"></div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap" class="noprint">
+            <button class="btn primary" id="quizDone">결과 보기</button>
+            <button class="btn ghost" id="quizReset">다시 풀기</button>
+          </div>
+        </div>
+        <aside class="resultside" id="quizResult"></aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 02 행동수칙 ======================= -->
+  <section class="panel" id="p-action" role="tabpanel" hidden>
+    <div class="wrap">
+      <div class="sechead">
+        <div class="code">§ 02</div>
+        <h2 id="actTitle">행동수칙</h2>
+        <p class="sub">당황한 사람은 줄글을 못 읽습니다. <b>지금 할 일 하나</b>만 보이도록 시간순 세 장으로 끊었습니다.</p>
+      </div>
+      <div class="chips noprint" id="actSwitch" style="margin-bottom:20px"></div>
+      <div class="timecols" id="actCols"></div>
+      <div class="sechead donthead"><div class="code">금지</div><h2 style="font-size:20px">절대 하지 말 것</h2></div>
+      <div class="donts" id="actDonts"></div>
+    </div>
+  </section>
+
+  <!-- ======================= 03 집 재료 제작 ======================= -->
+  <section class="panel" id="p-make" role="tabpanel" hidden>
+    <div class="wrap">
+      <div class="sechead">
+        <div class="code">§ 03</div>
+        <h2 id="makeScanTitle">집 재료 스캐너</h2>
+        <p class="sub">키트가 없어도 집에는 재료가 있습니다. 가진 것을 체크하면 <b>지금 만들 수 있는 것</b>을 계산합니다.</p>
+      </div>
+
+      <div class="scanwrap" id="makeScan">
+        <div class="card pad">
+          <div style="display:flex;gap:9px;align-items:center;margin-bottom:16px;flex-wrap:wrap" class="noprint">
+            <div class="label" style="margin-right:auto">보유 재료 체크 · 35품목</div>
+            <button class="btn sm ghost" id="invPreset">일반 가정 기본값</button>
+            <button class="btn sm ghost" id="invClear">전체 해제</button>
+          </div>
+          <div id="matGroups"></div>
+        </div>
+
+        <aside style="display:grid;gap:14px">
+          <div class="card pad">
+            <div class="label">즉시 제작 가능</div>
+            <div class="counter"><span class="big" id="mkCount">0</span><span class="of" id="mkTotal">/ 10 종</span></div>
+            <div class="scorebar" style="margin-top:10px"><i id="mkBar" style="width:0%"></i></div>
+            <p class="note" style="margin-top:12px">부족한 재료는 §04 내 키트에서 바로 담을 수 있습니다.</p>
+          </div>
+          <div class="matchlist" id="matchList"></div>
+        </aside>
+      </div>
+
+      <div class="sechead"><div class="code">§ 03-2</div><h2 style="font-size:22px">제작 가이드 10종</h2>
+        <p class="sub">모든 수치는 가정용 재료 기준입니다. 화재·전기 작업은 <b>안전 경고를 먼저</b> 읽으십시오.</p></div>
+
+      <div class="guides" id="guides">
+
+        <!-- G01 간이 소화기 -->
+        <details class="guide" id="g-fireext">
+          <summary>
+            <span class="gc">G01</span><span class="gn">간이 분말 소화기 (A·K급 초기 화재)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">5분</span><span class="tag bad">B·C급 사용 금지</span><span class="matchtag" data-for="fireext"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료</h5>
+                <ul class="matlist">
+                  <li><span class="q">주재료</span>베이킹소다(탄산수소나트륨) 300g 이상</li>
+                  <li><span class="q">보조</span>굵은 소금 200g — 분말 밀도를 높여 멀리 던져짐</li>
+                  <li><span class="q">용기</span>입구 넓은 페트병·유리병 또는 깡통</li>
+                  <li><span class="q">마감</span>청테이프, 랩 (습기 차단)</li>
+                </ul>
+                <h5 style="margin-top:16px">만드는 법</h5>
+                <ol class="steps">
+                  <li>용기를 완전히 말립니다. 습기가 들어가면 분말이 굳어 쏟아지지 않습니다.</li>
+                  <li>베이킹소다와 소금을 3:2로 섞어 용기의 80%까지 채웁니다.</li>
+                  <li>입구를 랩으로 덮고 테이프로 고정합니다. 던질 때 터지도록 <b>얇게</b> 한 겹만.</li>
+                  <li>용기 겉면에 <b>'A·K급 전용'</b>과 제조일을 적습니다. 6개월마다 교체.</li>
+                  <li>주방 싱크대 아래·현관처럼 <b>불이 날 곳에서 2m 이상 떨어진</b> 곳에 둡니다.</li>
+                </ol>
+                <h5 style="margin-top:16px">쓰는 법</h5>
+                <ol class="steps">
+                  <li>먼저 "불이야" 외치고 119. 그다음에 끕니다.</li>
+                  <li>불의 <b>밑동(연료 표면)</b>을 향해 뿌리거나 던집니다. 불꽃 끝이 아닙니다.</li>
+                  <li>30초 안에 안 꺼지면 포기하고 문을 닫고 대피합니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>작동 원리</h5>
+                <div class="figbox">
+                  <figure>
+                    <svg viewBox="0 0 440 290" role="img" aria-label="연료·산소·열로 이루어진 화재 삼각형과, 가정용 재료로 끊을 수 있는 변은 산소와 연료뿐임을 보여주는 그림">
+                      <polygon points="220,38 388,248 52,248" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".85"/>
+                      <text x="220" y="26" text-anchor="middle" font-size="13" font-family="monospace" fill="currentColor">열</text>
+                      <text x="30" y="266" text-anchor="start" font-size="13" font-family="monospace" fill="currentColor">연료</text>
+                      <text x="410" y="266" text-anchor="end" font-size="13" font-family="monospace" fill="currentColor">산소</text>
+                      <!-- 산소 차단(오른쪽 변) -->
+                      <line x1="304" y1="143" x2="336" y2="117" stroke="#FFB01F" stroke-width="3"/>
+                      <text x="344" y="112" font-size="12" fill="#FFB01F" font-family="monospace">질식</text>
+                      <text x="344" y="128" font-size="11" fill="currentColor" opacity=".7">베이킹소다·뚜껑</text>
+                      <!-- 연료 제거(왼쪽 변) -->
+                      <line x1="136" y1="143" x2="104" y2="117" stroke="#FFB01F" stroke-width="3"/>
+                      <text x="96" y="112" font-size="12" fill="#FFB01F" font-family="monospace" text-anchor="end">제거</text>
+                      <text x="96" y="128" font-size="11" fill="currentColor" opacity=".7" text-anchor="end">가스밸브·차단기</text>
+                      <!-- 냉각(아래 변) : 물, 조건부 -->
+                      <line x1="204" y1="248" x2="236" y2="248" stroke="#FF4A3A" stroke-width="3" stroke-dasharray="5 4"/>
+                      <text x="220" y="278" font-size="12" fill="#FF4A3A" font-family="monospace" text-anchor="middle">냉각 = 물</text>
+                      <text x="220" y="230" font-size="11" fill="currentColor" opacity=".7" text-anchor="middle">기름·전기엔 금지</text>
+                    </svg>
+                    <figcaption>불은 연료·산소·열 세 변이 모두 있어야 유지됩니다. 가정 재료로 안전하게 끊을 수 있는 변은 <b>산소(질식)</b>와 <b>연료(차단)</b> 둘뿐입니다. 기름·전기 화재에 물을 부으면 열은 못 내리고 불을 퍼뜨립니다.</figcaption>
+                  </figure>
+                </div>
+                <div class="spec" style="margin-top:16px">
+                  <div><div class="sk">유효 사거리</div><div class="sv">약 1 m</div></div>
+                  <div><div class="sk">대응 화재</div><div class="sv">A · K급</div></div>
+                  <div><div class="sk">유효 기간</div><div class="sv">6 개월</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>이것은 정식 소화기의 대체품이 아닙니다.</b> 쓰레기통·냄비 수준의 초기 불씨에만 씁니다.</li>
+                <li><b>B급(휘발유·시너)·C급(전기) 화재 금지.</b> 분말을 던지는 동작이 유증기를 퍼뜨리거나 감전을 유발합니다.</li>
+                <li>식초를 섞어 이산화탄소를 만드는 '분사형'은 만들지 마십시오. 밀폐 용기 파열 위험이 있고, 분사 압력이 1초면 끝납니다.</li>
+                <li>천장까지 불이 올라갔으면 소화 시도 중단. <b>대피가 유일한 정답</b>입니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G02 질식 소화 -->
+        <details class="guide" id="g-smother">
+          <summary>
+            <span class="gc">G02</span><span class="gn">질식 소화 덮개 (식용유 화재 · K급)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">즉시</span><span class="tag bad">물 사용 금지</span><span class="matchtag" data-for="smother"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료</h5>
+                <ul class="matlist">
+                  <li><span class="q">1순위</span>냄비보다 큰 뚜껑 또는 큰 접시</li>
+                  <li><span class="q">2순위</span>물에 적셔 꽉 짠 수건 (물이 흐르면 안 됨)</li>
+                  <li><span class="q">3순위</span>베이킹소다 한 통 / 마른 모래</li>
+                </ul>
+                <h5 style="margin-top:16px">순서</h5>
+                <ol class="steps">
+                  <li>불 끄기 전에 <b>가스·인덕션 전원을 먼저</b> 끕니다. 열원을 남기면 다시 붙습니다.</li>
+                  <li>뚜껑을 몸 쪽에서 반대쪽으로 <b>밀어 덮습니다.</b> 위에서 수직으로 내리면 화염이 손을 타고 올라옵니다.</li>
+                  <li>덮은 뒤 <b>최소 20분 열지 않습니다.</b> 기름 온도가 발화점 아래로 내려가야 합니다.</li>
+                  <li>뚜껑이 없으면 적신 수건을 같은 방향으로 밀어 덮고, 그 위에 베이킹소다를 붓습니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>왜 물을 부으면 폭발하는가</h5>
+                <div class="spec">
+                  <div><div class="sk">식용유 발화점</div><div class="sv">약 360 ℃</div></div>
+                  <div><div class="sk">물 끓는점</div><div class="sv">100 ℃</div></div>
+                  <div><div class="sk">수증기 팽창</div><div class="sv">약 1700 배</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">360℃ 기름에 물이 닿으면 즉시 수증기로 1700배 팽창하면서 기름을 공중으로 분무시킵니다. 분무된 기름은 표면적이 폭증해 한순간에 불덩이가 됩니다. 이것이 주방 화재 사망의 대표 경로입니다.</p>
+                <p class="note" style="margin-top:10px"><b>젖은 수건은 되는데 물은 안 되는 이유:</b> 수건에 머금은 소량의 물은 증기막을 만들어 산소를 덮지만, 쏟아지는 물은 기름 속으로 파고들어 분무를 만듭니다. 수건은 <b>꽉 짜서</b> 씁니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>불붙은 냄비를 들고 옮기지 마십시오.</b> 이동 중 쏟으면 동선 전체가 불바다가 됩니다.</li>
+                <li>밀가루·설탕을 뿌리면 <b>분진 폭발</b>합니다. 흰 가루라고 다 같지 않습니다.</li>
+                <li>환기팬을 켜면 불이 덕트로 올라갑니다. 끄십시오.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G03 자전거 발전기 -->
+        <details class="guide" id="g-bikegen">
+          <summary>
+            <span class="gc">G03</span><span class="gn">자전거 발전기 (휴대폰·LED 충전)</span>
+            <span class="gmeta"><span class="tag">난이도 상</span><span class="tag">2시간</span><span class="tag info">5V 출력</span><span class="matchtag" data-for="bikegen"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gblock">
+              <h5>구조</h5>
+              <div class="figbox">
+                <figure>
+                  <svg viewBox="0 0 760 230" role="img" aria-label="페달에서 DC모터, 정류 다이오드, 차량용 USB 충전기를 거쳐 휴대폰까지 전기가 전달되는 자전거 발전기 계통도">
+                    <defs>
+                      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <polygon points="0,0 10,5 0,10" fill="currentColor"/>
+                      </marker>
+                    </defs>
+                    <g font-family="monospace" font-size="12">
+                      <rect x="8" y="64" width="124" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <text x="70" y="88" text-anchor="middle" font-size="12.5" fill="currentColor">페달 · 뒷바퀴</text>
+                      <text x="70" y="106" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">60~80 rpm</text>
+
+                      <rect x="196" y="64" width="124" height="60" rx="3" fill="none" stroke="#FFB01F" stroke-width="1.8"/>
+                      <text x="258" y="88" text-anchor="middle" font-size="12.5" fill="#FFB01F">DC 모터</text>
+                      <text x="258" y="106" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">폐프린터·전동완구</text>
+
+                      <rect x="384" y="64" width="112" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <text x="440" y="88" text-anchor="middle" font-size="12.5" fill="currentColor">정류 다이오드</text>
+                      <text x="440" y="106" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">역전류 차단</text>
+
+                      <rect x="560" y="64" width="124" height="60" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <text x="622" y="86" text-anchor="middle" font-size="12.5" fill="currentColor">차량용 USB</text>
+                      <text x="622" y="104" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">전압 안정화</text>
+
+                      <line x1="134" y1="94" x2="192" y2="94" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+                      <text x="163" y="84" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".8">벨트 1:8</text>
+
+                      <line x1="322" y1="94" x2="380" y2="94" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+                      <text x="351" y="84" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".8">3~14 V</text>
+
+                      <line x1="498" y1="94" x2="556" y2="94" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+                      <text x="527" y="84" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".8">맥류 DC</text>
+
+                      <line x1="686" y1="94" x2="740" y2="94" stroke="#35C07A" stroke-width="2" marker-end="url(#ar)"/>
+                      <text x="713" y="84" text-anchor="middle" font-size="10.5" fill="#35C07A">5V 0.5A</text>
+                      <text x="713" y="120" text-anchor="middle" font-size="11.5" fill="currentColor">휴대폰</text>
+
+                      <line x1="258" y1="128" x2="258" y2="176" stroke="#FF4A3A" stroke-width="1.4" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+                      <text x="258" y="196" text-anchor="middle" font-size="11" fill="#FF4A3A">모터 직결 시 14V 급등 → 기기 소손</text>
+                    </g>
+                  </svg>
+                  <figcaption>모터를 휴대폰에 바로 꽂으면 안 됩니다. 회전수에 따라 전압이 3V에서 14V까지 요동치기 때문에, 전압을 5V로 묶어 주는 <b>차량용 USB 충전기</b>가 이 계통의 핵심 부품입니다.</figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료</h5>
+                <ul class="matlist">
+                  <li><span class="q">동력</span>자전거 (뒷바퀴를 띄울 수 있게 거꾸로 세움)</li>
+                  <li><span class="q">발전</span>DC 모터 — 폐프린터·전동드릴·RC카에서 회수. 12V 표기품이 좋음</li>
+                  <li><span class="q">전달</span>고무벨트 대용 노끈·고무밴드, 모터 고정용 각목과 테이프</li>
+                  <li><span class="q">회로</span>전선 2m, 정류 다이오드(1N4007 등) 1개, 차량용 USB 충전기 1개</li>
+                </ul>
+                <h5 style="margin-top:16px">조립</h5>
+                <ol class="steps">
+                  <li>자전거를 거꾸로 세우고 뒷바퀴가 공중에서 자유롭게 돌게 고정합니다.</li>
+                  <li>모터축을 뒷바퀴 타이어 측면에 <b>눌러 밀착</b>시키고 각목에 단단히 묶습니다. 헐거우면 미끄러져 발전이 안 됩니다.</li>
+                  <li>모터 단자 → 다이오드 → 차량용 USB 충전기 입력 단자 순서로 연결합니다. 극성(+/−)을 반대로 하면 충전기가 죽습니다.</li>
+                  <li>충전기에 USB 케이블을 꽂고, <b>싼 기기로 먼저 시험</b>합니다. LED 조명 → 보조배터리 → 휴대폰 순서.</li>
+                  <li>페달을 일정한 속도로 밟습니다. 급가속은 전압 스파이크를 만듭니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>현실적인 성능</h5>
+                <div class="spec">
+                  <div><div class="sk">실출력</div><div class="sv">2~5 W</div></div>
+                  <div><div class="sk">휴대폰 20%</div><div class="sv">25~40 분</div></div>
+                  <div><div class="sk">LED 전구</div><div class="sv">상시 가능</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">사람의 지속 출력은 약 75~100W이고, 이 구조의 전달 효율은 낮아 실제로는 2~5W만 나옵니다. <b>냉장고·전기장판은 불가능합니다.</b> 조명과 통신기기 충전에만 쓰십시오.</p>
+                <p class="note" style="margin-top:10px"><b>보조배터리를 중간에 두십시오.</b> 페달 속도가 흔들려도 보조배터리가 완충 역할을 해 휴대폰을 보호합니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li>젖은 손·젖은 바닥에서 작업 금지. 저전압이라도 회로 단락 시 <b>발열과 화상</b>이 생깁니다.</li>
+                <li>리튬 배터리가 <b>부풀거나 뜨거워지면</b> 즉시 분리해 불연성 바닥에 둡니다.</li>
+                <li>벽 콘센트·가정 배선에 절대 연결하지 마십시오. 복구 작업자 감전(역송전) 사고로 이어집니다.</li>
+                <li>회전부에 머리카락·끈·손가락이 말려 들어갑니다. 바퀴 옆에 사람이 없게 하십시오.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G04 소금물 배터리 -->
+        <details class="guide" id="g-saltcell">
+          <summary>
+            <span class="gc">G04</span><span class="gn">소금물 전지 비상등 (LED 점등)</span>
+            <span class="gmeta"><span class="tag">난이도 중</span><span class="tag">20분</span><span class="tag info">직렬 3개 = 2.1V</span><span class="matchtag" data-for="saltcell"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료</h5>
+                <ul class="matlist">
+                  <li><span class="q">전해질</span>물 500ml + 소금 2큰술 (진하게)</li>
+                  <li><span class="q">+극</span>구리선 또는 구리판 (10원 동전 아님 — 구리 피복선 속살)</li>
+                  <li><span class="q">−극</span>아연도금 못·철못 또는 알루미늄 조각</li>
+                  <li><span class="q">용기</span>유리컵 3개 이상, 전선, LED</li>
+                </ul>
+                <h5 style="margin-top:16px">만드는 법</h5>
+                <ol class="steps">
+                  <li>컵 3개에 소금물을 채우고, 각 컵에 구리와 못을 <b>서로 닿지 않게</b> 담급니다.</li>
+                  <li>1번 컵의 못(−) → 2번 컵의 구리(+)를 전선으로 잇습니다. 이것이 직렬입니다.</li>
+                  <li>3번 컵까지 같은 방식으로 잇고, 양쪽 끝의 구리(+)·못(−)에 LED 다리를 연결합니다.</li>
+                  <li>LED가 안 켜지면 다리를 바꿔 꽂습니다. LED는 극성이 있습니다.</li>
+                  <li>어두워지면 소금물을 갈거나 못을 사포로 닦습니다(산화막 제거).</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>성능과 한계</h5>
+                <div class="spec">
+                  <div><div class="sk">셀 1개</div><div class="sv">0.6~0.9 V</div></div>
+                  <div><div class="sk">전류</div><div class="sv">수 mA</div></div>
+                  <div><div class="sk">지속</div><div class="sv">6~20 시간</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">전류가 매우 작아 <b>LED 한두 개를 희미하게 켜는 수준</b>입니다. 휴대폰 충전은 불가능합니다. 쓸모는 '빛'이 아니라 <b>위치 표시</b>입니다 — 어두운 복도·화장실·대피 통로 표식, 가족 집결지 신호.</p>
+                <p class="note" style="margin-top:10px">레몬·감자도 같은 원리로 작동하지만, 소금물이 더 오래가고 재료를 먹을 수 있는 식량으로 남겨 둘 수 있습니다. <b>재난 중에 식량을 실험에 쓰지 마십시오.</b></p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li>소금물 전지는 <b>수소 가스</b>를 미량 발생시킵니다. 밀폐 용기에 담아 봉하지 말고 환기되는 곳에 두십시오.</li>
+                <li>전해질은 마시면 안 되고, 금속 이온이 섞인 물은 <b>식수·조리수로 전용 금지</b>입니다.</li>
+                <li>동전·배터리와 섞어 쓰지 마십시오. 폐배터리 단락은 발화합니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G05 정수 -->
+        <details class="guide" id="g-waterfilter">
+          <summary>
+            <span class="gc">G05</span><span class="gn">페트병 3단 여과기 + 소독</span>
+            <span class="gmeta"><span class="tag">난이도 중</span><span class="tag">30분</span><span class="tag bad">여과만으론 못 마심</span><span class="matchtag" data-for="waterfilter"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>구조</h5>
+                <div class="figbox">
+                  <figure>
+                    <svg viewBox="0 0 400 330" role="img" aria-label="거꾸로 세운 페트병 안에 천, 자갈, 모래, 숯을 층층이 쌓은 여과기 단면도와, 세균은 모든 층을 통과한다는 경고를 담은 그림">
+                      <defs>
+                        <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                          <polygon points="0,0 10,5 0,10" fill="currentColor"/>
+                        </marker>
+                      </defs>
+                      <g font-family="monospace" font-size="11.5">
+                        <path d="M138 30 L262 30 L262 54 L246 74 L246 268 L154 268 L154 74 L138 54 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <rect x="155" y="75" width="90" height="26" fill="currentColor" opacity=".16"/>
+                        <rect x="155" y="101" width="90" height="42" fill="currentColor" opacity=".3"/>
+                        <rect x="155" y="143" width="90" height="52" fill="currentColor" opacity=".2"/>
+                        <rect x="155" y="195" width="90" height="56" fill="currentColor" opacity=".42"/>
+                        <rect x="155" y="251" width="90" height="17" fill="currentColor" opacity=".16"/>
+
+                        <text x="276" y="92" fill="currentColor">천·커피필터</text>
+                        <text x="276" y="128" fill="currentColor">자갈 3 cm</text>
+                        <text x="276" y="174" fill="currentColor">모래 5 cm</text>
+                        <text x="276" y="228" fill="currentColor">숯·활성탄 6 cm</text>
+                        <text x="276" y="265" fill="currentColor">천 (받침)</text>
+
+                        <line x1="248" y1="88" x2="268" y2="88" stroke="currentColor" stroke-width="1"/>
+                        <line x1="248" y1="124" x2="268" y2="124" stroke="currentColor" stroke-width="1"/>
+                        <line x1="248" y1="170" x2="268" y2="170" stroke="currentColor" stroke-width="1"/>
+                        <line x1="248" y1="224" x2="268" y2="224" stroke="currentColor" stroke-width="1"/>
+                        <line x1="248" y1="261" x2="268" y2="261" stroke="currentColor" stroke-width="1"/>
+
+                        <text x="200" y="20" text-anchor="middle" fill="currentColor">흐린 물 투입</text>
+                        <line x1="200" y1="36" x2="200" y2="70" stroke="#5A95FF" stroke-width="2" marker-end="url(#arw)"/>
+
+                        <path d="M196 268 L196 286 M204 268 L204 286" stroke="#5A95FF" stroke-width="2"/>
+                        <path d="M150 292 L250 292 L240 320 L160 320 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                        <text x="200" y="312" text-anchor="middle" fill="currentColor">맑아진 물</text>
+
+                        <line x1="118" y1="76" x2="118" y2="286" stroke="#FF4A3A" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+                        <text x="108" y="160" text-anchor="end" fill="#FF4A3A">세균</text>
+                        <text x="108" y="176" text-anchor="end" fill="#FF4A3A">바이러스</text>
+                        <text x="108" y="192" text-anchor="end" fill="#FF4A3A">그대로</text>
+                        <text x="108" y="208" text-anchor="end" fill="#FF4A3A">통과</text>
+                      </g>
+                    </svg>
+                      <figcaption>여과는 <b>흙·냄새·기름기만</b> 걸러 냅니다. 세균과 바이러스는 모래 틈을 그대로 통과합니다. 맑아진 물은 마실 수 있는 물이 아니라 <b>소독할 준비가 된 물</b>입니다.</figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="gblock">
+                <h5>만드는 법</h5>
+                <ol class="steps">
+                  <li>페트병 바닥을 잘라 내고 <b>뚜껑 쪽을 아래로</b> 거꾸로 세웁니다. 뚜껑에 못으로 구멍 3~4개를 뚫습니다.</li>
+                  <li>아래부터 천 → 숯 → 모래 → 자갈 → 천 순으로 채웁니다. 숯은 잘게 부수고, 모래와 자갈은 먼저 물로 씻습니다.</li>
+                  <li>맑은 물이 나올 때까지 <b>처음 1~2L는 버립니다.</b> 초기 유출수에는 숯가루가 섞여 있습니다.</li>
+                  <li>통과한 물을 <b>반드시</b> 소독합니다 — 아래 2가지 중 하나.</li>
+                </ol>
+                <h5 style="margin-top:16px">소독 (둘 중 하나는 필수)</h5>
+                <div class="spec">
+                  <div><div class="sk">① 끓이기</div><div class="sv">1 분 이상</div></div>
+                  <div><div class="sk">고도 1000m↑</div><div class="sv">3 분</div></div>
+                  <div><div class="sk">② 락스</div><div class="sv">2 방울 / 1 L</div></div>
+                </div>
+                <p class="note" style="margin-top:12px"><b>락스 소독법:</b> 향·계면활성제가 없는 가정용 염소 표백제(차아염소산나트륨 4~6%)를 물 1L당 2방울 넣고 섞어 <b>30분</b> 기다립니다. 희미한 염소 냄새가 나야 정상이고, 냄새가 전혀 없으면 1방울 더 넣고 15분 더 기다립니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>절대 쓰면 안 되는 물:</b> 바닷물(염분으로 탈수 가속), 수영장물, 라디에이터·온수난방 배관물, 변기 탱크의 세정제 섞인 물, 공장·농경지 침출수. 이 물은 여과·소독으로 해결되지 않습니다.</li>
+                <li><b>향기 나는 표백제·주방세제형 락스 금지.</b> 계면활성제와 향료는 독성 물질입니다.</li>
+                <li>소독 후에도 화학물질(중금속·농약)은 남습니다. <b>소독은 미생물만</b> 처리합니다.</li>
+                <li>생존 수요는 1인당 하루 3L(음용 2L + 위생 1L)입니다. 여과기 하나로는 못 댑니다. <b>저장이 먼저</b>입니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G06 캔 램프 -->
+        <details class="guide" id="g-canlamp">
+          <summary>
+            <span class="gc">G06</span><span class="gn">식용유 캔 램프 (비상 조명)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">10분</span><span class="tag warn">환기 필수</span><span class="matchtag" data-for="canlamp"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>재료와 순서</h5>
+                <ul class="matlist">
+                  <li><span class="q">연료</span>식용유 (참치캔의 기름도 가능)</li>
+                  <li><span class="q">심지</span>면 수건·면 끈을 꼬아 만든 가닥 — 화학섬유는 녹으며 유독가스</li>
+                  <li><span class="q">용기</span>빈 깡통 또는 두꺼운 유리병</li>
+                  <li><span class="q">반사</span>알루미늄 포일 (뒤에 세우면 체감 밝기 상승)</li>
+                </ul>
+                <ol class="steps" style="margin-top:14px">
+                  <li>캔 뚜껑 중앙에 못으로 구멍을 뚫고, 꼰 면심지를 1cm만 올라오게 끼웁니다.</li>
+                  <li>캔을 식용유로 채우고 <b>10분간 심지가 기름을 빨아올리게</b> 둡니다. 바로 불을 붙이면 심지만 타 버립니다.</li>
+                  <li>불을 붙이고, 포일을 반원으로 접어 뒤에 세웁니다.</li>
+                  <li>타일·금속 트레이 같은 <b>불연 바닥</b>에 놓고, 커튼·종이에서 1m 이상 띄웁니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>성능</h5>
+                <div class="spec">
+                  <div><div class="sk">지속 시간</div><div class="sv">4~6 시간</div></div>
+                  <div><div class="sk">밝기</div><div class="sv">양초 1~2개</div></div>
+                  <div><div class="sk">난방 효과</div><div class="sv">없음</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">식용유는 등유보다 인화점이 높아 <b>쏟아져도 즉시 불바다가 되지 않습니다.</b> 그래서 양초나 알코올램프보다 가정에서 안전합니다. 다만 그을음이 많이 생깁니다.</p>
+                <p class="note" style="margin-top:10px"><b>조명이 급하면 더 안전한 방법:</b> 손전등 뒤에 물을 담은 투명 페트병을 올리면 빛이 산란해 방 전체가 밝아집니다. 불을 쓰지 않아 가장 먼저 시도할 방법입니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>실내 난방 목적의 연소는 절대 금지.</b> 화분 난로·숯불·부탄 버너는 일산화탄소를 만들고, 무색무취로 잠든 사람을 먼저 죽입니다. 추위는 옷·단열로 해결합니다(G10).</li>
+                <li>지진·가스 누출이 의심되면 <b>불을 켜지 말고</b> 스위치도 누르지 마십시오. 스파크가 점화원이 됩니다.</li>
+                <li>잘 때·방을 떠날 때 반드시 소화. 아이·반려동물 손이 닿는 높이에 두지 마십시오.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G07 간이 화장실 -->
+        <details class="guide" id="g-toilet">
+          <summary>
+            <span class="gc">G07</span><span class="gn">간이 화장실 (단수 시 위생 방어선)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">5분</span><span class="tag warn">물 내리기 금지</span><span class="matchtag" data-for="toilet"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>만드는 법</h5>
+                <ol class="steps">
+                  <li>단수·배관 손상이 확인되면 <b>변기 물을 내리지 않습니다.</b> 역류하면 집 안을 오염시킵니다.</li>
+                  <li>변기 물을 퍼내고 변기 안쪽에 비닐봉지를 두 겹 씌우거나, 양동이에 봉지를 씌워 테이프로 고정합니다.</li>
+                  <li>봉지 바닥에 흡수재를 한 컵 깔아 둡니다 — <b>고양이 모래 · 톱밥 · 마른 흙 · 신문지 조각</b> 순으로 좋습니다.</li>
+                  <li>사용 후 흡수재를 한 컵 덮습니다. 냄새의 원인은 수분과 공기 접촉입니다.</li>
+                  <li>2~3회 사용하면 봉지를 묶어 이중 봉투에 넣고, 집 밖 <b>햇빛 안 드는 곳</b>에 따로 모읍니다. 쓰레기와 섞지 마십시오.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>왜 이것이 1순위인가</h5>
+                <div class="spec">
+                  <div><div class="sk">1인 1일</div><div class="sv">5 회분</div></div>
+                  <div><div class="sk">4인·3일</div><div class="sv">봉지 60 장</div></div>
+                  <div><div class="sk">흡수재</div><div class="sv">3 kg</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">대규모 재난의 2차 피해 1위는 붕괴가 아니라 <b>위생 붕괴로 인한 감염</b>입니다. 설사 질환은 물 소비를 늘려 탈수를 가속시키고, 좁은 대피 공간에서 빠르게 번집니다.</p>
+                <p class="note" style="margin-top:10px">손 씻을 물이 없으면 알코올 손소독제 → 물티슈 → 마른 천 순으로 쓰고, <b>조리 담당자는 반드시</b> 소독 후 음식을 만집니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li>오염 봉지를 <b>실내에 보관하지 마십시오.</b> 여름철 2일이면 감염 위험이 급상승합니다.</li>
+                <li>락스를 직접 분뇨에 붓지 마십시오. 암모니아와 반응해 <b>유독가스(염소가스)</b>가 발생합니다.</li>
+                <li>소각 금지. 분뇨·플라스틱 연소 연기는 호흡기 손상을 일으킵니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G08 응급 지혈 -->
+        <details class="guide" id="g-firstaid">
+          <summary>
+            <span class="gc">G08</span><span class="gn">직접 압박 지혈 · 부목 고정</span>
+            <span class="gmeta"><span class="tag">난이도 중</span><span class="tag">즉시</span><span class="tag bad">지혈대는 최후수단</span><span class="matchtag" data-for="firstaid"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>출혈 — 순서가 생명입니다</h5>
+                <ol class="steps">
+                  <li>깨끗한 천·거즈를 상처에 대고 <b>체중을 실어 세게 누릅니다.</b> 5분간 떼지 않습니다.</li>
+                  <li>피가 배어 나오면 천을 <b>떼지 말고 위에 덧댑니다.</b> 떼면 막히던 응고가 풀립니다.</li>
+                  <li>가능하면 상처를 심장보다 높게 올립니다.</li>
+                  <li>압박으로 멈추지 않는 <b>팔다리의 분출성 출혈</b>에만 지혈대를 씁니다. 상처에서 5~7cm 심장 쪽, 관절은 피해서 폭 5cm 이상의 천으로 감고 막대로 조입니다.</li>
+                  <li>지혈대에 <b>조인 시각</b>을 반드시 적습니다. 이마에 적는 것이 관례입니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>부목 — 움직이지 않게만</h5>
+                <ol class="steps">
+                  <li>나무막대·철사 옷걸이·두꺼운 신문지 말이를 부목으로 씁니다.</li>
+                  <li><b>부러진 곳의 위·아래 관절까지</b> 함께 고정합니다. 뼈를 맞추려 하지 마십시오.</li>
+                  <li>천으로 묶고, 손끝·발끝의 <b>색·온도·감각</b>을 15분마다 확인합니다. 창백하고 차가워지면 즉시 느슨하게.</li>
+                  <li>척추·목 손상이 의심되면 <b>옮기지 않습니다.</b> 추가 위험이 없다면 그 자리에서 보온하며 구조를 기다립니다.</li>
+                </ol>
+                <div class="spec" style="margin-top:14px">
+                  <div><div class="sk">압박 유지</div><div class="sv">5 분</div></div>
+                  <div><div class="sk">지혈대 폭</div><div class="sv">5 cm↑</div></div>
+                  <div><div class="sk">순환 확인</div><div class="sv">15 분</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>지혈대를 풀었다 조였다 반복하지 마십시오.</b> 쌓인 대사산물이 한꺼번에 돌아 쇼크를 일으킵니다. 한 번 조이면 의료진이 풀 때까지 유지합니다.</li>
+                <li>끈·전선처럼 <b>얇은 것으로 조르면</b> 신경과 혈관을 끊습니다. 반드시 넓은 천을 쓰십시오.</li>
+                <li>상처에 소독약을 들이붓거나 박힌 물체를 빼지 마십시오. 출혈이 폭증합니다. 고정만 하고 이송합니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G09 신호 -->
+        <details class="guide" id="g-signal">
+          <summary>
+            <span class="gc">G09</span><span class="gn">구조 신호 (호루라기 · 반사판 · 표식)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">10분</span><span class="tag info">통신 마비 대응</span><span class="matchtag" data-for="signal"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>소리 — 가장 확실한 신호</h5>
+                <ol class="steps">
+                  <li>소리치지 말고 <b>두드리십시오.</b> 목은 몇 분이면 쉬고, 금속·콘크리트 타격음은 더 멀리 갑니다.</li>
+                  <li>규칙을 만드십시오: <b>3회 두드림 → 1분 침묵 → 반복.</b> 3회 반복은 국제적인 구조 요청 신호입니다.</li>
+                  <li>구조대 소리가 들릴 때 집중적으로 두드립니다. 체력을 아끼십시오.</li>
+                </ol>
+                <h5 style="margin-top:16px">빛 — 포일 반사판</h5>
+                <ol class="steps">
+                  <li>골판지에 알루미늄 포일을 반듯하게 붙이고 가운데에 작은 구멍을 냅니다.</li>
+                  <li>구멍으로 목표(헬기·구조대)를 보면서 판을 기울여 <b>반사광을 목표에 겹칩니다.</b></li>
+                  <li>햇빛이 있는 낮에는 수 km까지 보입니다. 밤에는 손전등으로 같은 리듬을 씁니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>표식 — 내가 떠난 뒤를 위해</h5>
+                <ol class="steps">
+                  <li>집을 떠날 때 현관 바깥에 <b>떠난 시각 · 인원 · 목적지 · 연락처</b>를 적어 붙입니다.</li>
+                  <li>구조대가 수색을 반복하지 않도록, 확인이 끝난 집은 그 사실이 보이게 적습니다.</li>
+                  <li>가족 집결지는 <b>집 근처 한 곳 + 동네 밖 한 곳</b> 두 군데를 미리 정합니다. 통신이 끊기면 약속만 남습니다.</li>
+                </ol>
+                <p class="note" style="margin-top:12px">통신 마비 때 휴대폰은 아직 쓸모가 있습니다. 통화는 안 되어도 <b>문자는 늦게라도 전송</b>되는 경우가 많고, 비행기 모드로 배터리를 아끼며 정시에만 켜 보는 전략이 유효합니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li>붕괴 공간에서 <b>소리치며 체력과 산소를 쓰지 마십시오.</b> 먼지를 들이마시면 호흡기가 막힙니다. 천으로 입을 가리고 두드리십시오.</li>
+                <li>헬기 조종사에게 레이저 포인터를 쏘지 마십시오. 시야를 잃게 만들어 구조를 방해합니다.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <!-- G10 단열 -->
+        <details class="guide" id="g-thermal">
+          <summary>
+            <span class="gc">G10</span><span class="gn">난방 없이 체온 지키기 (단열 텐트)</span>
+            <span class="gmeta"><span class="tag">난이도 하</span><span class="tag">30분</span><span class="tag ok">연료 불필요</span><span class="matchtag" data-for="thermal"></span></span>
+          </summary>
+          <div class="gbody">
+            <div class="gcols">
+              <div class="gblock">
+                <h5>집 안에 작은 방을 만드십시오</h5>
+                <ol class="steps">
+                  <li>집 전체를 데우려 하지 말고 <b>가장 작은 방 하나</b>를 고릅니다. 창이 적고 외벽이 적은 방이 좋습니다.</li>
+                  <li>식탁·의자에 담요를 덮어 <b>사람 몸 크기의 텐트</b>를 만듭니다. 공간이 작을수록 체온으로 데워집니다.</li>
+                  <li>바닥에 골판지 → 신문지 → 담요를 깝니다. <b>열은 바닥으로 가장 많이 빠집니다.</b></li>
+                  <li>창문에 골판지를 대고 테이프로 붙이고, 틈새는 수건으로 막습니다. 유리는 가장 큰 열 손실 경로입니다.</li>
+                  <li>알루미늄 포일을 텐트 안쪽 천장에 붙여 복사열을 되돌립니다.</li>
+                  <li>옷은 두꺼운 한 겹보다 <b>얇은 여러 겹</b>. 머리·목·발을 먼저 덮습니다.</li>
+                </ol>
+              </div>
+              <div class="gblock">
+                <h5>효과</h5>
+                <div class="spec">
+                  <div><div class="sk">체감 상승</div><div class="sv">5~10 ℃</div></div>
+                  <div><div class="sk">필요 연료</div><div class="sv">0</div></div>
+                  <div><div class="sk">CO 위험</div><div class="sv">없음</div></div>
+                </div>
+                <p class="note" style="margin-top:12px">성인 한 명은 가만히 있어도 약 100W의 열을 냅니다. 작은 텐트에서는 이 열이 빠져나가지 않아 난방기 없이도 버틸 수 있습니다. <b>두 명 이상이 함께 있으면 두 배가 됩니다.</b></p>
+                <p class="note" style="margin-top:10px">따뜻한 물을 페트병에 담아 수건으로 감싸면 간이 온수팩이 됩니다. 뜨거운 물을 직접 피부에 대면 화상을 입습니다.</p>
+              </div>
+            </div>
+            <div class="danger">
+              <h5>안전 경고</h5>
+              <ul>
+                <li><b>실내에서 숯·가스·장작을 태우지 마십시오.</b> 일산화탄소 중독은 추위보다 훨씬 빠르게 사람을 죽입니다. 매년 반복되는 사망 원인입니다.</li>
+                <li>술은 혈관을 확장시켜 <b>체온을 더 빨리 빼앗습니다.</b> 따뜻해지는 느낌은 착각입니다.</li>
+                <li>젖은 옷은 즉시 갈아입습니다. 젖은 상태의 열 손실은 마른 상태의 25배입니다.</li>
+                <li>영아·고령자는 체온 조절이 약합니다. <b>가장 안쪽, 가장 따뜻한 자리</b>에 두고 자주 확인하십시오.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 04 내 키트 ======================= -->
+  <section class="panel" id="p-kit" role="tabpanel" hidden>
+    <div class="wrap">
+      <div class="sechead">
+        <div class="code">§ 04</div>
+        <h2>내 키트 조립</h2>
+        <p class="sub">완성형 세트는 안 쓰는 물건까지 따라옵니다. <b>내 상황에 필요한 것만</b> 담아 가져가십시오.</p>
+      </div>
+
+      <div class="label" style="margin-bottom:11px">상황별 소포장 세트 — 한 번에 담기</div>
+      <div class="kitsets" id="kitsets"></div>
+
+      <div class="kitwrap">
+        <div id="itemPanel">
+          <div style="display:flex;gap:9px;align-items:center;margin-bottom:11px;flex-wrap:wrap" class="noprint">
+            <div class="label" style="margin-right:auto">개별 품목 · <span id="itemCount">0</span>종</div>
+            <div class="chips" id="itemFilter"></div>
+          </div>
+          <div class="tblscroll">
+            <table class="itemtable">
+              <thead><tr><th>품목</th><th>용도</th><th style="width:88px">직접 제작</th><th style="width:92px;text-align:right">예상가</th><th style="width:74px"></th></tr></thead>
+              <tbody id="itemRows"></tbody>
+            </table>
+          </div>
+          <p class="note" style="margin-top:12px">예상가는 2026년 11월 온라인 기준 참고값입니다. 이 페이지는 해커톤 시연용이라 <b>결제 기능이 없습니다.</b> 담은 목록은 인쇄하거나 공식 판매처 검색으로 넘어가 구매하십시오.</p>
+        </div>
+
+        <aside>
+          <div class="cart">
+            <div class="ch"><b>내 키트</b><span class="tag" id="cartN">0 품목</span></div>
+            <ul class="cartlist" id="cartList"></ul>
+            <div class="carttotal"><span class="label">예상 합계</span><span class="big" id="cartSum">0원</span></div>
+            <div class="cartfoot noprint">
+              <button class="btn primary" id="cartPrint">구매 목록 인쇄</button>
+              <a class="btn" id="cartNaver" href="https://search.shopping.naver.com/search/all?query=%EB%B9%84%EC%83%81%EB%8C%80%ED%95%98%EA%B0%80%EB%B0%A9" target="_blank" rel="noopener">네이버쇼핑에서 찾기</a>
+              <a class="btn" id="cartCoupang" href="https://www.coupang.com/np/search?q=%EB%B9%84%EC%83%81%EB%8C%80%ED%95%98%EA%B0%80%EB%B0%A9" target="_blank" rel="noopener">쿠팡에서 찾기</a>
+              <button class="btn ghost" id="cartClear">비우기</button>
+            </div>
+          </div>
+          <div class="card pad" style="margin-top:14px">
+            <div class="label">공동구매</div>
+            <p class="note" style="margin-top:8px">같은 층·같은 동 이웃과 함께 담으면 흡수재·생수·건전지 같은 <b>부피 큰 품목의 단가</b>가 내려갑니다. 그리고 재난 때 가장 먼저 도와줄 사람은 소방서가 아니라 옆집입니다.</p>
+            <button class="btn sm ghost noprint" id="shareKit" style="margin-top:11px">내 키트 구성 복사</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 05 오프라인 대피 카드 ======================= -->
+  <section class="panel" id="p-card" role="tabpanel" hidden>
+    <div class="wrap">
+      <div class="sechead">
+        <div class="code">§ 05</div>
+        <h2>오프라인 꾸러미</h2>
+        <p class="sub">전기와 통신이 끊기면 이 포털도 열리지 않습니다. 그때 남는 건 <b>PDF 파일과 종이 한 장</b>입니다.</p>
+      </div>
+
+      <div class="pdfmenu noprint">
+        <button class="pdfcard" data-pdf="all">
+          <span class="pn">전체 매뉴얼</span>
+          <span class="pd">행동수칙 5종 + 제작 가이드 10종 + 키트 목록 + 대피 카드. 약 12~16쪽.</span>
+          <span class="pa">PDF로 저장 →</span>
+        </button>
+        <button class="pdfcard" data-pdf="action">
+          <span class="pn">행동수칙 1장</span>
+          <span class="pd">지금 고른 재난의 지금 / 5분 후 / 1시간 후 카드와 금지 사항. 1~2쪽.</span>
+          <span class="pa">PDF로 저장 →</span>
+        </button>
+        <button class="pdfcard" data-pdf="guides">
+          <span class="pn">제작 가이드 10종</span>
+          <span class="pd">간이 소화기 · 자전거 발전기 · 정수기 등 집 재료 제작법 전체. 약 10쪽.</span>
+          <span class="pa">PDF로 저장 →</span>
+        </button>
+        <button class="pdfcard" data-pdf="kit">
+          <span class="pn">키트 구매 목록</span>
+          <span class="pd">담아 둔 품목과 예상 합계. 오프라인 매장에 들고 갈 장보기 목록.</span>
+          <span class="pa">PDF로 저장 →</span>
+        </button>
+        <button class="pdfcard hl" data-pdf="card">
+          <span class="pn">비상 대피 카드</span>
+          <span class="pd">A4 한 장. 대피소 · 경로 · 집결지 · 연락처 + 핵심 수칙. 현관과 키트에 각각.</span>
+          <span class="pa">PDF로 저장 →</span>
+        </button>
+      </div>
+      <p class="note noprint" style="margin:-6px 0 26px">
+        버튼을 누르면 인쇄 창이 열립니다. <b>대상(프린터)을 "PDF로 저장"</b>으로 바꾸면 파일로 떨어집니다.
+        휴대폰에서는 공유 → 인쇄 → PDF로 저장. 저장한 파일은 전기·통신 없이도 열립니다.
+      </p>
+
+      <div class="cardwrap">
+        <div class="card pad noprint">
+          <div class="label" style="margin-bottom:13px">카드에 들어갈 내용</div>
+          <div class="form">
+            <div class="field">
+              <label for="f-addr">우리 집 주소</label>
+              <input id="f-addr" placeholder="예) ○○시 ○○구 ○○로 12, 304호">
+            </div>
+            <div class="field">
+              <label for="f-shelter">지정 대피소 이름과 주소</label>
+              <input id="f-shelter" placeholder="예) ○○초등학교 체육관 / ○○로 45">
+              <span class="hint">국민재난안전포털 → 민방위대피소 조회에서 집 주소로 검색해 적어 두십시오. 네트워크가 살아 있는 지금만 할 수 있는 일입니다. <a href="https://www.safekorea.go.kr" target="_blank" rel="noopener">safekorea.go.kr</a></span>
+            </div>
+            <div class="field">
+              <label for="f-route">걸어가는 경로 (3단계)</label>
+              <textarea id="f-route" rows="3" placeholder="예) 현관 → 비상계단으로 1층 → 큰길 좌회전 300m → ○○초등학교 정문"></textarea>
+              <span class="hint">엘리베이터는 없다고 가정하고, 밤에 걸어서 갈 수 있는 길로 적습니다.</span>
+            </div>
+            <div class="field">
+              <label for="f-meet">가족 집결지 (근거리 / 원거리)</label>
+              <input id="f-meet" placeholder="예) 1차: 아파트 놀이터 / 2차: ○○역 2번 출구">
+            </div>
+            <div class="field">
+              <label for="f-contact">비상 연락처 (가족·친척)</label>
+              <input id="f-contact" placeholder="예) 어머니 010-0000-0000 / 이모 010-0000-0000">
+            </div>
+            <div class="field">
+              <label for="f-med">지병 · 상비약 · 특이사항</label>
+              <input id="f-med" placeholder="예) 천식(흡입기), 반려견 1마리, 고령자 1인">
+            </div>
+            <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:4px">
+              <button class="btn primary" id="printCard">A4 PDF로 저장</button>
+              <button class="btn ghost" id="demoCard">예시 채우기</button>
+            </div>
+            <p class="note">입력값은 이 브라우저에만 저장되고 어디에도 전송되지 않습니다. 인쇄한 뒤 키트 바깥 주머니에 넣고, 한 장은 현관에 붙여 두십시오.</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="label noprint" style="margin-bottom:11px">A4 미리보기 — 인쇄하면 이 그대로 나옵니다</div>
+          <div class="sheet" id="sheet"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fg">
+      <div>
+        <h5>긴급 연락</h5>
+        <ul>
+          <li>119 — 화재 · 구조 · 구급</li>
+          <li>112 — 범죄 신고</li>
+          <li>1339 — 질병관리청 상담</li>
+          <li>131 — 기상 정보</li>
+        </ul>
+      </div>
+      <div>
+        <h5>공식 정보</h5>
+        <ul>
+          <li><a href="https://www.safekorea.go.kr" target="_blank" rel="noopener">국민재난안전포털</a> — 대피소 조회</li>
+          <li>안전디딤돌 앱 — 재난문자 수신</li>
+          <li><a href="https://www.redcross.or.kr" target="_blank" rel="noopener">대한적십자사</a> — 응급처치 교육</li>
+        </ul>
+      </div>
+      <div>
+        <h5>이 포털의 원칙</h5>
+        <ul>
+          <li>인터넷 없이도 열립니다</li>
+          <li>서버에 아무것도 보내지 않습니다</li>
+          <li>모든 화면이 PDF로 떨어집니다</li>
+        </ul>
+      </div>
+    </div>
+    <p class="disc">
+      <b>면책 및 안내</b> — 이 페이지는 해커톤 시연을 위한 교육용 자료입니다. 품목 예상가는 참고값이며 결제 기능은 없습니다.
+      실제 재난 시에는 119 신고와 정식 소화기·공식 재난 지침(국민재난안전포털·재난문자)이 언제나 우선합니다.
+      여기의 자가 제작물은 정식 장비의 대체품이 아니라 <b>아무것도 없을 때의 차선책</b>이며, 화재·전기·의료 항목은 각 안전 경고를 반드시 함께 읽어야 합니다.
+      수칙은 소방청·행정안전부·대한적십자사의 공개 지침과 일반 응급처치 원칙을 바탕으로 정리했습니다.
+    </p>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
