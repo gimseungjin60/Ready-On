@@ -228,3 +228,71 @@ body::after {
 /* 테스트 화면: 행성이 글자를 덮지 않도록 더 오른쪽으로 */
 .test-section .planet { right: -32vw; opacity: .8; }
 .test-intro-side { position: relative; padding: 24px; border-radius: 16px; background: rgba(6, 5, 9, .55); border: 1px solid var(--glass-line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+
+/* ---------- 가상 API 데이터 표시 ---------- */
+.demo-chip { display: inline-block; padding: 1px 6px; border-radius: 4px; background: rgba(94, 234, 212, .15); color: #5EEAD4; font-family: var(--font-display); font-size: 10px; font-weight: 800; letter-spacing: .1em; vertical-align: 1px; }
+/* 경보 단계 */
+.lv { display: inline-block; margin-right: 8px; padding: 2px 8px; border-radius: 999px; font-style: normal; font-size: 11px; font-weight: 800; vertical-align: 2px; }
+.lv-crit { background: #FF3B30; color: #fff; }
+.lv-warn { background: var(--mars); color: #fff; }
+.lv-caution { background: #FFB347; color: #1A0F08; }
+.lv-info { background: rgba(94, 234, 212, .2); color: #5EEAD4; }
+.lv-done { background: rgba(255, 255, 255, .12); color: var(--txt-2); }
+/* 시설 상태 */
+.st { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-style: normal; font-size: 11px; font-weight: 800; vertical-align: 1px; }
+.st-open { background: rgba(94, 234, 212, .16); color: #5EEAD4; }
+.st-busy { background: rgba(255, 179, 71, .18); color: #FFB347; }
+.st-full { background: rgba(255, 59, 48, .2); color: #FF7A70; }
+.st-check { background: rgba(255, 255, 255, .1); color: var(--txt-2); }
+
+/* 지도 카드 안 상황판 */
+.alert-board { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .14); }
+.ab-head { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.ab-dot { width: 8px; height: 8px; border-radius: 50%; background: #FF3B30; box-shadow: 0 0 10px #FF3B30; animation: blink 1.2s steps(2, start) infinite; }
+.alert-board ul { display: grid; gap: 4px; max-height: 210px; overflow-y: auto; }
+.ab-item { display: flex; align-items: center; width: 100%; padding: 6px 8px; border-radius: 8px; text-align: left; font-size: 13px; color: #E8E2DC; transition: background-color .2s; }
+.ab-item:hover { background: rgba(255, 255, 255, .08); }
+.ab-item .lv { flex: none; }
+.loc-status.is-alert { background: rgba(224, 64, 26, .14); border: 1px solid rgba(255, 106, 61, .35); }
+.loc-status.is-alert small { color: var(--txt-2); }
+
+/* 지도 위 재난 표시 */
+.hz-label { width: auto !important; height: auto !important; }
+.hz-label span { display: inline-block; transform: translate(-50%, -50%); white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: rgba(12, 10, 8, .8); color: #fff; font-size: 12px; font-weight: 800; border: 1px solid rgba(255, 138, 92, .6); }
+.hz-solar span { border-color: rgba(255, 220, 120, .7); color: #FFE29A; }
+.hz-pulse i { position: absolute; inset: 5px; border-radius: 50%; background: #FF3B30; box-shadow: 0 0 0 0 rgba(255, 59, 48, .7); animation: hzpulse 1.6s infinite; }
+.hz-pulse.hzp-caution i { background: #FFB347; }
+.hz-pulse.hzp-info i { background: #5EEAD4; }
+@keyframes hzpulse { 70% { box-shadow: 0 0 0 16px rgba(255, 59, 48, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); } }
+.hz-ring { animation: ringfade 2.4s ease-in-out infinite alternate; }
+@keyframes ringfade { to { opacity: .35; } }
+path.hz-dust { animation: dustflow 3s ease-in-out infinite alternate; }
+@keyframes dustflow { to { fill-opacity: .45; } }
+.leaflet-popup-content .lv { margin: 0 0 0 4px; }
+
+/* 행동수칙: 상황 카드 */
+.scn { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+.scn-loading { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; color: var(--txt-2); font-size: 14px; }
+.scn-main, .scn-metrics, .scn-time { padding: 18px; border-radius: var(--radius-lg); background: var(--glass); border: 1px solid var(--glass-line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.scn-main { border-color: rgba(255, 106, 61, .45); background: linear-gradient(160deg, rgba(224, 64, 26, .18), rgba(255, 255, 255, .03)); display: grid; gap: 8px; align-content: start; }
+.scn-head { font-size: 12px; color: var(--txt-2); }
+.scn-main h3 { font-size: 20px; font-weight: 800; letter-spacing: -.02em; color: #fff; }
+.scn-area { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--txt-2); }
+.scn-area svg { width: 14px; height: 14px; color: var(--mars); }
+.scn-msg { font-size: 15px; line-height: 1.6; color: var(--txt); }
+.scn-do { font-size: 14px; color: var(--txt); padding: 8px 10px; border-radius: 8px; background: rgba(0, 0, 0, .25); }
+.scn-do b { color: #5EEAD4; margin-right: 6px; }
+.scn-main .btn { justify-self: start; margin-top: 4px; }
+.scn-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; align-content: start; }
+.scn-metrics dt { font-size: 12px; color: var(--txt-2); }
+.scn-metrics dd { margin: 2px 0 0; font-family: var(--font-display); font-size: 17px; font-weight: 800; color: #fff; }
+.scn-time { display: grid; gap: 10px; align-content: start; counter-reset: none; }
+.scn-time li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.5; color: var(--txt); }
+.scn-time li::before { content: ''; position: absolute; left: 0; top: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--mars); box-shadow: 0 0 8px var(--mars); }
+.scn-time li b { display: block; font-family: var(--font-display); font-size: 12px; color: var(--mars); }
+@media (max-width: 1080px) { .scn { grid-template-columns: 1fr 1fr; } .scn-main { grid-column: 1 / -1; } }
+@media (max-width: 760px) { .scn { grid-template-columns: 1fr; } .scn-metrics { grid-template-columns: 1fr 1fr; } }
+/* 상태판 최신 경보 */
+.hud-alert { margin-top: 8px; padding: 6px 8px; border-radius: 6px; background: rgba(224, 64, 26, .25); font-size: 12px; color: #fff; }
+.hud-alert:empty { display: none; }
+.hud-alert b { color: #FF8A5C; margin-right: 4px; }

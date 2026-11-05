@@ -232,6 +232,7 @@
     panel.setAttribute('aria-labelledby', 'gtab-' + active);
     panel.innerHTML = `
       <p class="guide-intro"><span class="guide-en">${d.en}</span>${d.intro}</p>
+      <section class="scn" id="scn" aria-live="polite"><p class="scn-loading"><span class="spinner" aria-hidden="true"></span>기지 관제에서 상황을 받아오고 있어요… (DEMO)</p></section>
       <div class="bot-toggle" role="group" aria-label="주변 구조 로봇·AI 보조 도우미">
         <span><i data-lucide="bot" aria-hidden="true"></i>주변 구조 로봇·AI 도우미</span>
         <button type="button" data-bot="1" aria-pressed="${hasBot}" class="${hasBot ? 'is-on' : ''}">있을 때</button>
@@ -239,6 +240,35 @@
       </div>
       ${stepperHTML(d)}
       ${stageHTML(d)}`;
+    RO.icons();
+    renderScenario();
+  }
+
+  // 재난별 상황 카드: 가상 API(js/mars-api.js)에서 진행 중 경보 + 수치 + 진행 순서를 받아옴
+  const LV = { 심각: 'crit', 경보: 'warn', 주의: 'caution', 정보: 'info', 해제: 'done' };
+  let scnNo = 0;
+  const scnCache = {};
+  async function renderScenario() {
+    const no = ++scnNo, hz = active;
+    // 같은 재난 안에서 단계·로봇 전환만 바뀐 경우엔 받아 둔 내용을 바로 보여 줌
+    if (scnCache[hz]) { document.getElementById('scn').innerHTML = scnCache[hz]; RO.icons(); return; }
+    const { data, fetchedAt } = await RO.marsApi.getScenario(hz);
+    const el = document.getElementById('scn');
+    if (!el || no !== scnNo) return;
+    const a = data.alert;
+    el.innerHTML = `
+      <div class="scn-main">
+        <p class="scn-head"><b class="demo-chip">DEMO</b> 기지 관제 · ${fetchedAt}</p>
+        ${a ? `<h3><em class="lv lv-${LV[a.level]}">${a.level}</em>${a.title}</h3>
+          <p class="scn-area"><i data-lucide="map-pin" aria-hidden="true"></i>${a.area} · 발령 ${a.issued}</p>
+          <p class="scn-msg">${a.message}</p>
+          <p class="scn-do"><b>지금 할 일</b> ${a.action}</p>`
+        : `<h3><em class="lv lv-info">예시</em>${DISASTERS[hz].label} 상황 예시</h3><p class="scn-msg">지금 진행 중인 경보는 없어요. 아래는 이 재난이 일어났을 때의 예시 상황이에요.</p>`}
+        <button type="button" class="btn btn-outline btn-sm" data-onmap="${hz}"><i data-lucide="map" aria-hidden="true"></i>정착지 지도에서 보기</button>
+      </div>
+      <dl class="scn-metrics">${data.metrics.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      <ol class="scn-time">${data.timeline.map((t) => { const [h, ...r] = t.split(' '); return `<li><b>${h}</b>${r.join(' ')}</li>`; }).join('')}</ol>`;
+    scnCache[hz] = el.innerHTML;
     RO.icons();
   }
 
@@ -265,6 +295,8 @@
       if (b) select(b.dataset.dis);
     });
     document.getElementById('guidePanel').addEventListener('click', (e) => {
+      const om = e.target.closest('[data-onmap]');
+      if (om) { RO.emit('setHazards', [om.dataset.onmap]); RO.go('shelter'); return; }
       const t = e.target.closest('[data-bot]');
       if (t) { hasBot = t.dataset.bot === '1'; render(); return; }
       const b = e.target.closest('[data-stage]');

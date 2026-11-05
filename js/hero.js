@@ -3,7 +3,31 @@
 (function (RO) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // 거주구 상태판: 가상 API(js/mars-api.js)에서 2초마다 받아옴
+  function hud() {
+    const $ = (id) => document.getElementById(id);
+    if (!$('hudDelay') || !RO.marsApi) return;
+    const tick = async () => {
+      if (!document.getElementById('top').classList.contains('is-active') && $('hudSol').textContent !== '…') return;
+      const [{ data: e }, { data: alerts }] = await Promise.all([RO.marsApi.getEnvironment(), RO.marsApi.getAlerts()]);
+      $('hudSol').textContent = e.clock;
+      $('hudDelay').textContent = `${Math.floor(e.delaySec / 60)}:${String(e.delaySec % 60).padStart(2, '0')}`;
+      $('hudPa').textContent = e.pressurePa + ' Pa';
+      $('hudTemp').textContent = e.tempC + '°C';
+      $('hudO2').textContent = e.o2.toFixed(1);
+      $('hudTau').textContent = e.tau.toFixed(1);
+      $('hudPower').style.width = e.solarPower + '%';
+      $('hudPowerTxt').textContent = e.solarPower + '%';
+      const top = alerts.find((a) => a.level === '심각') || alerts.find((a) => a.level === '경보');
+      if (top) $('hudAlert').innerHTML = `<b>${top.level}</b> ${top.title}`;
+    };
+    $('hudSol').textContent = '…';
+    tick();
+    setInterval(tick, 2000);
+  }
+
   function init() {
+    hud();
     const hero = document.querySelector('.hero');
     const canvas = document.getElementById('heroFx');
     if (!hero || !canvas || reduce) return;
@@ -79,22 +103,6 @@
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : hero.classList.contains('is-active') && start()));
     if (hero.classList.contains('is-active')) { resize(); start(); }
 
-    // 거주구 상태 HUD (시연용 가상 수치): 신호 지연 카운트, 산소·먼지·발전량이 조금씩 변함
-    let delay = 12 * 60 + 41, tau = 4.2, power = 38;
-    const $ = (id) => document.getElementById(id);
-    setInterval(() => {
-      if (!running) return;
-      delay = Math.max(180, delay + (Math.random() < 0.5 ? -1 : 1));
-      tau = Math.min(6.5, Math.max(3.4, tau + (Math.random() - 0.45) * 0.08));
-      power = Math.round(Math.max(18, Math.min(45, 62 - tau * 6 + (Math.random() - 0.5) * 2)));
-      if ($('hudDelay')) {
-        $('hudDelay').textContent = `${Math.floor(delay / 60)}:${String(delay % 60).padStart(2, '0')}`;
-        $('hudTau').textContent = tau.toFixed(1);
-        $('hudO2').textContent = (20.8 + Math.random() * 0.2).toFixed(1);
-        $('hudPower').style.width = power + '%';
-        $('hudPowerTxt').textContent = power + '%';
-      }
-    }, 1000);
   }
 
   RO.hero = { init };

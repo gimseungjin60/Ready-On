@@ -70,13 +70,14 @@
         <dl>
           <div><dt>화성 시각</dt><dd id="hudSol">SOL 1,284 · 14:32</dd></div>
           <div><dt>지구 신호 지연</dt><dd><b id="hudDelay">12:41</b> 편도</dd></div>
-          <div><dt>바깥 기압</dt><dd>610 Pa <small>지구의 0.6%</small></dd></div>
+          <div><dt>바깥 기압</dt><dd><span id="hudPa">610 Pa</span> <small>지구의 0.6%</small></dd></div>
           <div><dt>바깥 기온</dt><dd id="hudTemp">-63°C</dd></div>
           <div><dt>거주구 산소</dt><dd><b id="hudO2">20.9</b>%</dd></div>
           <div class="hud-warn"><dt>먼지 농도 τ</dt><dd><b id="hudTau">4.2</b> <small>폭풍 경보</small></dd></div>
         </dl>
         <p class="hud-bar" aria-hidden="true"><span id="hudPower"></span></p>
-        <p class="hud-foot">태양광 발전 <b id="hudPowerTxt">38%</b> · 시연용 가상 수치</p>
+        <p class="hud-foot">태양광 발전 <b id="hudPowerTxt">38%</b> · <b class="demo-chip">DEMO</b> 가상 관제 데이터</p>
+        <p class="hud-alert" id="hudAlert"></p>
       </aside>
       <div class="container hero-inner">
         <p class="hero-status"><span class="dot" aria-hidden="true"></span><span class="hero-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span>지구 통신 두절 · <b>전역 먼지폭풍 접근 중</b></p>
@@ -212,6 +213,7 @@
         <p class="eyebrow eyebrow-red">GALE 정착지 지도 · 맞춤 키트</p>
         <h2 class="map-title-h" id="shelterTitle">KNOW YOUR<br>WAY <em>OUT.</em></h2>
         <p>거주구를 고르고 재난만 선택하세요. 정착지와의 거리에 맞춰 필요한 물품과 수량을 계산해요.</p>
+        <div class="alert-board" id="alertBoard" aria-live="polite"><p class="ab-head">기지 관제 상황판 불러오는 중…</p></div>
       </div>
 
       <aside class="map-panel" aria-label="거주구 위치와 맞춤 키트">
@@ -469,6 +471,7 @@
   <script src="js/disaster.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/test.js"></script>
+  <script src="js/mars-api.js"></script>
   <script src="js/shelter.js"></script>
   <script src="js/kitcalc.js"></script>
   <script src="js/recipes.js"></script>

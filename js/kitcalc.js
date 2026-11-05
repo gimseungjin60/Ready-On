@@ -243,6 +243,8 @@
     });
     $('kitToCart').addEventListener('click', addToCart);
     RO.on('location', (loc) => { state.loc = loc; compute(); });
+    // 상황판·행동수칙에서 특정 재난을 고르면 그 재난으로 전환
+    RO.on('setHazards', (hz) => { state.hazards = hz; state.buy = {}; save(); renderHazards(); RO.emit('hazards', state.hazards); compute(); });
     RO.emit('hazards', state.hazards);
   }
 

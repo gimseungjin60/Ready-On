@@ -1,4 +1,4 @@
-/* BLACK-OUT : MARS — 정착지 지도 (Leaflet, 좌표계 CRS.Simple + NASA 궤도 사진)
+/* BLACK-OUT : MARS — 정착지 지도 (시설·상태·재난 상황은 가상 API js/mars-api.js에서 받음) (Leaflet, 좌표계 CRS.Simple + NASA 궤도 사진)
    - 지도 배경: NASA 마스 오디세이 THEMIS 게일 크레이터 궤도 사진(퍼블릭 도메인). 정착지·시설·축척은 시연용 가상 설정입니다.
    - 위치 지정: 거주 구역 선택 또는 지도 클릭·핀 끌기
    - 비축 기간(서비스 계획 가정): 정착지 중심에서 멀수록 길게 — 3km 안 3솔 / 10km 안 7솔 / 그 밖 14솔
@@ -23,33 +23,10 @@
   };
   const typesFor = (hz) => (hz.includes('all') ? Object.keys(TYPES) : [...new Set(hz.flatMap((h) => TYPES_FOR[h] || []))]);
 
-  // 가상 시설 (x, y는 사진 기준 0~1 비율)
-  const FACILITIES = [
-    { id: 'p1', type: 'pressure', name: '중앙 돔 비상 대피 구역 P-1', x: 0.4567, y: 0.6543 },
-    { id: 'p2', type: 'pressure', name: '서쪽 돔 비상 대피 구역 P-2', x: 0.4145, y: 0.6256 },
-    { id: 'p3', type: 'pressure', name: '남부 돔 비상 대피 구역 P-3', x: 0.4811, y: 0.7031 },
-    { id: 's1', type: 'shield', name: '지하 방사선 대피소 S-1 (암반 8m)', x: 0.4678, y: 0.6083 },
-    { id: 's2', type: 'shield', name: '레골리스 방사선 벙커 S-2', x: 0.4012, y: 0.6772 },
-    { id: 'r1', type: 'robot', name: '구조 로봇 R-1 (대기 중)', x: 0.4411, y: 0.6428 },
-    { id: 'r2', type: 'robot', name: '구조 로봇 R-2 (대기 중)', x: 0.3834, y: 0.6169 },
-    { id: 'r3', type: 'robot', name: '구조 로봇 R-3 (충전 중)', x: 0.5033, y: 0.6944 },
-    { id: 'h1', type: 'people', name: '이웃 거주민 HAB-03 (6명)', x: 0.4722, y: 0.6428 },
-    { id: 'h2', type: 'people', name: '이웃 거주민 HAB-11 (4명)', x: 0.4167, y: 0.6657 },
-    { id: 'h3', type: 'people', name: '연구팀 거주민 HAB-19 (9명)', x: 0.4944, y: 0.7231 },
-    { id: 'h4', type: 'people', name: '의료진 거주구 HAB-05 (3명)', x: 0.4633, y: 0.6715 },
-    { id: 'v1', type: 'rover', name: '대피 로버 차고 V-1 (6인승 2대)', x: 0.521, y: 0.637 },
-    { id: 'v2', type: 'rover', name: '대피 로버 정류장 V-2 (4인승)', x: 0.4278, y: 0.7117 },
-    { id: 'v3', type: 'rover', name: '장거리 대피 로버 V-3 (8인승)', x: 0.561, y: 0.7461 }
-  ];
-
-  // 거주 구역 (기능 명세의 거주 형태). 비축 기간은 정착지 중심과의 거리로 정함
-  const ZONES = [
-    { id: 'HAB-07', name: '돔 도시 중앙 HAB-07', x: 0.4522, y: 0.6629 },
-    { id: 'HAB-12', name: '지하 거주 구역 HAB-12', x: 0.4722, y: 0.5969 },
-    { id: 'HAB-21', name: '개인 거주 모듈 HAB-21', x: 0.5499, y: 0.7748 },
-    { id: 'RV-25', name: '이동형 로버 정류장 RV-25', x: 0.3168, y: 0.8035 },
-    { id: 'OUT-30', name: '외곽 연구 기지 OUT-30', x: 0.1392, y: 0.373 }
-  ];
+  // 시설·거주 구역은 가상 API(js/mars-api.js)에서 받아옵니다
+  const FACILITIES = RO.marsApi.FACILITIES;
+  const ZONES = RO.marsApi.ZONES;
+  const LEVEL_KEY = { 심각: 'crit', 경보: 'warn', 주의: 'caution', 정보: 'info', 해제: 'done' };
 
   const PLAN = [
     { maxKm: 3, days: 3, label: '정착지 중심 기준', reason: '정착지 중심 3km 안이라 보급·구조가 가까운 곳으로 보고 3솔 기준을 적용했어요.' },
@@ -62,6 +39,7 @@
   const fmtKm = (km) => (km < 1 ? Math.round(km * 1000) + 'm' : km.toFixed(1) + 'km');
   const minutes = (km, kmh) => { const m = Math.round((km / kmh) * 60); return m < 60 ? `${m}분` : `${Math.floor(m / 60)}시간 ${m % 60}분`; };
 
+  let hzLayer, hazards = ['all'], status = {}, alertList = [], timer = null;
   let map, layer, pinMarker, H = Math.round((W * 1700) / 2200), kmPerUnit = MAP.kmWidth / W;
   let loc = null, shelterType = 'pressure', allowed = Object.keys(TYPES), results = [], selected = null;
   const toLatLng = (x, y) => [(1 - y) * H, x * W];
@@ -111,6 +89,7 @@
       // 정착지 중심 표시
       L.circle(toLatLng(CORE.x, CORE.y), { radius: 3 / kmPerUnit, color: '#E0401A', weight: 1, dashArray: '4 6', fill: false, interactive: false }).addTo(map);
       L.circle(toLatLng(CORE.x, CORE.y), { radius: 10 / kmPerUnit, color: '#E0401A', weight: 1, dashArray: '2 8', opacity: 0.6, fill: false, interactive: false }).addTo(map);
+      hzLayer = L.layerGroup().addTo(map);
       layer = L.layerGroup().addTo(map);
       map.on('click', (e) => setLocation({ lat: e.latlng.lat, lng: e.latlng.lng, label: '지도에서 고른 위치', source: 'map' }));
     }
@@ -132,8 +111,8 @@
         <button class="sh-main" data-focus="${s.id}" aria-label="${s.name} 지도에서 보기">
           <span class="sh-no">${i + 1}</span>
           <span class="sh-text">
-            <span class="sh-name">${s.name}</span>
-            <span class="sh-addr">${loc.orbit ? '궤도에서는 셔틀로 이동해야 해요' : `우주복 도보 약 ${minutes(s.km, 3)} · 로버 약 ${minutes(s.km, 15)}`}</span>
+            <span class="sh-name">${s.name}${s.status ? ` <em class="st st-${s.status.key}">${s.status.label}</em>` : ''}</span>
+            <span class="sh-addr">${s.status ? s.status.note + ' · ' : ''}${loc.orbit ? '궤도에서는 셔틀로 이동해야 해요' : `우주복 도보 약 ${minutes(s.km, 3)}`}</span>
           </span>
           <span class="sh-dist">${loc.orbit ? '-' : fmtKm(s.km)}</span>
         </button>
@@ -151,7 +130,7 @@
     const bounds = loc && !loc.orbit ? [[loc.lat, loc.lng]] : [];
     results.forEach((s, i) => {
       const m = L.marker(toLatLng(s.x, s.y), { icon: pin(`<span>${i + 1}</span>`, 'pin-real'), title: s.name, keyboard: true }).addTo(layer);
-      m.bindPopup(`<b>${s.name}</b><br>${TYPES[s.type].name}${loc.orbit ? '' : ` · 직선 ${fmtKm(s.km)}`}<br><small>시연용 가상 시설 · 실제 개방 여부는 기지 안내 확인</small>`);
+      m.bindPopup(`<b>${s.name}</b><br>${TYPES[s.type].name}${loc.orbit ? '' : ` · 직선 ${fmtKm(s.km)}`}${s.status ? `<br><b class="st st-${s.status.key}">${s.status.label}</b> ${s.status.note}` : ''}<br><small>DEMO 데이터 · ${statusAt}</small>`);
       m.on('click', () => select(s.id, false));
       s._m = m;
       bounds.push(toLatLng(s.x, s.y));
@@ -168,18 +147,81 @@
     if (!fromList) document.querySelector(`.sh-item[data-id="${id}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
-  function loadFacilities() {
+  let statusAt = '';
+  let reqNo = 0;
+  async function loadFacilities() {
     if (!loc) return;
-    results = FACILITIES.filter((f) => f.type === shelterType).map((f) => {
+    const no = ++reqNo;
+    setStatus('shelterStatus', 'loading', '<span class="spinner" aria-hidden="true"></span>기지 관제에서 시설 상태를 받아오고 있어요… (DEMO)');
+    const res = await RO.marsApi.getFacilities();
+    if (no !== reqNo) return; // 더 최근 요청이 있으면 무시
+    statusAt = res.fetchedAt;
+    res.data.forEach((f) => { status[f.id] = f.status; });
+    results = res.data.filter((f) => f.type === shelterType).map((f) => {
       const ll = toLatLng(f.x, f.y);
       return { ...f, km: loc.orbit ? 0 : dist(loc, { lat: ll[0], lng: ll[1] }) };
-    }).sort((a, b) => a.km - b.km);
+    }).sort((a, b) => (b.status.key === 'open') - (a.status.key === 'open') || a.km - b.km); // 이용 가능한 곳 먼저, 그다음 가까운 곳
     selected = null;
     draw();
     $('shelterPrint').disabled = !results.length;
+    const ok = results.filter((r) => r.status.key === 'open').length;
     setStatus('shelterStatus', results.length ? 'ok' : 'empty', results.length
-      ? `<i data-lucide="${TYPES[shelterType].icon}" aria-hidden="true"></i><span>가까운 ${TYPES[shelterType].name} ${results.length}곳<br><small>직선거리 순 · 시연용 가상 시설 · 지도에 있어도 지금 열려 있다는 뜻은 아니에요</small></span>`
+      ? `<i data-lucide="${TYPES[shelterType].icon}" aria-hidden="true"></i><span>${TYPES[shelterType].name} ${results.length}곳 · 바로 이용 가능 ${ok}곳<br><small><b class="demo-chip">DEMO</b> 가상 관제 데이터 · ${res.fetchedAt} 기준 · 이용 가능한 곳·가까운 곳 순</small></span>`
       : `<i data-lucide="search-x" aria-hidden="true"></i>${TYPES[shelterType].name} 자료가 없어요.`);
+  }
+
+  /* ---------- 재난 상황: 지도 위 표시 + 상황판 ---------- */
+  const xy = (o) => toLatLng(o.x, o.y);
+  const active = (hz) => hazards.includes('all') || hazards.includes(hz);
+  async function drawIncidents() {
+    if (!map || !hzLayer) return;
+    const { data } = await RO.marsApi.getIncidents();
+    hzLayer.clearLayers();
+    alertList = data.alerts;
+    if (active('dust')) {
+      const fx = data.dustFrontX;
+      const pts = [];
+      for (let i = 0; i <= 24; i++) { const y = i / 24; pts.push(toLatLng(fx + Math.sin(i * 1.3) * 0.012, y)); }
+      L.polygon([toLatLng(-0.2, 0), ...pts, toLatLng(-0.2, 1)], { stroke: false, fillColor: '#C2410C', fillOpacity: 0.32, interactive: false, className: 'hz-dust' }).addTo(hzLayer);
+      L.polyline(pts, { color: '#FF8A5C', weight: 2, dashArray: '6 6', interactive: false }).addTo(hzLayer);
+      L.marker(toLatLng(fx, 0.5), { icon: L.divIcon({ className: 'hz-label', html: '<span>먼지 폭풍 전선 →</span>' }), interactive: false }).addTo(hzLayer);
+    }
+    if (active('quake')) {
+      [2, 5, 9].forEach((r, i) => L.circle(xy(data.quake), { radius: r / kmPerUnit, color: '#FFB347', weight: 1.5, opacity: 0.8 - i * 0.2, fill: i === 0, fillOpacity: 0.12, interactive: false, className: 'hz-ring' }).addTo(hzLayer));
+      L.marker(xy(data.quake), { icon: L.divIcon({ className: 'hz-label', html: `<span>진앙 M${data.quake.mag}</span>` }), interactive: false }).addTo(hzLayer);
+    }
+    if (active('meteor')) {
+      L.circle(xy(data.meteor), { radius: 1 / kmPerUnit, color: '#FF6A3D', weight: 1.5, dashArray: '3 5', fillColor: '#FF6A3D', fillOpacity: 0.12, interactive: false }).addTo(hzLayer);
+      L.marker(xy(data.meteor), { icon: L.divIcon({ className: 'hz-label', html: '<span>운석 충돌 지점 · 출입 통제 1km</span>' }), interactive: false }).addTo(hzLayer);
+    }
+    if (active('solar')) L.marker(toLatLng(0.82, 0.14), { icon: L.divIcon({ className: 'hz-label hz-solar', html: '<span>☀ 태양 방사선 주의 · 입자 도달 약 11시간 뒤</span>' }), interactive: false }).addTo(hzLayer);
+    data.alerts.filter((a) => a.level !== '해제' && ['depress', 'life', 'power', 'cold', 'fire'].includes(a.hazard) && active(a.hazard)).forEach((a) => {
+      L.marker(xy(a.at), { icon: L.divIcon({ className: `hz-pulse hzp-${LEVEL_KEY[a.level]}`, html: '<i></i>', iconSize: [22, 22], iconAnchor: [11, 11] }), title: a.title, zIndexOffset: 500 })
+        .addTo(hzLayer).bindPopup(`<b>${a.title}</b> <em class="lv lv-${LEVEL_KEY[a.level]}">${a.level}</em><br>${a.message}<br><small>DEMO 데이터 · ${a.issued}</small>`);
+    });
+    renderBoard();
+  }
+
+  function renderBoard() {
+    const order = { 심각: 0, 경보: 1, 주의: 2, 정보: 3, 해제: 4 };
+    const list = alertList.slice().sort((a, b) => order[a.level] - order[b.level]);
+    const live = list.filter((a) => a.level !== '해제').length;
+    $('alertBoard').innerHTML = `
+      <p class="ab-head"><span class="ab-dot" aria-hidden="true"></span>기지 관제 상황판 · 진행 중 ${live}건 <b class="demo-chip">DEMO</b></p>
+      <ul>${list.map((a) => `
+        <li><button type="button" class="ab-item" data-alert="${a.id}">
+          <em class="lv lv-${LEVEL_KEY[a.level]}">${a.level}</em><span>${a.title}</span>
+        </button></li>`).join('')}</ul>`;
+  }
+
+  function focusAlert(id) {
+    const a = alertList.find((x) => x.id === id);
+    if (!a) return;
+    RO.emit('setHazards', [a.hazard]);
+    setTimeout(() => {
+      if (map) map.flyTo(xy(a.at), 1, { duration: 0.8 });
+      setStatus('locStatus', 'alert', `<i data-lucide="siren" aria-hidden="true"></i><span><b>${a.title}</b> · ${a.area}<br>${a.message}<br><small>할 일: ${a.action}</small></span>`);
+    }, 120);
   }
 
   function setLocation(next) {
@@ -250,7 +292,10 @@
       $('tabShelter').hidden = b.dataset.tab !== 'shelter';
       if (b.dataset.tab === 'shelter' && results.length) draw();
     });
+    $('alertBoard').addEventListener('click', (e) => { const b = e.target.closest('[data-alert]'); if (b) focusAlert(b.dataset.alert); });
     RO.on('hazards', (hz) => {
+      hazards = hz;
+      drawIncidents();
       allowed = typesFor(hz);
       if (!allowed.includes(shelterType)) { shelterType = allowed[0]; loadFacilities(); }
       renderTypes();
@@ -261,6 +306,10 @@
         map?.invalidateSize();
         if (!loc) { $('regionSelect').value = 'HAB-07'; $('regionSelect').dispatchEvent(new Event('change')); }
         else if (results.length) draw();
+        drawIncidents();
+        // 화면을 보고 있는 동안 10초마다 가상 API를 다시 불러 상황(먼지 전선·시설 상태)을 갱신
+        clearInterval(timer);
+        timer = setInterval(() => { if (document.getElementById('shelter').classList.contains('is-active')) { drawIncidents(); loadFacilities(); } else clearInterval(timer); }, 10000);
       }, 80));
     });
   }
@@ -269,7 +318,7 @@
   function nearestAll(l = loc) {
     if (!l || l.orbit) return [];
     return Object.keys(TYPES).map((t) => {
-      const best = FACILITIES.filter((f) => f.type === t).map((f) => { const ll = toLatLng(f.x, f.y); return { ...f, km: dist(l, { lat: ll[0], lng: ll[1] }) }; }).sort((a, b) => a.km - b.km)[0];
+      const best = RO.marsApi.facilityStatus().filter((f) => f.type === t && f.status.key !== 'check').map((f) => { const ll = toLatLng(f.x, f.y); return { ...f, km: dist(l, { lat: ll[0], lng: ll[1] }) }; }).sort((a, b) => a.km - b.km)[0];
       return best && { type: TYPES[t].name, name: best.name, km: best.km, walk: minutes(best.km, 3) };
     }).filter(Boolean);
   }
