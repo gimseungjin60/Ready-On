@@ -1,4 +1,4 @@
-/* READY : ON — 대피소 지도 (Leaflet + OpenStreetMap)
+/* BLACK-OUT — 대피소 지도 (Leaflet + OpenStreetMap)
    데이터: 팀원 브랜치(readykit)의 행정안전부 국민안전24 안전지도 공개 데이터 스냅샷(2026-11-05 수집).
    가까운 시설 계산과 시설 유형 정의는 readykit/dist/engine.mjs를 그대로 불러 씁니다.
    - 실시간 개방·혼잡 여부는 알 수 없으며, 거리는 직선거리입니다.
@@ -197,7 +197,7 @@
   function printList() {
     if (!results.length) return;
     $('shelterPrintArea').innerHTML = `
-      <h1>READY : ON 주변 대피시설 — ${RO.esc(typeInfo().name)}</h1>
+      <h1>BLACK-OUT 주변 대피시설 — ${RO.esc(typeInfo().name)}</h1>
       <p>기준: ${RO.esc(origin?.label || '')} · 출력일 ${new Date().toLocaleDateString('ko-KR')}</p>
       <table><thead><tr><th>번호</th><th>이름</th><th>주소</th><th>직선거리</th></tr></thead>
       <tbody>${results.map((s, i) => `<tr><td>${i + 1}</td><td>${RO.esc(s.name)}</td><td>${RO.esc(s.address || '상세주소 미제공')}</td><td>${fmtDist(s.distanceKm)}</td></tr>`).join('')}</tbody></table>

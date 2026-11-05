@@ -1,4 +1,4 @@
-/* READY : ON — 디자인 시스템 + 섹션 스타일 */
+/* BLACK-OUT — 디자인 시스템 + 섹션 스타일 */
 :root {
   --red: #E60000;
   --red-dark: #B80000;
@@ -596,13 +596,12 @@ dialog[open] { animation: fadeUp .3s var(--ease); }
 .card-recipes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 14px; }
 .card-recipes span { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-dark); background: rgba(255, 255, 255, .06); }
 .card-recipes .text-link { margin-left: 6px; }
+.card-recipes em { font-style: normal; color: var(--gray-light); }
+.sh-make-blank { border-style: dashed !important; }
+.sh-make-blank .sh-make-name span { color: #555; }
+.sh-make-blank ol li { height: 6.2mm; border-bottom: .25mm solid #aaa; }
 
 /* ---------- 우리집 재료로 만들기 ---------- */
-.make-wrap { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 28px; align-items: start; }
-.make-side { position: sticky; top: calc(var(--header-h) + 20px); background: #fff; border-radius: var(--radius-lg); padding: 22px; }
-.make-side-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
-.make-side-head h3 { font-size: 20px; font-weight: 800; letter-spacing: -.03em; }
-.make-tools { display: flex; gap: 8px; }
 .pantry { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .ing { position: relative; display: grid; justify-items: center; gap: 6px; padding: 14px 6px 12px; border-radius: var(--radius); border: 1.5px solid var(--line); background: #fff; transition: border-color .2s, background-color .2s, transform .15s var(--ease); }
 .ing:hover { border-color: var(--ink); }
@@ -618,29 +617,76 @@ dialog[open] { animation: fadeUp .3s var(--ease); }
 .make-rule { display: flex; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--text-muted); }
 .make-rule svg { flex: none; width: 16px; height: 16px; color: var(--red); margin-top: 2px; }
 .make-rule b { color: var(--ink); }
-.make-summary { font-size: 15px; color: var(--text-muted); margin-bottom: 14px; }
-.make-summary b { font-family: var(--font-display); font-size: 20px; font-weight: 900; color: var(--ink); margin: 0 1px; }
-.recipe-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.recipe { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 18px; text-align: left; background: #fff; border: 1.5px solid transparent; border-radius: var(--radius-lg); transition: transform .25s var(--ease), box-shadow .25s, border-color .25s; }
-.recipe:hover { transform: translateY(-3px); box-shadow: 0 16px 30px -22px rgba(37, 40, 43, .5); }
-.recipe-top { display: flex; align-items: center; gap: 6px; width: 100%; }
-.recipe-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: var(--soft); color: var(--gray); margin-right: 4px; transition: .25s; }
-.recipe-icon svg { width: 20px; height: 20px; }
-.recipe-use { font-size: 12px; font-weight: 700; color: var(--text-muted); }
-.recipe-adult { margin-left: auto; font-size: 11px; font-weight: 800; color: var(--red); padding: 2px 8px; border: 1px solid var(--red); border-radius: 999px; }
-.recipe-name { font-size: 18px; font-weight: 800; letter-spacing: -.03em; }
-.recipe-need { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 13px; }
-.recipe-need span { padding: 3px 8px; border-radius: 6px; border: 1px dashed var(--gray-light); color: var(--gray); }
-.recipe-need span.has { border: 1px solid var(--ink); color: var(--ink); font-weight: 700; }
-.recipe-need em { font-style: normal; color: var(--gray-light); font-weight: 700; }
-.recipe-state { display: inline-flex; align-items: center; gap: 5px; margin-top: auto; padding-top: 6px; font-size: 13px; font-weight: 700; color: var(--text-muted); }
-.recipe-state svg { width: 16px; height: 16px; }
-.recipe.is-ready { border-color: var(--red); }
-.recipe.is-ready .recipe-icon { background: var(--red); color: #fff; }
-.recipe.is-ready .recipe-state { color: var(--red); }
-.recipe.is-new { animation: unlock .7s var(--ease); }
-@keyframes unlock { 0% { transform: scale(.94); box-shadow: 0 0 0 0 rgba(230, 0, 0, .5); } 50% { transform: scale(1.03); } 100% { transform: none; box-shadow: 0 0 0 14px rgba(230, 0, 0, 0); } }
-.recipe-oncard { position: absolute; right: 12px; bottom: 14px; font-size: 11px; font-weight: 700; color: #fff; background: var(--ink); padding: 2px 8px; border-radius: 999px; }
+
+/* ---------- make.html: 우리집 재료로 만들기 ---------- */
+.page-make { background: var(--soft); }
+.page-make .header { background: rgba(26, 28, 30, .97); }
+.mk-hero { background: var(--ink); color: #fff; padding: calc(var(--header-h) + 28px) 0 28px; }
+.mk-hero-inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; }
+.mk-hero .display { font-size: clamp(40px, 4.6vw, 72px); }
+.mk-hero .eyebrow { margin-bottom: 12px; }
+.mk-hero .lead { color: #E9E9E9; }
+.mk-hero .lead b { color: #fff; }
+.mk-progress { margin-top: 16px; }
+.mk-progress p { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 700; color: var(--gray-light); margin-bottom: 8px; }
+.mk-progress b { font-family: var(--font-display); font-size: 26px; font-weight: 900; color: #fff; }
+.mk-bar { display: block; height: 8px; border-radius: 8px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+.mk-bar span { display: block; height: 100%; width: 0; background: var(--red); border-radius: 8px; transition: width .8s var(--ease); }
+
+.mk-lab { padding: 24px 0 16px; }
+.mk-lab-inner { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 24px; align-items: stretch; }
+.mk-box, .mk-bench { background: #fff; border-radius: var(--radius-lg); padding: 24px; }
+.mk-box-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+.mk-box-head h2 { font-size: 22px; font-weight: 800; letter-spacing: -.03em; }
+.mk-box-head p { font-size: 13px; color: var(--text-muted); }
+
+.mk-bench { display: flex; flex-direction: column; }
+.bench { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto 170px; align-items: center; gap: 16px; padding: 22px; border-radius: var(--radius-lg); background: var(--soft); background-image: radial-gradient(var(--line) 1px, transparent 1.5px); background-size: 18px 18px; }
+.slots { display: flex; align-items: center; gap: 10px; }
+.slot { flex: 1; min-width: 0; aspect-ratio: 1; max-width: 140px; display: grid; place-content: center; justify-items: center; gap: 8px; border-radius: 16px; border: 2px dashed var(--gray-light); background: rgba(255, 255, 255, .6); font-size: 13px; font-weight: 700; color: var(--gray); text-align: center; padding: 8px; }
+.slot.is-filled { border: 2px solid var(--ink); background: #fff; color: var(--ink); animation: pop .35s var(--ease); cursor: pointer; transition: transform .2s; }
+.slot.is-filled:hover { transform: translateY(-3px); }
+.slot.is-filled svg { width: 34px; height: 34px; }
+.slot-plus, .bench-eq { font-family: var(--font-display); font-size: 28px; font-weight: 900; color: var(--gray); }
+.bench-eq { font-size: 36px; }
+.bench-result .result { width: 100%; aspect-ratio: 1; display: grid; place-content: center; justify-items: center; gap: 6px; border-radius: 18px; border: 2px dashed var(--gray-light); color: var(--gray); font-size: 13px; font-weight: 700; text-align: center; padding: 10px; }
+.bench-result .result svg { width: 38px; height: 38px; }
+.bench-result .result.is-done { border: 0; background: var(--red); color: #fff; box-shadow: 0 18px 36px -18px rgba(230, 0, 0, .7); animation: reveal .7s var(--ease); cursor: pointer; }
+.bench-result .result.is-done b { font-size: 19px; font-weight: 900; letter-spacing: -.03em; }
+.bench-result .result.is-done span { font-size: 12px; text-decoration: underline; text-underline-offset: 3px; opacity: .9; }
+@keyframes reveal { 0% { transform: scale(.4) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.08) rotate(2deg); opacity: 1; } 100% { transform: none; } }
+.bench.is-fail .slots { animation: shakeX .45s var(--ease); }
+@keyframes shakeX { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.bench.is-success { animation: flash .8s var(--ease); }
+@keyframes flash { 0% { box-shadow: inset 0 0 0 3px var(--red); } 100% { box-shadow: inset 0 0 0 0 rgba(230, 0, 0, 0); } }
+.bench-msg { margin: 12px 0; min-height: 26px; font-size: 16px; font-weight: 600; text-align: center; color: var(--text-muted); }
+.bench-msg b { color: var(--ink); }
+.bench-msg.is-ok { color: var(--ink); }
+.bench-msg.is-ok b, .bench-msg.is-fail b { color: var(--red); }
+.bench-msg.is-fail, .bench-msg.is-warn { color: var(--ink); }
+.bench-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+
+.mk-book { padding: 48px 0 80px; }
+.mk-book-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.mk-book-title { font-size: clamp(26px, 2.6vw, 36px); font-weight: 900; letter-spacing: -.04em; }
+.mk-book-note { font-size: 14px; color: var(--text-muted); }
+.book { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.book-card { display: flex; flex-direction: column; gap: 6px; padding: 18px; background: #fff; border-radius: var(--radius-lg); border: 1.5px solid transparent; transition: transform .25s var(--ease), box-shadow .25s; }
+.book-card:not(.is-locked):hover { transform: translateY(-3px); box-shadow: 0 16px 30px -22px rgba(37, 40, 43, .5); }
+.book-card.is-new { border-color: var(--red); animation: reveal .7s var(--ease); }
+.book-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--red); color: #fff; font-family: var(--font-display); font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+.book-icon svg { width: 22px; height: 22px; }
+.book-name { font-size: 17px; font-weight: 800; letter-spacing: -.03em; }
+.book-hint { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+.book-card.is-locked { background: transparent; border: 1.5px dashed var(--gray-light); }
+.book-card.is-locked .book-icon { background: var(--line); color: var(--gray); }
+.book-card.is-locked .book-name { color: var(--gray); }
+.book-actions { margin-top: auto; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 6px; border-top: 1px solid var(--line); }
+.card-toggle { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; border: 1.5px solid var(--line); font-size: 12px; font-weight: 700; color: var(--text-muted); transition: .2s; }
+.card-toggle svg { width: 13px; height: 13px; }
+.card-toggle.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+.mk-book-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.page-make .footer { padding: 40px 0; }
 
 /* 만들기 방법 창 */
 .modal-recipe { width: min(620px, calc(100vw - 32px)); }
@@ -794,9 +840,9 @@ body.on-home .header:not(.is-open) { background: transparent; backdrop-filter: n
 
 /* ---------- 버튼 ---------- */
 .btn-primary { position: relative; overflow: hidden; isolation: isolate; }
-.btn-primary::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .35) 50%, transparent 70%); transform: translateX(-120%); transition: transform .7s var(--ease); }
+.btn-primary::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .35) 50%, transparent 70%); transform: translateX(-120%); transition: transform .7s var(--ease); }
 .btn-primary:hover::after { transform: translateX(120%); }
-.btn-pulse { box-shadow: 0 0 0 0 rgba(230, 0, 0, .6); animation: ctaPulse 2.4s infinite; overflow: visible; }
+.btn-pulse { box-shadow: 0 0 0 0 rgba(230, 0, 0, .6); animation: ctaPulse 2.4s infinite; }
 @keyframes ctaPulse { 0% { box-shadow: 0 0 0 0 rgba(230, 0, 0, .55); } 70%, 100% { box-shadow: 0 0 0 18px rgba(230, 0, 0, 0); } }
 .btn.is-added { background: var(--ink) !important; color: #fff !important; border-color: var(--ink) !important; }
 .cart-btn.is-shake svg { animation: shake .5s var(--ease); }

@@ -1,4 +1,4 @@
-﻿# READY : ON — 실습 호스팅(FTP) 업로드
+﻿# BLACK-OUT — 실습 호스팅(FTP) 업로드
 # 사용법 (C:\readyon 에서):
 #   $env:FTP_PASS='비밀번호'; powershell -ExecutionPolicy Bypass -File scripts\deploy-ftp.ps1 team2
 # - 비밀번호는 파일에 저장하지 않고 FTP_PASS 환경변수로만 받습니다.
@@ -27,7 +27,7 @@ else { throw "FTP에서 '$Team' 폴더를 찾지 못했습니다. 최상위 목�
 Write-Host "업로드 위치: /$base/"
 
 # 사이트에 필요한 파일만 (readykit은 엔진과 대피시설 데이터만)
-$files = git ls-files index.html css js assets readykit/dist/engine.mjs readykit/dist/data
+$files = git ls-files index.html make.html css js assets readykit/dist/engine.mjs readykit/dist/data
 $i = 0
 foreach ($f in $files) {
   $i++

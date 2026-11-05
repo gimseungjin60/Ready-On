@@ -1,4 +1,4 @@
-/* READY : ON — 페이지(뷰) 라우터 + 공통 동작 + 모듈 초기화
+/* BLACK-OUT — 페이지(뷰) 라우터 + 공통 동작 + 모듈 초기화
    발표용: 한 번에 한 화면만 보여 주고 상단 메뉴로 이동합니다. 주소의 #해시가 현재 화면입니다. */
 (function (RO) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -158,17 +158,21 @@
   document.addEventListener('DOMContentLoaded', () => {
     initHeader();
     initDialogs();
-    RO.test.init();
-    RO.products.init();
-    RO.disaster.init();
-    RO.cart.init();
-    RO.shelter.init();
-    RO.recipes.init();
-    RO.card.init();
-    RO.hero.init();
-    initTilt();
+    if (document.querySelector('.view')) {
+      // index.html: 화면(뷰) 기반 메인 페이지
+      RO.test.init();
+      RO.products.init();
+      RO.disaster.init();
+      RO.cart.init();
+      RO.shelter.init();
+      RO.card.init();
+      RO.hero.init();
+      initTilt();
+      initRouter();
+    }
+    if (RO.make) RO.make.init(); // make.html: 우리집 재료로 만들기
     RO.icons();
-    document.getElementById('year').textContent = new Date().getFullYear();
-    initRouter();
+    const y = document.getElementById('year');
+    if (y) y.textContent = new Date().getFullYear();
   });
 })(window.RO);

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>우리집 재료로 만들기 — BLACK-OUT 블랙아웃</title>
+  <meta name="description" content="집에 있는 재료를 조합해서 인터넷이 끊겨도 만들 수 있는 생존 용품을 알아봐요. 아이도 따라 할 수 있는 3단계 만들기.">
+  <meta name="theme-color" content="#25282B">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body class="page-make">
+  <a class="skip" href="#lab">본문 바로가기</a>
+
+  <header class="header" id="header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html" aria-label="BLACK-OUT 홈">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="logo-text">BLACK<span class="logo-colon">-</span>OUT</span>
+      </a>
+      <nav class="nav" id="nav" aria-label="주요 메뉴">
+        <ul class="nav-links">
+          <li><a href="index.html#why">소개</a></li>
+          <li><a href="index.html#test">재난 대비 테스트</a></li>
+          <li><a href="index.html#guide">재난 행동수칙</a></li>
+          <li><a href="index.html#kit">안전키트</a></li>
+          <li><a href="index.html#shelter">대피소 찾기</a></li>
+          <li><a href="make.html" class="is-current" aria-current="page">우리집 만들기</a></li>
+          <li><a href="index.html#offline-card">대피 카드</a></li>
+        </ul>
+        <a class="btn btn-primary nav-cta-mobile" href="index.html#offline-card">대피 카드 만들기</a>
+      </nav>
+      <div class="header-actions">
+        <a class="btn btn-primary btn-sm header-cta" href="index.html#offline-card">대피 카드 만들기</a>
+        <button class="icon-btn nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav" aria-label="메뉴 열기">
+          <span class="burger" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="mk-hero" aria-labelledby="mkTitle">
+      <div class="container mk-hero-inner">
+        <div>
+          <p class="eyebrow eyebrow-red">우리집 재료로 만들기</p>
+          <h1 class="display" id="mkTitle">MAKE IT<br>AT <em>HOME.</em></h1>
+        </div>
+        <div class="mk-hero-side">
+          <p class="lead">집에 있는 재료를 조합대에 올리고 <b>조합하기</b>를 눌러 보세요.<br>인터넷이 끊겨도 만들 수 있는 생존 용품이 완성돼요.</p>
+          <div class="mk-progress" aria-live="polite">
+            <p><span>나의 조합 도감</span><b id="bookCount">0 / 10</b></p>
+            <span class="mk-bar" aria-hidden="true"><span id="bookBar"></span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mk-lab" id="lab" aria-labelledby="labTitle">
+      <div class="container mk-lab-inner">
+        <div class="mk-box">
+          <div class="mk-box-head">
+            <h2 id="labTitle">재료 상자</h2>
+            <p>누르면 조합대에 올라가요</p>
+          </div>
+          <div class="pantry" id="pantry" role="group" aria-label="재료 상자"></div>
+          <p class="make-rule"><i data-lucide="shield-check" aria-hidden="true"></i><span>모두 3단계 이하예요. 불과 칼은 쓰지 않아요. 가위가 필요하면 <b>어른과 함께</b> 만들어요.</span></p>
+        </div>
+
+        <div class="mk-bench" aria-labelledby="benchTitle">
+          <div class="mk-box-head">
+            <h2 id="benchTitle">조합대</h2>
+            <p>재료는 최대 3개까지 올릴 수 있어요</p>
+          </div>
+          <div class="bench" id="bench">
+            <div class="slots" id="slots"></div>
+            <span class="bench-eq" aria-hidden="true">=</span>
+            <div class="bench-result" id="benchResult" aria-live="polite"></div>
+          </div>
+          <p class="bench-msg" id="benchMsg" role="status" aria-live="polite">재료를 골라 조합대에 올려 보세요.</p>
+          <div class="bench-actions">
+            <button class="btn btn-primary btn-lg btn-pulse" id="combineBtn" type="button" disabled><i data-lucide="sparkles" aria-hidden="true"></i>조합하기</button>
+            <button class="btn btn-outline" id="clearBtn" type="button">조합대 비우기</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mk-book" aria-labelledby="bookTitle">
+      <div class="container">
+        <div class="mk-book-head">
+          <div>
+            <p class="eyebrow">나의 조합 도감</p>
+            <h2 class="mk-book-title" id="bookTitle">내가 만든 조합법</h2>
+          </div>
+          <p class="mk-book-note">✓ 표시한 조합법(최대 4개)이 <a class="text-link" href="index.html#offline-card">대피 카드</a> 뒷면에 들어가요.</p>
+        </div>
+        <div class="book" id="book"></div>
+        <div class="mk-book-foot">
+          <button class="link-btn" id="resetBook" type="button">도감 처음부터 다시 하기</button>
+          <a class="btn btn-primary" href="index.html#offline-card"><i data-lucide="file-down" aria-hidden="true"></i>내 조합법으로 대피 카드 만들기</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-disclaimer">블랙아웃은 평상시 재난 대비를 돕는 서비스입니다. 실제 재난 상황에서는 정부와 관계기관의 공식 안내 및 현장 지침을 우선적으로 따르세요.</p>
+      <p class="footer-copy">© <span id="year"></span> BLACK-OUT · MVP 시연 버전</p>
+    </div>
+  </footer>
+
+  <dialog class="modal modal-recipe" id="recipeDialog" aria-labelledby="recipeTitle">
+    <div class="modal-box" id="recipeBody"></div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/recipes.js"></script>
+  <script src="js/make.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

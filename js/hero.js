@@ -1,4 +1,4 @@
-/* READY : ON — 히어로 효과: 떠오르는 불씨·재 파티클 + 마우스를 따라가는 손전등 불빛
+/* BLACK-OUT — 히어로 효과: 떠오르는 불씨·재 파티클 + 마우스를 따라가는 손전등 불빛
    마우스가 없거나 멈춰 있으면 불빛이 천천히 스스로 움직입니다(발표 화면용). */
 (function (RO) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

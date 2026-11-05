@@ -1,4 +1,4 @@
-/* READY : ON — 인쇄 전용 (media="print")
+/* BLACK-OUT — 인쇄 전용 (media="print")
    body.print-card     → 오프라인 대피 카드 A4 2장 (앞면·뒷면)
    body.print-shelters → 대피소 목록만
    그 외(Ctrl+P)        → 대피 카드 기본 출력 */

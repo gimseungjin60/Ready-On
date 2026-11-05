@@ -1,11 +1,10 @@
-/* READY : ON — 반응형 */
+/* BLACK-OUT — 반응형 */
 
 @media (max-width: 1280px) {
   .kit-grid { grid-template-columns: repeat(2, 1fr); }
   .kit-cta { min-height: 0; }
   .mini-kits { grid-template-columns: 1fr; }
   .map-panel { width: 360px; }
-  .recipe-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* 태블릿 이하: 햄버거 메뉴 */
@@ -38,10 +37,9 @@
   .map-panel { position: static; width: auto; order: 2; border-radius: 0; box-shadow: none; }
   .shelter-list { max-height: none; overflow: visible; }
   .card-wrap { grid-template-columns: 1fr; }
+  .mk-hero-inner, .mk-lab-inner { grid-template-columns: 1fr; }
+  .book { grid-template-columns: repeat(3, 1fr); }
   .card-preview { position: static; max-height: none; overflow: visible; }
-  .make-wrap { grid-template-columns: 1fr; }
-  .make-side { position: static; }
-  .recipe-grid { grid-template-columns: repeat(2, 1fr); }
   .flow { grid-template-columns: repeat(3, 1fr); row-gap: 18px; }
 }
 
@@ -87,7 +85,12 @@
   .shelter-full .shelter-map { height: 46vh; }
   .type-chip small { display: none; }
   .contact-row { grid-template-columns: 1fr; }
-  .recipe-grid { grid-template-columns: 1fr; }
+  .bench { grid-template-columns: 1fr; justify-items: center; padding: 20px; }
+  .slots { width: 100%; }
+  .bench-eq { transform: rotate(90deg); }
+  .bench-result { width: 160px; }
+  .book { grid-template-columns: repeat(2, 1fr); }
+  .mk-box, .mk-bench { padding: 18px; }
   .pantry { grid-template-columns: repeat(3, 1fr); }
   .card-actions .btn { flex: 1 1 100%; }
   /* 모바일 미리보기: A4 비율 대신 자연 높이 */

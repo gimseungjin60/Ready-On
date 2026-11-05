@@ -1,4 +1,4 @@
-/* READY : ON — 오프라인 대피 카드 (A4 2장: 앞면 정보·대피 장소·연락처·지갑 카드 / 뒷면 행동수칙·만들기·체크리스트)
+/* BLACK-OUT — 오프라인 대피 카드 (A4 2장: 앞면 정보·대피 장소·연락처·지갑 카드 / 뒷면 행동수칙·만들기·체크리스트)
    화면 미리보기는 실제 A4 크기로 그린 뒤 축소해서 보여 주므로 PDF와 똑같이 보입니다.
    입력값은 "이 브라우저에 저장"을 누를 때만 localStorage에 저장되며, 서버로 전송하지 않습니다. */
 (function (RO) {
@@ -18,7 +18,7 @@
     return `
       <header class="sh-head">
         <div>
-          <p class="sh-brand">READY : ON</p>
+          <p class="sh-brand">BLACK-OUT</p>
           <h3 class="sh-title">${title}</h3>
         </div>
         <p class="sh-page">${page}</p>
@@ -28,7 +28,7 @@
   function wallet(d, contacts) {
     return `
       <div class="wallet">
-        <p class="wl-top"><b>비상 연락 카드</b><span>READY : ON</span></p>
+        <p class="wl-top"><b>비상 연락 카드</b><span>BLACK-OUT</span></p>
         <dl class="wl-info">
           <div><dt>이름</dt><dd>${v(d.cName)}</dd></div>
           <div><dt>혈액형</dt><dd>${v(d.cBlood)}</dd></div>
@@ -131,14 +131,20 @@
         </section>
 
         <section class="sh-block">
-          <h4>우리집 재료로 만들기</h4>
+          <h4>내가 만든 조합법</h4>
           <div class="sh-makes">
             ${recipes.map((r) => `
               <div class="sh-make">
                 <p class="sh-make-name"><i data-lucide="${r.icon}" aria-hidden="true"></i>${r.name}<span>${r.use}${r.adult ? ' · 어른과 함께' : ''}</span></p>
                 <p class="sh-make-need">재료: ${r.need.map(ing).join(' + ')}</p>
-                <ol>${r.steps.map((s) => `<li>${s}</li>`).join('')}</ol>
+                <ol>${r.steps.map((st) => `<li>${st}</li>`).join('')}</ol>
                 <p class="sh-make-tip">! ${r.tip}</p>
+              </div>`).join('')}
+            ${Array.from({ length: 4 - recipes.length }, () => `
+              <div class="sh-make sh-make-blank">
+                <p class="sh-make-name">직접 적어 보세요<span>내 조합법</span></p>
+                <p class="sh-make-need">재료:</p>
+                <ol><li></li><li></li><li></li></ol>
               </div>`).join('')}
           </div>
         </section>
@@ -157,7 +163,7 @@
         </section>
 
         <footer class="sh-foot">
-          실제 재난이 나면 정부·지자체·소방의 공식 안내와 현장 지침을 먼저 따르세요. · 만든 날 ${new Date().toLocaleDateString('ko-KR')} · READY : ON
+          실제 재난이 나면 정부·지자체·소방의 공식 안내와 현장 지침을 먼저 따르세요. · 만든 날 ${new Date().toLocaleDateString('ko-KR')} · BLACK-OUT
         </footer>
       </article>`;
   }
@@ -168,7 +174,9 @@
     RO.icons();
     fit();
     const rs = RO.recipes.forCard();
-    $('cardRecipes').innerHTML = `${rs.map((r) => `<span>${r.name}</span>`).join('')}<a class="text-link" href="#make">바꾸기 →</a>`;
+    $('cardRecipes').innerHTML = rs.length
+      ? `${rs.map((r) => `<span>${r.name}</span>`).join('')}<a class="text-link" href="make.html">조합법 바꾸기 →</a>`
+      : '<em>아직 만든 조합법이 없어요. 카드에는 직접 적을 수 있는 빈칸이 들어가요.</em><a class="text-link" href="make.html">조합하러 가기 →</a>';
   }
 
   // 실제 A4 크기로 그린 시트를 미리보기 너비에 맞게 축소
@@ -184,7 +192,7 @@
   function printCard() {
     const name = $('cName').value.trim();
     const title = document.title;
-    document.title = `READY-ON_대피카드${name ? '_' + name : ''}`; // PDF 파일 이름
+    document.title = `BLACKOUT_대피카드${name ? '_' + name : ''}`; // PDF 파일 이름
     window.addEventListener('afterprint', () => { document.title = title; }, { once: true });
     RO.print('print-card');
   }

@@ -1,4 +1,4 @@
-/* READY : ON — 장바구니 (localStorage 유지, 우측 드로어, 결제 준비 안내)
+/* BLACK-OUT — 장바구니 (localStorage 유지, 우측 드로어, 결제 준비 안내)
    상태 형태: [{ id, qty }] — 상품 정보는 RO.products.find(id)로 조회 */
 (function (RO) {
   const KEY = 'cart';

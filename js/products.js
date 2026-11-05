@@ -1,4 +1,4 @@
-/* READY : ON — 상품 데이터 + 안전키트 섹션 렌더링 + 맞춤 추천 정렬
+/* BLACK-OUT — 상품 데이터 + 안전키트 섹션 렌더링 + 맞춤 추천 정렬
    가격은 모두 MVP 시연용 가상 가격입니다. 백엔드 연결 시 RO.products.kits/items를 API 응답으로 교체하세요. */
 (function (RO) {
   const CATEGORIES = [

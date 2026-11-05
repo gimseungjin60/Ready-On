@@ -1,4 +1,4 @@
-/* READY : ON — 공용 유틸: localStorage 래퍼, 이벤트 버스, 포맷터 */
+/* BLACK-OUT — 공용 유틸: localStorage 래퍼, 이벤트 버스, 포맷터 */
 window.RO = window.RO || {};
 
 (function (RO) {

@@ -1,4 +1,4 @@
-/* READY : ON — 우리집 재료로 만드는 생존 용품 (재료 조합)
+/* BLACK-OUT — 우리집 재료 조합 데이터 + '내가 만든 조합법' 저장 (make.html과 대피 카드가 함께 사용)
    원칙: 아이도 따라 할 수 있게 3단계 이하, 불·칼 사용 없음. 가위가 필요한 것은 "어른과 함께" 표시.
    행정안전부·소방청 안내(젖은 수건으로 코·입 막기, 식수 비축, 구조 요청 등)와 일반적인 생활 안전 요령을 바탕으로 했습니다. */
 (function (RO) {
@@ -79,122 +79,50 @@
     }
   ];
 
-  const DEFAULT_CARD = ['lantern', 'mask', 'tag', 'warmer'];
-  let have = new Set(RO.store.get('pantry', []));
-  let onCard = new Set(RO.store.get('cardRecipes', []));
+  // 내가 조합에 성공한 것(만든 순서) / 그중 대피 카드에 넣을 것(최대 4개)
+  const CARD_MAX = 4;
+  let made = RO.store.get('madeRecipes', []).filter((id) => RECIPES.some((r) => r.id === id));
+  let onCard = RO.store.get('cardRecipes', null);
+  if (!Array.isArray(onCard)) onCard = made.slice(0, CARD_MAX);
+  onCard = onCard.filter((id) => made.includes(id));
 
-  const missing = (r) => r.need.filter((n) => !have.has(n));
-  const ingName = (id) => INGREDIENTS.find((i) => i.id === id).name;
-  const ingIcon = (id) => INGREDIENTS.find((i) => i.id === id).icon;
+  const save = () => { RO.store.set('madeRecipes', made); RO.store.set('cardRecipes', onCard); RO.emit('recipes'); };
+  const byId = (id) => RECIPES.find((r) => r.id === id);
+  const ingredient = (id) => INGREDIENTS.find((i) => i.id === id);
 
-  // 카드에 넣을 만들기 4개: 직접 고른 것 → 지금 만들 수 있는 것 → 기본 추천 순으로 채움
-  function forCard() {
-    const ready = have.size ? RECIPES.filter((r) => !missing(r).length).map((r) => r.id) : [];
-    const ids = [...new Set([...onCard, ...ready, ...DEFAULT_CARD])].slice(0, 4);
-    return ids.map((id) => RECIPES.find((r) => r.id === id));
+  // 재료 묶음과 정확히 같은 조합법 찾기 (순서 무관)
+  function combine(ids) {
+    const set = new Set(ids);
+    return RECIPES.find((r) => r.need.length === set.size && r.need.every((n) => set.has(n))) || null;
+  }
+  // 실패했을 때 힌트: 고른 재료를 모두 쓰는 조합법 중 가장 가까운 것
+  function hint(ids) {
+    const near = RECIPES.filter((r) => ids.every((i) => r.need.includes(i))).sort((a, b) => a.need.length - b.need.length)[0];
+    return near ? near.need.filter((n) => !ids.includes(n)) : null;
   }
 
-  /* ---------- 화면 ---------- */
-  const $ = (id) => document.getElementById(id);
-
-  function renderPantry() {
-    $('pantry').innerHTML = INGREDIENTS.map((i) => `
-      <button type="button" class="ing ${have.has(i.id) ? 'is-on' : ''}" data-ing="${i.id}" aria-pressed="${have.has(i.id)}">
-        <span class="ing-icon"><i data-lucide="${i.icon}" aria-hidden="true"></i></span>
-        <span class="ing-name">${i.name}</span>
-        <span class="ing-check" aria-hidden="true"><i data-lucide="check" aria-hidden="true"></i></span>
-      </button>`).join('');
+  function addMade(id) {
+    const isNew = !made.includes(id);
+    if (isNew) {
+      made.push(id);
+      if (onCard.length < CARD_MAX) onCard.push(id);
+      save();
+    }
+    return isNew;
   }
-
-  function renderRecipes(justUnlocked = []) {
-    const list = [...RECIPES].sort((a, b) => missing(a).length - missing(b).length);
-    const ready = RECIPES.filter((r) => !missing(r).length).length;
-    $('makeSummary').innerHTML = `재료 <b>${have.size}</b>개 선택 · 지금 만들 수 있는 것 <b>${ready}</b>개`;
-    $('recipeGrid').innerHTML = list.map((r) => {
-      const miss = missing(r);
-      const done = !miss.length;
-      return `
-        <button type="button" class="recipe ${done ? 'is-ready' : ''} ${justUnlocked.includes(r.id) ? 'is-new' : ''}" data-recipe="${r.id}"
-          aria-label="${r.name} 만드는 법 보기${done ? ' (만들 수 있어요)' : ''}">
-          <span class="recipe-top">
-            <span class="recipe-icon"><i data-lucide="${r.icon}" aria-hidden="true"></i></span>
-            <span class="recipe-use">${r.use}</span>
-            ${r.adult ? '<span class="recipe-adult">어른과 함께</span>' : ''}
-          </span>
-          <span class="recipe-name">${r.name}</span>
-          <span class="recipe-need">${r.need.map((n) => `<span class="${have.has(n) ? 'has' : ''}">${ingName(n)}</span>`).join('<em>+</em>')}</span>
-          <span class="recipe-state">${done
-            ? '<i data-lucide="circle-check" aria-hidden="true"></i>만들 수 있어요'
-            : `${miss.map(ingName).join(', ')} 있으면 완성`}</span>
-          ${onCard.has(r.id) ? '<span class="recipe-oncard">대피 카드에 넣음</span>' : ''}
-        </button>`;
-    }).join('');
-    RO.icons();
+  function toggleCard(id) {
+    if (onCard.includes(id)) onCard = onCard.filter((x) => x !== id);
+    else if (onCard.length >= CARD_MAX) return false;
+    else onCard.push(id);
+    save();
+    return true;
   }
+  function reset() { made = []; onCard = []; save(); }
 
-  function openRecipe(id) {
-    const r = RECIPES.find((x) => x.id === id);
-    const miss = missing(r);
-    $('recipeBody').innerHTML = `
-      <p class="rd-use"><i data-lucide="${r.icon}" aria-hidden="true"></i>${r.use}에 쓰여요${r.adult ? ' · <b>어른과 함께 만들어요</b>' : ''}</p>
-      <h2 id="recipeTitle">${r.name}</h2>
-      <p class="rd-why">${r.why}</p>
-      <div class="rd-formula" aria-label="필요한 재료">
-        ${r.need.map((n) => `<span class="rd-ing ${have.has(n) ? 'has' : ''}"><i data-lucide="${ingIcon(n)}" aria-hidden="true"></i>${ingName(n)}</span>`).join('<span class="rd-plus" aria-hidden="true">+</span>')}
-        <span class="rd-plus" aria-hidden="true">=</span>
-        <span class="rd-ing rd-result"><i data-lucide="${r.icon}" aria-hidden="true"></i>${r.name}</span>
-      </div>
-      ${miss.length ? `<p class="rd-missing">아직 없는 재료: <b>${miss.map(ingName).join(', ')}</b></p>` : ''}
-      <ol class="rd-steps">${r.steps.map((s) => `<li>${s}</li>`).join('')}</ol>
-      <p class="rd-tip"><i data-lucide="alert-triangle" aria-hidden="true"></i>${r.tip}</p>
-      <div class="modal-actions">
-        <button class="btn ${onCard.has(r.id) ? 'btn-outline' : 'btn-primary'}" data-card-recipe="${r.id}">
-          ${onCard.has(r.id) ? '대피 카드에서 빼기' : '대피 카드에 넣기'}
-        </button>
-        <button class="btn btn-outline" data-close>닫기</button>
-      </div>`;
-    RO.icons();
-    $('recipeDialog').showModal();
-  }
-
-  function toggleIngredient(id) {
-    const before = new Set(RECIPES.filter((r) => !missing(r).length).map((r) => r.id));
-    have.has(id) ? have.delete(id) : have.add(id);
-    RO.store.set('pantry', [...have]);
-    const unlocked = RECIPES.filter((r) => !missing(r).length && !before.has(r.id)).map((r) => r.id);
-    renderPantry();
-    renderRecipes(unlocked);
-    if (unlocked.length) RO.toast(`${RECIPES.find((r) => r.id === unlocked[0]).name}${unlocked.length > 1 ? ` 외 ${unlocked.length - 1}개를` : '을(를)'} 만들 수 있어요!`);
-    RO.emit('recipes');
-  }
-
-  function init() {
-    renderPantry();
-    renderRecipes();
-    $('pantry').addEventListener('click', (e) => {
-      const b = e.target.closest('[data-ing]');
-      if (b) toggleIngredient(b.dataset.ing);
-    });
-    $('recipeGrid').addEventListener('click', (e) => {
-      const b = e.target.closest('[data-recipe]');
-      if (b) openRecipe(b.dataset.recipe);
-    });
-    $('pantryAll').addEventListener('click', () => { INGREDIENTS.forEach((i) => have.add(i.id)); RO.store.set('pantry', [...have]); renderPantry(); renderRecipes(RECIPES.map((r) => r.id)); RO.emit('recipes'); });
-    $('pantryReset').addEventListener('click', () => { have.clear(); RO.store.set('pantry', []); renderPantry(); renderRecipes(); RO.emit('recipes'); });
-    $('recipeDialog').addEventListener('click', (e) => {
-      const b = e.target.closest('[data-card-recipe]');
-      if (!b) return;
-      const id = b.dataset.cardRecipe;
-      if (onCard.has(id)) onCard.delete(id);
-      else if (onCard.size >= 4) { RO.toast('대피 카드에는 4개까지 넣을 수 있어요'); return; }
-      else onCard.add(id);
-      RO.store.set('cardRecipes', [...onCard]);
-      RO.toast(onCard.has(id) ? '대피 카드에 넣었어요' : '대피 카드에서 뺐어요');
-      openRecipe(id);
-      renderRecipes();
-      RO.emit('recipes');
-    });
-  }
-
-  RO.recipes = { init, forCard, INGREDIENTS, RECIPES };
+  RO.recipes = {
+    INGREDIENTS, RECIPES, CARD_MAX, byId, ingredient, combine, hint, addMade, toggleCard, reset,
+    made: () => made.slice(),
+    isOnCard: (id) => onCard.includes(id),
+    forCard: () => onCard.map(byId)
+  };
 })(window.RO);
