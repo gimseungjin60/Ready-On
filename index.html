@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BLACK-OUT 블랙아웃 — 재난이 닥치기 전, 준비를 켜다</title>
-  <meta name="description" content="블랙아웃은 재난 대비력 테스트, 재난별 행동수칙, 맞춤형 안전키트, 대피소 확인, 오프라인 대피 카드를 제공하는 재난 대비 플랫폼입니다.">
-  <meta name="theme-color" content="#25282B">
+  <title>BLACK-OUT : MARS — 화성 거주구 재난 대비</title>
+  <meta name="description" content="BLACK-OUT : MARS는 화성 거주자를 위한 재난 대비 플랫폼입니다. 대비력 테스트, 기압 손실·먼지폭풍·태양폭풍 행동수칙, 거주구 맞춤 키트, 정착지 대피 지도, 오프라인 비상 카드를 제공합니다.">
+  <meta name="theme-color" content="#0E0D0C">
   <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,18 +26,18 @@
     <div class="container header-inner">
       <a class="logo" href="#top" aria-label="BLACK-OUT 홈">
         <span class="logo-mark" aria-hidden="true"></span>
-        <span class="logo-text">BLACK<span class="logo-colon">-</span>OUT</span>
+        <span class="logo-text">BLACK<span class="logo-colon">-</span>OUT<small class="logo-sub">MARS</small></span>
       </a>
 
       <nav class="nav" id="nav" aria-label="주요 메뉴">
         <ul class="nav-links">
           <li><a href="#why">소개</a></li>
-          <li><a href="#test">재난 대비 테스트</a></li>
-          <li><a href="#guide">재난 행동수칙</a></li>
-          <li><a href="#kit">안전키트</a></li>
-          <li><a href="#shelter">우리 동네 키트</a></li>
-          <li><a href="make.html">우리집 만들기</a></li>
-          <li><a href="#offline-card">대피 카드</a></li>
+          <li><a href="#test">생존력 테스트</a></li>
+          <li><a href="#guide">비상 행동수칙</a></li>
+          <li><a href="#kit">거주구 키트</a></li>
+          <li><a href="#shelter">정착지 지도</a></li>
+          <li><a href="make.html">거주구 DIY</a></li>
+          <li><a href="#offline-card">비상 카드</a></li>
         </ul>
         <button class="btn btn-primary nav-cta-mobile" data-action="start-test">내 대비력 확인하기</button>
       </nav>
@@ -58,29 +58,42 @@
   <main id="main">
     <!-- 02 HERO -->
     <section class="hero view" id="top" data-name="홈" aria-labelledby="heroTitle">
-      <div class="hero-media" aria-hidden="true"><img class="hero-bg" src="assets/images/hero.jpg" alt="" fetchpriority="high"></div>
+      <div class="hero-media" aria-hidden="true"><img class="hero-bg" src="assets/mars/hero.jpg" alt="" fetchpriority="high"></div>
       <canvas class="hero-fx" id="heroFx" aria-hidden="true"></canvas>
       <div class="hero-siren" aria-hidden="true"></div>
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-dark" aria-hidden="true"></div>
       <div class="hero-noise" aria-hidden="true"></div>
+      <aside class="hud" aria-label="거주구 상태 (시연용 가상 수치)">
+        <p class="hud-head"><span class="hud-dot" aria-hidden="true"></span>GALE HAB-07 · 실시간 상태</p>
+        <dl>
+          <div><dt>화성 시각</dt><dd id="hudSol">SOL 1,284 · 14:32</dd></div>
+          <div><dt>지구 신호 지연</dt><dd><b id="hudDelay">12:41</b> 편도</dd></div>
+          <div><dt>바깥 기압</dt><dd>610 Pa <small>지구의 0.6%</small></dd></div>
+          <div><dt>바깥 기온</dt><dd id="hudTemp">-63°C</dd></div>
+          <div><dt>거주구 산소</dt><dd><b id="hudO2">20.9</b>%</dd></div>
+          <div class="hud-warn"><dt>먼지 농도 τ</dt><dd><b id="hudTau">4.2</b> <small>폭풍 경보</small></dd></div>
+        </dl>
+        <p class="hud-bar" aria-hidden="true"><span id="hudPower"></span></p>
+        <p class="hud-foot">태양광 발전 <b id="hudPowerTxt">38%</b> · 시연용 가상 수치</p>
+      </aside>
       <div class="container hero-inner">
-        <p class="hero-status"><span class="dot" aria-hidden="true"></span><span class="hero-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span>인터넷 연결 끊김 · <b>신호 없음</b></p>
+        <p class="hero-status"><span class="dot" aria-hidden="true"></span><span class="hero-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span>지구 통신 두절 · <b>전역 먼지폭풍 접근 중</b></p>
         <h1 class="hero-title" id="heroTitle" lang="en">
           <span>WHAT IF</span>
-          <span>THE WORLD</span>
-          <span>GOES <em class="glitch" data-text="OFFLINE?">OFFLINE?</em></span>
+          <span>MARS GOES</span>
+          <span><em class="glitch" data-text="DARK?">DARK?</em></span>
         </h1>
         <div class="hero-bottom">
-          <p class="hero-sub">인터넷이 끊기고 AI가 멈춰도,<br>당신은 스스로를 지킬 준비가 되어 있나요?</p>
+          <p class="hero-sub">먼지폭풍이 해를 가리고 지구와의 통신이 끊겨도,<br>당신의 거주구는 버틸 준비가 되어 있나요?</p>
           <div class="hero-ctas">
             <button class="btn btn-primary btn-lg" data-action="start-test">
-              내 재난 대비력 테스트하기 <i data-lucide="arrow-right" aria-hidden="true"></i>
+              내 화성 생존력 테스트 <i data-lucide="arrow-right" aria-hidden="true"></i>
             </button>
-            <a class="btn btn-ghost-dark btn-lg" href="#guide">재난 대비 가이드 보기</a>
+            <a class="btn btn-ghost-dark btn-lg" href="#guide">비상 행동수칙 보기</a>
           </div>
         </div>
-        <p class="hero-note"><span>재난은 예고 없이 찾아오지만, 준비는 미리 할 수 있어요.</span></p>
+        <p class="hero-note"><span>화성의 재난은 예고 없이 오지만, 준비는 미리 할 수 있어요.</span><span class="hero-note-fine">BLACK-OUT : MARS · 화성 정착 시대를 가정한 시연용 서비스</span></p>
       </div>
     </section>
 
@@ -88,38 +101,38 @@
     <!-- 03 PROBLEM -->
     <div class="view" id="why" data-name="서비스 소개"><section class="section section-light" aria-labelledby="whyTitle">
       <div class="container">
-        <p class="eyebrow reveal">WHY BLACK-OUT</p>
-        <h2 class="section-title reveal" id="whyTitle">재난이 발생한 순간,<br><b>당신이 믿었던 모든 것이 멈춘다면?</b></h2>
+        <p class="eyebrow reveal">WHY BLACK-OUT : MARS</p>
+        <h2 class="section-title reveal" id="whyTitle">지구에서 2억 km 떨어진 곳,<br><b>도움을 요청해도 답이 늦게 온다면?</b></h2>
         <div class="problem-grid stagger">
           <article class="problem-card">
-            <div class="problem-media"><img src="assets/images/problem-network.jpg" alt="통신 기지국 안테나" loading="lazy" width="800" height="1000"></div>
+            <div class="problem-media"><img src="assets/mars/earth-from-mars.jpg" alt="화성 하늘에서 작은 점으로 보이는 지구" loading="lazy" width="800" height="1000"><span class="earth-mark" style="left:35%;top:12.3%">지구</span></div>
             <p class="problem-no">01</p>
-            <h3 class="problem-title">NETWORK DOWN</h3>
-            <p class="problem-ko">인터넷이 끊겨요</p>
-            <p class="problem-desc">인터넷과 전화가 안 되면 궁금한 것을 찾아볼 수 없어요.</p>
+            <h3 class="problem-title">SIGNAL DELAY</h3>
+            <p class="problem-ko">지구의 답은 늦게 와요</p>
+            <p class="problem-desc">지구까지 신호가 가는 데만 편도 3~22분. 비상 상황에서 지구의 지시를 기다릴 수 없어요.</p>
           </article>
           <article class="problem-card">
-            <div class="problem-media"><img src="assets/images/problem-ai.jpg" alt="어두운 실내에서 손전등을 든 사람" loading="lazy" width="800" height="1000"></div>
+            <div class="problem-media"><img src="assets/mars/thin-air.jpg" alt="바람 한 점 없는 화성의 메마른 지표" loading="lazy" width="800" height="1000"></div>
             <p class="problem-no">02</p>
-            <h3 class="problem-title">AI UNAVAILABLE</h3>
-            <p class="problem-ko">AI가 멈춰요</p>
-            <p class="problem-desc">AI에게 물어볼 수 없으니 내가 스스로 판단해야 해요.</p>
+            <h3 class="problem-title">THIN AIR</h3>
+            <p class="problem-ko">바깥에서는 숨을 쉴 수 없어요</p>
+            <p class="problem-desc">화성의 기압은 지구의 0.6%, 공기의 95%가 이산화탄소예요. 거주구 벽 하나가 생명선이에요.</p>
           </article>
           <article class="problem-card">
-            <div class="problem-media"><img src="assets/images/problem-unprepared.jpg" alt="물건이 비어 있는 마트 진열대" loading="lazy" width="800" height="1000"></div>
+            <div class="problem-media"><img src="assets/mars/dust-storm.jpg" alt="먼지로 뒤덮인 화성 탐사 로버" loading="lazy" width="800" height="1000"></div>
             <p class="problem-no">03</p>
-            <h3 class="problem-title">UNPREPARED</h3>
-            <p class="problem-ko">준비물이 없어요</p>
-            <p class="problem-desc">물, 먹을 것, 손전등, 구급약이 없으면 버티기 어려워요.</p>
+            <h3 class="problem-title">DUST STORM</h3>
+            <p class="problem-ko">먼지가 해를 가려요</p>
+            <p class="problem-desc">행성 전체를 덮는 먼지폭풍은 몇 주에서 몇 달 이어져요. 2018년엔 태양광 로버 오퍼튜니티가 그대로 멈췄어요.</p>
           </article>
         </div>
-        <p class="problem-msg reveal">그래서 재난이 오기 <b>전에</b> 미리 준비하는 방법을 알려 드려요.</p>
+        <p class="problem-msg reveal">그래서 경보가 울리기 <b>전에</b>, 혼자서도 버틸 준비를 함께 해요.</p>
         <ol class="flow reveal stagger" aria-label="BLACK-OUT 이용 흐름">
           <li><span>01</span>대비력 테스트</li>
           <li><span>02</span>유형 진단</li>
           <li><span>03</span>행동수칙·부족 물품</li>
-          <li><span>04</span>맞춤 안전키트</li>
-          <li><span>05</span>대피소·오프라인 카드</li>
+          <li><span>04</span>거주구 맞춤 키트</li>
+          <li><span>05</span>대피 모듈·비상 카드</li>
         </ol>
       </div>
     </section></div>
@@ -128,11 +141,11 @@
     <div class="view" id="test" data-name="대비력 테스트"><section class="section section-dark test-section" aria-labelledby="testSecTitle">
       <div class="container test-intro">
         <div>
-          <p class="eyebrow eyebrow-red reveal">재난 대비력 테스트</p>
+          <p class="eyebrow eyebrow-red reveal">화성 생존력 테스트</p>
           <h2 class="display reveal" id="testSecTitle">HOW READY<br>ARE <em>YOU?</em></h2>
         </div>
         <div class="test-intro-side reveal">
-          <p class="lead">질문 10개에 답하면 나의 재난 대비 점수와<br>꼭 필요한 준비물을 알려 드려요.</p>
+          <p class="lead">질문 10개에 답하면 나의 화성 생존 점수와<br>거주구에 꼭 필요한 준비물을 알려 드려요.</p>
           <ul class="test-facts">
             <li><span class="fact-label">질문</span><b><span data-count="10">10</span><small>개</small></b></li>
             <li><span class="fact-label">걸리는 시간</span><b><span data-count="2">2</span><small>분</small></b></li>
@@ -164,11 +177,11 @@
             <p class="eyebrow reveal">재난 행동수칙</p>
             <h2 class="display display-ink reveal" id="guideTitle">KNOW WHAT<br>TO <em>DO.</em></h2>
           </div>
-          <p class="lead lead-ink reveal">재난이 일어나면 가장 중요한 건<br>순서대로 침착하게 움직이는 거예요.</p>
+          <p class="lead lead-ink reveal">경보가 울리면 지구에 물어볼 시간이 없어요.<br>순서대로, 침착하게 움직여요.</p>
         </div>
         <div class="guide-tabs" id="guideTabs" role="tablist" aria-label="재난 종류"></div>
         <div class="guide-panel" id="guidePanel" role="tabpanel" tabindex="0"></div>
-        <p class="source-note"><i data-lucide="book-open" aria-hidden="true"></i>행정안전부 국민재난안전포털 「국민행동요령」, 소방청 화재 대피 안내를 바탕으로 요약했습니다. 현장에서는 관계기관의 안내를 우선 따르세요.</p>
+        <p class="source-note"><i data-lucide="book-open" aria-hidden="true"></i>국제우주정거장(ISS)의 실제 비상 대응 순서(화재·기압 손실·유독 대기)와 NASA가 공개한 화성 환경 자료를 바탕으로 만든 시연용 행동수칙이에요. 실제 거주구에서는 기지 관제의 안내를 먼저 따르세요.</p>
       </div>
     </section></div>
 
@@ -177,10 +190,10 @@
       <div class="container">
         <div class="section-head">
           <div>
-            <p class="eyebrow reveal">맞춤 안전키트</p>
+            <p class="eyebrow reveal">거주구 맞춤 키트</p>
             <h2 class="display display-ink reveal" id="kitTitle">PREPARE<br>YOUR OWN <em>KIT.</em></h2>
           </div>
-          <p class="lead lead-ink reveal">모두에게 같은 가방이 필요한 건 아니에요.<br>나에게 꼭 필요한 것만 챙겨요.</p>
+          <p class="lead lead-ink reveal">돔에 사는지, 지하에 사는지, 궤도에 사는지에 따라<br>필요한 장비가 달라요.</p>
         </div>
         <div id="kitRecBanner"></div>
         <div class="chips" id="kitTabs" role="tablist" aria-label="키트 카테고리"></div>
@@ -190,40 +203,23 @@
     </section></div>
 
     <!-- 07 우리 동네 맞춤 키트 + 대피소 — 전체 화면 지도 + 오른쪽 패널 (팀원 readykit 확장) -->
-    <div class="view" id="shelter" data-name="우리 동네 키트·대피소"><section class="shelter-full" aria-labelledby="shelterTitle">
-      <div class="shelter-map" id="shelterMap" aria-label="대비 장소 지도 (누르면 그 자리로 지정)"></div>
+    <div class="view" id="shelter" data-name="정착지 지도·키트"><section class="shelter-full" aria-labelledby="shelterTitle">
+      <div class="shelter-map" id="shelterMap" aria-label="GALE 정착지 지도 (누르면 그 자리를 내 거주구로 지정)"></div>
 
       <div class="map-title">
-        <p class="eyebrow eyebrow-red">우리 동네 맞춤 키트 · 대피소</p>
+        <p class="eyebrow eyebrow-red">GALE 정착지 지도 · 맞춤 키트</p>
         <h2 class="map-title-h" id="shelterTitle">KNOW YOUR<br>WAY <em>OUT.</em></h2>
-        <p>위치를 확인하고 재난만 고르세요. 우리 동네에 맞춰 필요한 물품과 수량을 계산해요.</p>
+        <p>거주구를 고르고 재난만 선택하세요. 정착지와의 거리에 맞춰 필요한 물품과 수량을 계산해요.</p>
       </div>
 
-      <aside class="map-panel" aria-label="대비 장소와 맞춤 키트">
-        <section class="mp-loc" aria-label="대비 장소">
-          <form class="search" id="shelterForm" role="search">
-            <label class="sr-only" for="shelterQuery">주소 또는 장소 검색</label>
-            <i data-lucide="search" aria-hidden="true"></i>
-            <input id="shelterQuery" type="search" placeholder="주소·장소 검색 (예: 세종대로 110)" autocomplete="street-address">
-            <button class="btn btn-primary btn-sm" type="submit">검색</button>
-          </form>
-          <div class="shelter-tools">
-            <button class="tool-btn" id="shelterGeo" type="button"><i data-lucide="locate-fixed" aria-hidden="true"></i>현재 위치</button>
-            <details class="mp-more">
-              <summary class="tool-btn"><i data-lucide="sliders-horizontal" aria-hidden="true"></i>좌표·시군구</summary>
-              <div class="mp-more-body">
-                <form class="coord-form" id="coordForm">
-                  <input id="coordLat" inputmode="decimal" placeholder="위도 37.5663" aria-label="위도">
-                  <input id="coordLng" inputmode="decimal" placeholder="경도 126.9779" aria-label="경도">
-                  <button class="btn btn-outline btn-xs" type="submit">적용</button>
-                </form>
-                <select id="regionSelect" aria-label="시·군·구로 지정 (상세 위치 없이)"><option>지역 목록 불러오는 중…</option></select>
-              </div>
-            </details>
-          </div>
+      <aside class="map-panel" aria-label="거주구 위치와 맞춤 키트">
+        <section class="mp-loc" aria-label="내 거주구 위치">
+          <label class="zone-pick"><i data-lucide="home" aria-hidden="true"></i>
+            <select id="regionSelect" aria-label="거주 구역 선택"><option>거주 구역 불러오는 중…</option></select>
+          </label>
           <div class="loc-now">
             <i data-lucide="map-pin" aria-hidden="true"></i>
-            <p><b id="locLabel">위치를 지정해 주세요</b><span id="locMeta">지도를 누르거나 핀을 끌어서 옮길 수도 있어요</span></p>
+            <p><b id="locLabel">거주 구역을 고르거나 지도를 눌러 주세요</b><span id="locMeta">핀을 끌어서 옮길 수도 있어요</span></p>
           </div>
           <div class="loc-status" id="locStatus" role="status" aria-live="polite" hidden></div>
         </section>
@@ -232,7 +228,7 @@
 
         <div class="mp-tabs" role="tablist" aria-label="결과 보기">
           <button type="button" role="tab" class="is-active" aria-selected="true" data-tab="kit" aria-controls="tabKit">필요 물품</button>
-          <button type="button" role="tab" aria-selected="false" data-tab="shelter" aria-controls="tabShelter">대피소</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="shelter" aria-controls="tabShelter">주변 대피·구조</button>
         </div>
 
         <div class="mp-tab" id="tabKit" role="tabpanel">
@@ -245,7 +241,7 @@
             </div>
             <label class="kit-days">기간
               <select id="kitDays">
-                <option value="0">자동 추천</option><option value="7">7일 이상</option><option value="14">14일 이상</option><option value="30">30일 이상</option>
+                <option value="0">자동 추천</option><option value="7">7솔 이상</option><option value="14">14솔 이상</option><option value="30">30솔 이상</option>
               </select>
             </label>
           </div>
@@ -263,7 +259,7 @@
           <ul class="shelter-list" id="shelterList" aria-label="가까운 대피시설 목록"></ul>
           <div class="mp-shelter-foot">
             <button class="tool-btn" id="shelterPrint" type="button" disabled><i data-lucide="printer" aria-hidden="true"></i>목록 인쇄</button>
-            <p class="map-source">출처: 행정안전부 국민안전24 안전지도(<span id="shelterDate">2026-11-05</span> 수집) · <a id="shelterSource" href="https://www.safekorea.go.kr" target="_blank" rel="noopener">공식 안전지도 ↗</a></p>
+            <p class="map-source">지도 배경: NASA 게일 크레이터 궤도 사진(퍼블릭 도메인) · 정착지·시설·축척은 시연용 가상 설정이에요.</p>
           </div>
         </div>
       </aside>
@@ -274,10 +270,10 @@
       <div class="container">
         <div class="section-head">
           <div>
-            <p class="eyebrow eyebrow-red reveal">오프라인 대피 카드</p>
-            <h2 class="display reveal" id="cardTitle">WHEN THE INTERNET<br>GOES <em>OFFLINE.</em></h2>
+            <p class="eyebrow eyebrow-red reveal">오프라인 비상 카드</p>
+            <h2 class="display reveal" id="cardTitle">WHEN THE SIGNAL<br>GOES <em>SILENT.</em></h2>
           </div>
-          <p class="lead reveal">종이 카드로 뽑아서 냉장고나 현관에 붙여 두세요.<br>재난 중에는 이 사이트에 들어오지 못할 수도 있어요.</p>
+          <p class="lead reveal">종이 카드로 뽑아 해치 옆에 붙여 두세요.<br>기지망이 끊기면 이 사이트에 들어오지 못해요.</p>
         </div>
 
         <div class="card-wrap">
@@ -285,12 +281,12 @@
             <fieldset>
               <legend>기본 정보</legend>
               <label>이름 또는 별칭<input id="cName" maxlength="30" placeholder="예: 김준비"></label>
-              <label>거주 주소<input id="cAddress" maxlength="80" placeholder="예: 서울시 OO구 OO로 12, 302호"></label>
+              <label>거주 구역 · 모듈 번호<input id="cAddress" maxlength="80" placeholder="예: 중앙 돔 거주구 HAB-07, 2번 모듈"></label>
               <div class="form-row">
                 <label>거주 형태
                   <select id="cHousing">
                     <option value="">선택</option>
-                    <option>아파트</option><option>오피스텔</option><option>원룸</option><option>단독주택</option><option>기타</option>
+                    <option>지표 돔 거주구</option><option>지하 용암동굴 거주구</option><option>이동식 로버 거주 모듈</option><option>궤도 정거장 (포보스 기지)</option><option>연구 전초기지</option>
                   </select>
                 </label>
                 <label>혈액형
@@ -304,9 +300,9 @@
             </fieldset>
             <fieldset>
               <legend>대피 정보</legend>
-              <label>주요 대피소<input id="cShelterName" maxlength="60" placeholder="대피소 찾기에서 저장하거나 직접 입력"></label>
-              <label>대피소 주소<input id="cShelterAddr" maxlength="80" placeholder="대피소 주소"></label>
-              <label>가족 만남 장소<input id="cMeet" maxlength="60" placeholder="예: OO초등학교 정문"></label>
+              <label>가장 가까운 대피 모듈<input id="cShelterName" maxlength="60" placeholder="정착지 지도에서 저장하거나 직접 입력"></label>
+              <label>대피 모듈 위치<input id="cShelterAddr" maxlength="80" placeholder="예: 직선 400m, 에어록 B 방향"></label>
+              <label>가족 만남 모듈<input id="cMeet" maxlength="60" placeholder="예: 지하 차폐 대피소 S-1"></label>
             </fieldset>
             <fieldset>
               <legend>비상 연락처</legend>
@@ -317,10 +313,10 @@
             <fieldset>
               <legend>우리 집 메모</legend>
               <label class="sr-only" for="cNotes">우리 집 메모</label>
-              <textarea id="cNotes" rows="3" maxlength="160" placeholder="예: 반려견 1마리, 비상계단은 복도 끝, 가스 밸브는 싱크대 아래"></textarea>
+              <textarea id="cNotes" rows="3" maxlength="160" placeholder="예: 여압복은 침실 수납장, 비상 산소는 해치 옆, 구조 로봇 호출 코드 R-07"></textarea>
             </fieldset>
             <fieldset>
-              <legend>내가 만든 조합법</legend>
+              <legend>내가 만든 거주구 DIY</legend>
               <p class="card-recipes" id="cardRecipes"></p>
             </fieldset>
             <div class="card-actions">
@@ -342,14 +338,14 @@
 
     <!-- 09 FINAL CTA -->
     <div class="view" id="end" data-name="마무리"><section class="final" aria-labelledby="finalTitle">
-      <img class="final-bg" src="assets/images/cta.jpg" alt="" loading="lazy">
+      <img class="final-bg" src="assets/mars/thin-air.jpg" alt="" loading="lazy">
       <div class="final-ring" aria-hidden="true"><span></span><span></span><span></span></div>
       <div class="container final-inner">
-        <h2 class="final-title reveal" id="finalTitle" lang="en">THE BEST TIME<br>TO PREPARE IS<br><em>BEFORE IT HAPPENS.</em></h2>
-        <p class="final-sub reveal">준비된 하루가 위기의 순간을 바꿔요.</p>
+        <h2 class="final-title reveal" id="finalTitle" lang="en">EARTH IS<br>22 MINUTES AWAY.<br><em>YOU ARE NOT.</em></h2>
+        <p class="final-sub reveal">지구의 도움은 늦게 오지만, 내 준비는 지금 여기 있어요.</p>
         <div class="btn-row reveal">
           <button class="btn btn-primary btn-lg btn-pulse" data-action="start-test">지금 대비력 테스트하기</button>
-          <a class="btn btn-ghost-dark btn-lg" href="#kit">안전키트 둘러보기</a>
+          <a class="btn btn-ghost-dark btn-lg" href="#kit">거주구 키트 둘러보기</a>
         </div>
       </div>
     </section>
@@ -360,35 +356,34 @@
       <div class="footer-top">
         <a class="logo" href="#top" aria-label="BLACK-OUT 맨 위로">
           <span class="logo-mark" aria-hidden="true"></span>
-          <span class="logo-text">BLACK<span class="logo-colon">-</span>OUT</span>
+          <span class="logo-text">BLACK<span class="logo-colon">-</span>OUT<small class="logo-sub">MARS</small></span>
         </a>
         <nav class="footer-nav" aria-label="푸터 메뉴">
           <a href="#why">서비스 소개</a>
-          <a href="#guide">재난 행동수칙</a>
-          <a href="#kit">안전키트</a>
+          <a href="#guide">비상 행동수칙</a>
+          <a href="#kit">거주구 키트</a>
           <a href="#shelter">대피소 정보</a>
           <button class="link-btn link-btn-light" data-action="privacy">개인정보 처리 안내</button>
         </nav>
       </div>
       <div class="footer-sources">
-        <p class="footer-label">공식 재난 정보 출처</p>
+        <p class="footer-label">참고한 공개 자료</p>
         <ul>
-          <li><a href="https://www.safekorea.go.kr" target="_blank" rel="noopener">국민재난안전포털</a></li>
-          <li><a href="https://www.mois.go.kr" target="_blank" rel="noopener">행정안전부</a></li>
-          <li><a href="https://www.nfa.go.kr" target="_blank" rel="noopener">소방청</a></li>
-          <li><a href="https://www.weather.go.kr" target="_blank" rel="noopener">기상청</a></li>
-          <li><a href="https://www.data.go.kr" target="_blank" rel="noopener">공공데이터포털</a></li>
+          <li><a href="https://science.nasa.gov/mars/" target="_blank" rel="noopener">NASA 화성 탐사</a></li>
+          <li><a href="https://www.nasa.gov/international-space-station/" target="_blank" rel="noopener">NASA 국제우주정거장</a></li>
+          <li><a href="https://science.nasa.gov/mission/msl-curiosity/" target="_blank" rel="noopener">큐리오시티 (게일 크레이터)</a></li>
+          <li><a href="https://www.swpc.noaa.gov/phenomena/solar-radiation-storm" target="_blank" rel="noopener">NOAA 태양 방사선 폭풍</a></li>
         </ul>
       </div>
-      <p class="footer-disclaimer">블랙아웃은 평상시 재난 대비를 돕는 서비스입니다. 실제 재난 상황에서는 정부와 관계기관의 공식 안내 및 현장 지침을 우선적으로 따르세요.</p>
-      <p class="footer-copy">© <span id="year"></span> BLACK-OUT · MVP 시연 버전 · 사진: 퍼블릭 도메인(Openverse · Wikimedia Commons)</p>
+      <p class="footer-disclaimer">BLACK-OUT : MARS는 화성 정착 시대를 가정한 시연용 재난 대비 서비스입니다. 실제 수치와 절차는 NASA·국제우주정거장 공개 자료를 참고했으며, 실제 상황에서는 기지 관제와 구조팀의 지시를 먼저 따르세요.</p>
+      <p class="footer-copy">© <span id="year"></span> BLACK-OUT · MVP 시연 버전 · 사진: NASA/JPL-Caltech 퍼블릭 도메인 · 상품 일러스트: BLACK-OUT 제작</p>
     </div>
   </footer>
   </div>
   </main>
 
   <!-- 발표용 페이지 이동 -->
-  <div class="curtain" id="curtain" aria-hidden="true"><span class="curtain-logo">BLACK<b>-</b>OUT</span></div>
+  <div class="curtain" id="curtain" aria-hidden="true"><span class="curtain-logo">BLACK<b>-</b>OUT : MARS</span></div>
 
   <!-- 테스트 모달 -->
   <dialog class="test-dialog" id="testDialog" aria-labelledby="testTitle">
@@ -445,28 +440,14 @@
     </div>
   </dialog>
 
-  <!-- 위치 정보 동의 -->
-  <dialog class="modal" id="geoDialog" aria-labelledby="geoTitle">
-    <div class="modal-box">
-      <h2 id="geoTitle">위치 정보를 사용할까요?</h2>
-      <p>주변 대피소를 찾기 위해 현재 위치를 <b>이 기기 안에서만</b> 1회 사용합니다. 위치는 저장하거나 서버로 전송하지 않습니다.</p>
-      <p class="fine fine-ink">다음 단계에서 브라우저가 권한을 한 번 더 묻습니다.</p>
-      <div class="modal-actions">
-        <button class="btn btn-outline" id="geoDeny" type="button">주소로 직접 찾기</button>
-        <button class="btn btn-primary" id="geoAllow" type="button">위치 사용 동의</button>
-      </div>
-    </div>
-  </dialog>
-
   <!-- 개인정보 처리 안내 -->
   <dialog class="modal" id="privacyDialog" aria-labelledby="privacyTitle">
     <div class="modal-box">
       <h2 id="privacyTitle">개인정보 처리 안내</h2>
       <ul class="plain-list">
-        <li>블랙아웃 MVP는 별도 서버에 개인정보를 저장하지 않습니다.</li>
+        <li>BLACK-OUT : MARS 시연 버전은 별도 서버에 개인정보를 저장하지 않습니다.</li>
         <li>테스트 응답, 장바구니, 대피 카드 입력값은 이 브라우저의 localStorage에만 보관됩니다.</li>
-        <li>위치 정보는 동의한 경우에만 대피소 검색에 1회 사용하며 저장하지 않습니다.</li>
-        <li>주소 검색 시 입력한 검색어는 좌표 변환을 위해 OpenStreetMap Nominatim으로 전송되며, 지도 이미지는 OpenStreetMap 서버에서 불러옵니다.</li>
+                <li>정착지 지도는 사이트 안의 NASA 궤도 사진을 쓰며, 위치 정보를 수집하거나 외부로 보내지 않습니다.</li>
         <li>브라우저 설정에서 사이트 데이터를 삭제하면 저장된 정보가 모두 지워집니다.</li>
       </ul>
       <div class="modal-actions"><button class="btn btn-primary" data-close>확인</button></div>

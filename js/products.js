@@ -3,85 +3,93 @@
 (function (RO) {
   const CATEGORIES = [
     { id: 'all', label: '전체' },
-    { id: 'earthquake', label: '지진 대비' },
-    { id: 'blackout', label: '정전 대비' },
-    { id: 'fire', label: '화재 대비' },
-    { id: 'flood', label: '침수 대비' },
-    { id: '72h', label: '72시간 생존' },
-    { id: 'solo', label: '1인 가구 미니' }
+    { id: 'depress', label: '기압 손실' },
+    { id: 'dust', label: '먼지폭풍' },
+    { id: 'solar', label: '태양폭풍' },
+    { id: 'fire', label: '거주구 화재' },
+    { id: 'life', label: '생명유지' },
+    { id: 'solo', label: '1인 모듈' }
   ];
 
+  // 화성 거주자용 키트. 구성은 NASA·ISS에서 실제로 쓰거나 시험한 장비를 본떴고, 가격은 시연용 가상 가격입니다.
   const kits = [
     {
-      id: 'kit-quake', cats: ['earthquake', '72h'], name: '지진 대비 72시간 키트', price: 89000,
-      img: 'assets/images/kit-earthquake.jpg',
-      desc: '흔들림이 멈춘 뒤 대피하고 사흘을 버티는 데 필요한 기본 구성.',
-      items: ['안전모', '호루라기', '방진 마스크 2매', '작업용 장갑', '생수 500ml × 6', '비상식량 3일분', 'LED 손전등', '기본 응급 파우치'],
-      target: '아파트·고층 거주자, 지진 행동요령이 익숙하지 않은 분'
+      id: 'kit-depress', cats: ['depress', 'life'], name: '기압 손실 대응 키트', price: 189000,
+      img: 'assets/mars/kit-depress.svg',
+      desc: '공기가 새는 순간 숨을 지키고, 새는 곳을 찾아 막고, 대피를 판단하는 세트.',
+      items: ['비상 산소마스크 2개', '휴대용 산소통(1인 6시간)', '휴대용 기압계', '초음파 누출 탐지기', '누출 패치 시트·고압 테이프'],
+      target: '지표 돔·모듈 거주자, 기압 손실 행동요령이 익숙하지 않은 분'
     },
     {
-      id: 'kit-night', cats: ['blackout'], name: '정전 대비 나이트 키트', price: 39000,
-      img: 'assets/images/kit-blackout.jpg',
-      desc: '불이 꺼진 집에서 이동하고, 소식을 듣고, 연락을 유지하는 조명·전원 세트.',
-      items: ['LED 랜턴', '헤드랜턴', '보조배터리 10,000mAh', '수동 충전 라디오', 'AA 건전지 8개'],
-      target: '손전등·보조배터리가 없는 분'
+      id: 'kit-dust', cats: ['dust', 'life'], name: '먼지폭풍 대비 30솔 키트', price: 249000,
+      img: 'assets/mars/kit-dust.svg',
+      desc: '태양광 발전이 몇 주 줄어드는 동안 조명·전력·공기를 지키는 장기전 세트.',
+      items: ['비상 배터리팩 2kWh', '고휘도 LED 헤드램프', '먼지 필터 반면 마스크', 'CO₂ 흡착 카트리지 30개(1인 1솔 1개)', '전력 사용 계획 카드'],
+      target: '태양광 의존 거주구, 기지와 멀리 떨어진 분'
     },
     {
-      id: 'kit-fire', cats: ['fire'], name: '화재 대피 키트', price: 59000,
-      img: 'assets/images/kit-fire.jpg',
-      desc: '초기 대응과 연기 속 대피를 돕는 가정용 화재 대비 구성.',
-      items: ['가정용 분말 소화기 3.3kg', '화재 대피용 마스크 2개', 'LED 손전등', '호루라기', '사용법 안내 카드'],
-      target: '소화기가 없는 가정, 고층·오피스텔 거주자'
+      id: 'kit-solar', cats: ['solar'], name: '태양폭풍 대피 키트', price: 329000,
+      img: 'assets/mars/kit-solar.svg',
+      desc: '고에너지 입자가 쏟아지는 몇 시간에서 하루, 차폐 대피 모듈에서 버티는 세트.',
+      items: ['방사선 차폐 조끼', '개인 선량계', '물 차폐 팩 6개(채우면 몸 주위 차폐벽)', '비상식 2솔분'],
+      target: '차폐가 얇은 지표 거주자, 선외활동이 잦은 분'
     },
     {
-      id: 'kit-flood', cats: ['flood'], name: '침수 대비 안전 키트', price: 69000,
-      img: 'assets/images/kit-flood.jpg',
-      desc: '집중호우와 침수 상황에서 몸과 중요한 물건을 지키는 방수 구성.',
-      items: ['방수 드라이백 20L', '우비', '미끄럼 방지 장화', '방수 손전등', '호루라기', '생수 500ml × 4'],
-      target: '저층·반지하·단독주택 거주자'
+      id: 'kit-suit', cats: ['depress', 'life'], name: '비상 여압복 세트', price: 890000,
+      img: 'assets/mars/kit-suit.svg',
+      desc: '거주구 전체가 기압을 잃어도 대피 모듈까지 갈 수 있게 몸을 감싸는 여압복.',
+      items: ['내부용 비상 여압복', '헬멧·헬멧 라이트', '휴대 산소팩(6시간)', '체형 조절 키트'],
+      target: '가족 거주자, 기압 대피 모듈과 거리가 먼 분'
     },
     {
-      id: 'kit-72h', cats: ['72h'], name: '72시간 생존 키트', price: 129000,
-      img: 'assets/images/kit-72h.jpg',
-      desc: '외부 지원이 닿기 전 최소 3일을 스스로 버티기 위한 종합 구성.',
-      items: ['생수 2L × 3', '비상식량 3일분', 'LED 랜턴', '수동 충전 라디오', '응급처치 키트', '은박 담요 2매', '위생용품 세트', '방수 백팩'],
-      target: '가족 단위 가구, 비상식량·식수가 부족한 분'
-    },
-    {
-      id: 'kit-solo', cats: ['solo'], name: '1인 가구 미니 생존 키트', price: 49000,
-      img: 'assets/images/kit-solo.jpg',
-      desc: '원룸·오피스텔에도 부담 없는 크기로 꼭 필요한 것만 담았습니다.',
-      items: ['생수 500ml × 3', '비상식량 1일분 × 3', '미니 랜턴', '보조배터리 5,000mAh', '호루라기', '은박 담요', '미니 응급 파우치', '대피 카드 방수 홀더'],
+      id: 'kit-solo', cats: ['solo', 'life'], name: '1인 거주 모듈 미니 키트', price: 129000,
+      img: 'assets/mars/kit-solo.svg',
+      desc: '좁은 1인 모듈에도 들어가는 크기로 첫 10분을 버틸 것만 담았어요.',
+      items: ['소형 산소마스크(2시간)', '헤드램프', '비상식 3솔분', '위치 신호 비콘', '접이식 물 파우치'],
       target: '혼자 사는 분, 보관 공간이 좁은 분'
     },
     {
-      id: 'kit-aid', cats: ['72h', 'solo'], name: '기본 응급처치 키트', price: 29000,
-      img: 'assets/images/kit-firstaid.jpg',
-      desc: '작은 상처부터 응급 상황 초기 대응까지, 모든 키트의 기본.',
-      items: ['멸균 거즈·붕대', '반창고 세트', '소독 용품', '압박 붕대', '의료용 테이프', '일회용 장갑', '응급처치 안내 카드'],
-      target: '응급용품이 없는 모든 가정'
+      id: 'kit-orbit', cats: ['life'], name: '궤도 정거장 자가구조 키트', price: 1290000,
+      img: 'assets/mars/kit-orbit.svg',
+      desc: '선외활동 중 줄이 끊어졌을 때 스스로 돌아오기 위한 소형 추진 장치 세트.',
+      items: ['자가구조 추진 장치(NASA SAFER 방식)', '예비 안전줄·후크', '손목 제어기', '사용 훈련 카드'],
+      target: '궤도 정거장(포보스 기지) 거주자, 선외활동 작업자'
+    },
+    {
+      id: 'kit-aid', cats: ['fire', 'life'], name: '저중력 응급 의료 키트', price: 99000,
+      img: 'assets/mars/kit-aid.svg',
+      desc: '중력이 지구의 38%라 물건이 덜 떨어져요. 고정 끈으로 정리한 응급 세트.',
+      items: ['고정 끈 정리 하드케이스', '붕대·거즈·반창고', '화상 드레싱', '맥박산소측정기', '응급처치 안내 카드'],
+      target: '모든 거주구'
+    },
+    {
+      id: 'kit-comm', cats: ['dust', 'solo'], name: '비상 통신 비콘 세트', price: 159000,
+      img: 'assets/mars/kit-comm.svg',
+      desc: '기지망이 끊겨도 내 위치와 상태를 이웃·구조 로봇에게 알리는 세트.',
+      items: ['조난 신호 비콘', '휴대용 무전기 2대', '점멸 신호등', '비상 주파수 카드'],
+      target: '혼자 사는 분, 로버·전초기지 거주자'
     }
   ];
 
   // 행동수칙 카드의 '키트에 담기'에서 쓰는 개별 물품
   const items = [
-    { id: 'item-flashlight', name: 'LED 손전등', price: 12000, icon: 'flashlight' },
-    { id: 'item-headlamp', name: '헤드랜턴', price: 15000, icon: 'lamp' },
-    { id: 'item-powerbank', name: '보조배터리 10,000mAh', price: 19000, icon: 'battery-charging' },
-    { id: 'item-radio', name: '수동 충전 라디오', price: 25000, icon: 'radio' },
-    { id: 'item-water', name: '생수 2L × 6', price: 6000, icon: 'droplets' },
-    { id: 'item-food', name: '비상식량 3일분', price: 24000, icon: 'package' },
-    { id: 'item-helmet', name: '안전모', price: 14000, icon: 'hard-hat' },
-    { id: 'item-whistle', name: '호루라기', price: 3000, icon: 'megaphone' },
-    { id: 'item-gloves', name: '작업용 장갑', price: 4000, icon: 'hand' },
-    { id: 'item-firemask', name: '화재 대피용 마스크', price: 18000, icon: 'shield' },
-    { id: 'item-extinguisher', name: '가정용 분말 소화기 3.3kg', price: 28000, icon: 'fire-extinguisher' },
-    { id: 'item-firstaid', name: '응급처치 키트', price: 29000, icon: 'cross' },
-    { id: 'item-raincoat', name: '우비', price: 7000, icon: 'umbrella' },
-    { id: 'item-boots', name: '미끄럼 방지 장화', price: 22000, icon: 'footprints' },
-    { id: 'item-drybag', name: '방수 드라이백 20L', price: 16000, icon: 'briefcase' },
-    { id: 'item-tape', name: '창문 고정용 테이프', price: 5000, icon: 'square-dashed' },
-    { id: 'item-cooler', name: '보냉 가방·아이스팩', price: 13000, icon: 'snowflake' }
+    { id: 'item-o2mask', name: '비상 산소마스크', price: 39000, icon: 'wind' },
+    { id: 'item-o2cyl', name: '휴대용 산소통(6시간)', price: 59000, icon: 'cylinder' },
+    { id: 'item-gauge', name: '휴대용 기압계', price: 24000, icon: 'gauge' },
+    { id: 'item-leak', name: '초음파 누출 탐지기', price: 69000, icon: 'radar' },
+    { id: 'item-patch', name: '누출 패치 시트·고압 테이프', price: 18000, icon: 'sticky-note' },
+    { id: 'item-dosimeter', name: '개인 선량계', price: 49000, icon: 'radiation' },
+    { id: 'item-vest', name: '방사선 차폐 조끼', price: 259000, icon: 'shield' },
+    { id: 'item-waterbag', name: '물 차폐 팩 6개', price: 29000, icon: 'droplets' },
+    { id: 'item-headlamp', name: '고휘도 LED 헤드램프', price: 19000, icon: 'flashlight' },
+    { id: 'item-battery', name: '비상 배터리팩 2kWh', price: 149000, icon: 'battery-charging' },
+    { id: 'item-dustmask', name: '먼지 필터 반면 마스크', price: 22000, icon: 'shield-half' },
+    { id: 'item-co2', name: 'CO₂ 흡착 카트리지', price: 9000, icon: 'filter' },
+    { id: 'item-o2candle', name: '비상 산소 발생 캔들', price: 35000, icon: 'flame-kindling' },
+    { id: 'item-extinguisher', name: '거주구용 CO₂ 소화기', price: 59000, icon: 'fire-extinguisher' },
+    { id: 'item-comask', name: '일산화탄소·연기 측정기', price: 39000, icon: 'activity' },
+    { id: 'item-beacon', name: '조난 신호 비콘', price: 79000, icon: 'radio-tower' },
+    { id: 'item-ration', name: '비상식 3솔분', price: 27000, icon: 'package' }
   ];
 
   const all = [...kits, ...items];

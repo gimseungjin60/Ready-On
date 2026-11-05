@@ -1,5 +1,5 @@
 /* BLACK-OUT — make.html: 재료를 조합대에 올려 생존 용품을 만드는 페이지
-   맞는 조합이면 완성되어 '나의 조합 도감'에 저장되고, 표시한 것(최대 4개)이 대피 카드 뒷면에 들어갑니다. */
+   맞는 조합이면 완성되어 '나의 조합 도감'에 저장되고, 표시한 것(최대 4개)이 비상 카드 뒷면에 들어갑니다. */
 (function (RO) {
   const SLOTS = 3;
   const R = () => RO.recipes;
@@ -64,7 +64,7 @@
           <div class="book-actions">
             <button type="button" class="link-act" data-open="${r.id}"><i data-lucide="book-open" aria-hidden="true"></i>만드는 법</button>
             <button type="button" class="card-toggle ${on ? 'is-on' : ''}" data-card="${r.id}" aria-pressed="${on}">
-              <i data-lucide="${on ? 'check' : 'plus'}" aria-hidden="true"></i>대피 카드</button>
+              <i data-lucide="${on ? 'check' : 'plus'}" aria-hidden="true"></i>비상 카드</button>
           </div>
         </article>`;
     }).join('');
@@ -126,7 +126,7 @@
       <p class="rd-src">근거: ${r.src.map((x) => (x.u ? `<a href="${x.u}" target="_blank" rel="noopener">${x.t}</a>` : x.t)).join(' · ')}</p>
       <div class="modal-actions">
         ${R().made().includes(r.id)
-          ? `<button class="btn ${on ? 'btn-outline' : 'btn-primary'}" data-card="${r.id}">${on ? '대피 카드에서 빼기' : '대피 카드에 넣기'}</button>`
+          ? `<button class="btn ${on ? 'btn-outline' : 'btn-primary'}" data-card="${r.id}">${on ? '비상 카드에서 빼기' : '비상 카드에 넣기'}</button>`
           : `<button class="btn btn-primary" data-try="${r.id}"><i data-lucide="sparkles" aria-hidden="true"></i>조합대에 재료 올려 보기</button>`}
         <button class="btn btn-outline" data-close>닫기</button>
       </div>`;
@@ -138,8 +138,8 @@
   function printGuides() {
     const list = R().made().length ? R().made().map(R().byId) : R().RECIPES;
     $('guidePrintArea').innerHTML = `
-      <h1>BLACK-OUT · 우리집 재료로 만들기</h1>
-      <p class="gp-sub">${R().made().length ? '내가 만든 조합법' : '전체 조합법'} ${list.length}가지 · 출력일 ${new Date().toLocaleDateString('ko-KR')}</p>
+      <h1>BLACK-OUT : MARS · 거주구 DIY</h1>
+      <p class="gp-sub">${R().made().length ? '내가 만든 DIY' : '전체 DIY'} ${list.length}가지 · 출력일 ${new Date().toLocaleDateString('ko-KR')}</p>
       ${list.map((r) => `
         <section class="gp-item">
           <h2>${r.name}<span>${r.use}${r.adult ? ' · 어른과 함께' : ''}</span></h2>
@@ -154,8 +154,8 @@
 
   function toggleCard(id) {
     const wasOn = R().isOnCard(id);
-    if (!R().toggleCard(id)) { RO.toast(`대피 카드에는 ${R().CARD_MAX}개까지 넣을 수 있어요. 하나를 먼저 빼 주세요.`); return; }
-    RO.toast(wasOn ? '대피 카드에서 뺐어요' : '대피 카드에 넣었어요');
+    if (!R().toggleCard(id)) { RO.toast(`비상 카드에는 ${R().CARD_MAX}개까지 넣을 수 있어요. 하나를 먼저 빼 주세요.`); return; }
+    RO.toast(wasOn ? '비상 카드에서 뺐어요' : '비상 카드에 넣었어요');
     renderBook();
     if ($('recipeDialog').open) openRecipe(id);
   }

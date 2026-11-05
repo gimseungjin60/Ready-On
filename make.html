@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>우리집 재료로 만들기 — BLACK-OUT 블랙아웃</title>
-  <meta name="description" content="집에 있는 재료를 조합해서 인터넷이 끊겨도 만들 수 있는 생존 용품을 알아봐요. 아이도 따라 할 수 있는 3단계 만들기.">
-  <meta name="theme-color" content="#25282B">
+  <title>거주구 DIY — BLACK-OUT : MARS</title>
+  <meta name="description" content="화성 거주구에 있는 물품을 조합해 비상 상황에 쓸 도구를 만들어요. 우주정거장과 아폴로 13호의 실제 사례를 바탕으로 한 3단계 DIY.">
+  <meta name="theme-color" content="#0E0D0C">
   <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,22 +22,22 @@
     <div class="container header-inner">
       <a class="logo" href="index.html" aria-label="BLACK-OUT 홈">
         <span class="logo-mark" aria-hidden="true"></span>
-        <span class="logo-text">BLACK<span class="logo-colon">-</span>OUT</span>
+        <span class="logo-text">BLACK<span class="logo-colon">-</span>OUT<small class="logo-sub">MARS</small></span>
       </a>
       <nav class="nav" id="nav" aria-label="주요 메뉴">
         <ul class="nav-links">
           <li><a href="index.html#why">소개</a></li>
-          <li><a href="index.html#test">재난 대비 테스트</a></li>
-          <li><a href="index.html#guide">재난 행동수칙</a></li>
-          <li><a href="index.html#kit">안전키트</a></li>
-          <li><a href="index.html#shelter">우리 동네 키트</a></li>
-          <li><a href="make.html" class="is-current" aria-current="page">우리집 만들기</a></li>
-          <li><a href="index.html#offline-card">대피 카드</a></li>
+          <li><a href="index.html#test">생존력 테스트</a></li>
+          <li><a href="index.html#guide">비상 행동수칙</a></li>
+          <li><a href="index.html#kit">거주구 키트</a></li>
+          <li><a href="index.html#shelter">정착지 지도</a></li>
+          <li><a href="make.html" class="is-current" aria-current="page">거주구 DIY</a></li>
+          <li><a href="index.html#offline-card">비상 카드</a></li>
         </ul>
-        <a class="btn btn-primary nav-cta-mobile" href="index.html#offline-card">대피 카드 만들기</a>
+        <a class="btn btn-primary nav-cta-mobile" href="index.html#offline-card">비상 카드 만들기</a>
       </nav>
       <div class="header-actions">
-        <a class="btn btn-primary btn-sm header-cta" href="index.html#offline-card">대피 카드 만들기</a>
+        <a class="btn btn-primary btn-sm header-cta" href="index.html#offline-card">비상 카드 만들기</a>
         <button class="icon-btn nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav" aria-label="메뉴 열기">
           <span class="burger" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
@@ -49,13 +49,13 @@
     <section class="mk-hero" aria-labelledby="mkTitle">
       <div class="container mk-hero-inner">
         <div>
-          <p class="eyebrow eyebrow-red">우리집 재료로 만들기</p>
-          <h1 class="display" id="mkTitle">MAKE IT<br>AT <em>HOME.</em></h1>
+          <p class="eyebrow eyebrow-red">거주구 DIY</p>
+          <h1 class="display" id="mkTitle">MAKE IT<br>IN THE <em>HAB.</em></h1>
         </div>
         <div class="mk-hero-side">
-          <p class="lead">재료 19가지 · 조합법 18가지. 집에 있는 재료를 조합대에 올리고 <b>조합하기</b>를 눌러 보세요.<br>인터넷이 끊겨도 만들 수 있는 생존 용품이 완성돼요.</p>
+          <p class="lead">거주구 물품 13가지 · DIY 13가지. 물품을 조합대에 올리고 <b>조합하기</b>를 눌러 보세요.<br>아폴로 13호처럼, 있는 것으로 살아남는 법을 익혀요.</p>
           <div class="mk-progress" aria-live="polite">
-            <p><span>나의 조합 도감</span><b id="bookCount">0 / 10</b></p>
+            <p><span>나의 DIY 도감</span><b id="bookCount">0 / 13</b></p>
             <span class="mk-bar" aria-hidden="true"><span id="bookBar"></span></span>
           </div>
         </div>
@@ -66,7 +66,7 @@
       <div class="container mk-lab-inner">
         <div class="mk-box">
           <div class="mk-box-head">
-            <h2 id="labTitle">재료 상자</h2>
+            <h2 id="labTitle">거주구 물품</h2>
             <p>누르면 조합대에 올라가요</p>
           </div>
           <div class="pantry" id="pantry" role="group" aria-label="재료 상자"></div>
@@ -96,10 +96,10 @@
       <div class="container">
         <div class="mk-book-head">
           <div>
-            <p class="eyebrow">나의 조합 도감</p>
-            <h2 class="mk-book-title" id="bookTitle">내가 만든 조합법</h2>
+            <p class="eyebrow">나의 DIY 도감</p>
+            <h2 class="mk-book-title" id="bookTitle">내가 만든 거주구 DIY</h2>
           </div>
-          <p class="mk-book-note">✓ 표시한 조합법(최대 4개)이 <a class="text-link" href="index.html#offline-card">대피 카드</a> 뒷면에 들어가요.</p>
+          <p class="mk-book-note">✓ 표시한 DIY(최대 4개)이 <a class="text-link" href="index.html#offline-card">비상 카드</a> 뒷면에 들어가요.</p>
         </div>
         <div class="book" id="book"></div>
         <div class="mk-book-foot">
@@ -107,7 +107,7 @@
             <button class="btn btn-outline" id="printGuides" type="button"><i data-lucide="printer" aria-hidden="true"></i>만드는 법 모아 인쇄 · PDF</button>
             <button class="link-btn" id="resetBook" type="button">도감 처음부터 다시 하기</button>
           </div>
-          <a class="btn btn-primary" href="index.html#offline-card"><i data-lucide="file-down" aria-hidden="true"></i>내 조합법으로 대피 카드 만들기</a>
+          <a class="btn btn-primary" href="index.html#offline-card"><i data-lucide="file-down" aria-hidden="true"></i>내 DIY로 비상 카드 만들기</a>
         </div>
       </div>
     </section>
@@ -115,8 +115,8 @@
 
   <footer class="footer">
     <div class="container">
-      <p class="footer-disclaimer">블랙아웃은 평상시 재난 대비를 돕는 서비스입니다. 실제 재난 상황에서는 정부와 관계기관의 공식 안내 및 현장 지침을 우선적으로 따르세요.</p>
-      <p class="footer-copy">© <span id="year"></span> BLACK-OUT · MVP 시연 버전</p>
+      <p class="footer-disclaimer">BLACK-OUT : MARS는 화성 정착 시대를 가정한 시연용 서비스입니다. 실제 상황에서는 기지 관제와 구조팀의 지시를 먼저 따르세요.</p>
+      <p class="footer-copy">© <span id="year"></span> BLACK-OUT : MARS · 시연 버전</p>
     </div>
   </footer>
 

@@ -1,4 +1,4 @@
-/* BLACK-OUT — 히어로 효과: 떠오르는 불씨·재 파티클 + 마우스를 따라가는 손전등 불빛
+/* BLACK-OUT : MARS — 히어로 효과: 바람에 날리는 화성 먼지 + 마우스를 따라가는 헬멧 조명 + 거주구 상태 HUD
    마우스가 없거나 멈춰 있으면 불빛이 천천히 스스로 움직입니다(발표 화면용). */
 (function (RO) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -16,16 +16,16 @@
       w = hero.clientWidth; h = hero.clientHeight;
       canvas.width = w * dpr; canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(140, w / 9));
+      const n = Math.round(Math.min(220, w / 6));
       parts = Array.from({ length: n }, () => spawn(true));
     };
-    // ember: 붉게 빛나는 불씨, ash: 회색 재
+    // 화성 먼지폭풍: 바람에 날리는 붉은 먼지(대부분) + 빛을 받아 반짝이는 입자(일부)
     const spawn = (anywhere) => {
-      const ember = Math.random() < 0.55;
+      const ember = Math.random() < 0.18;
       return {
-        x: Math.random() * w, y: anywhere ? Math.random() * h : h + 10,
-        r: ember ? 0.8 + Math.random() * 2.2 : 1 + Math.random() * 2.5,
-        vy: -(0.25 + Math.random() * (ember ? 1.4 : 0.6)), vx: (Math.random() - 0.5) * 0.4,
+        x: anywhere ? Math.random() * w : -10, y: Math.random() * h,
+        r: ember ? 0.8 + Math.random() * 1.8 : 0.8 + Math.random() * 2.6,
+        vy: (Math.random() - 0.6) * 0.5, vx: 0.8 + Math.random() * 2.2,
         life: Math.random() * Math.PI * 2, ember
       };
     };
@@ -36,9 +36,9 @@
       ctx.globalCompositeOperation = 'lighter';
       for (const p of parts) {
         p.life += 0.03;
-        p.x += p.vx + Math.sin(p.life) * 0.35 + 0.15; // 바람에 살짝 흔들리며
+        p.x += p.vx + Math.sin(p.life) * 0.4; // 강한 바람에 옆으로 날림
         p.y += p.vy;
-        if (p.y < -10 || p.x > w + 10) Object.assign(p, spawn(false));
+        if (p.y < -10 || p.y > h + 10 || p.x > w + 10) Object.assign(p, spawn(false));
         const a = p.ember ? 0.55 + Math.sin(p.life * 3) * 0.35 : 0.18;
         if (p.ember) {
           const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
@@ -48,7 +48,7 @@
           ctx.fillStyle = g;
           ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2); ctx.fill();
         } else {
-          ctx.fillStyle = `rgba(200,190,185,${a})`;
+          ctx.fillStyle = `rgba(214,140,92,${a + 0.12})`;
           ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
         }
       }
@@ -78,6 +78,23 @@
     RO.on('view', (id) => { if (id === 'top') { resize(); start(); } else stop(); });
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : hero.classList.contains('is-active') && start()));
     if (hero.classList.contains('is-active')) { resize(); start(); }
+
+    // 거주구 상태 HUD (시연용 가상 수치): 신호 지연 카운트, 산소·먼지·발전량이 조금씩 변함
+    let delay = 12 * 60 + 41, tau = 4.2, power = 38;
+    const $ = (id) => document.getElementById(id);
+    setInterval(() => {
+      if (!running) return;
+      delay = Math.max(180, delay + (Math.random() < 0.5 ? -1 : 1));
+      tau = Math.min(6.5, Math.max(3.4, tau + (Math.random() - 0.45) * 0.08));
+      power = Math.round(Math.max(18, Math.min(45, 62 - tau * 6 + (Math.random() - 0.5) * 2)));
+      if ($('hudDelay')) {
+        $('hudDelay').textContent = `${Math.floor(delay / 60)}:${String(delay % 60).padStart(2, '0')}`;
+        $('hudTau').textContent = tau.toFixed(1);
+        $('hudO2').textContent = (20.8 + Math.random() * 0.2).toFixed(1);
+        $('hudPower').style.width = power + '%';
+        $('hudPowerTxt').textContent = power + '%';
+      }
+    }, 1000);
   }
 
   RO.hero = { init };

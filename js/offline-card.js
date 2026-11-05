@@ -3,8 +3,8 @@
    입력값은 "이 브라우저에 저장"을 누를 때만 localStorage에 저장되며, 서버로 전송하지 않습니다. */
 (function (RO) {
   const KEY = 'offlineCard';
-  const CHECKLIST = ['식수 (1명 하루 3L × 3일)', '비상식량 3일분', '손전등·여분 건전지', '보조배터리 (충전해 두기)', '휴대용 라디오', '응급처치 키트·상비약', '호루라기', '마스크·장갑', '현금 조금·신분증 사본', '이 카드 사본'];
-  const COMMON = ['엘리베이터는 타지 않아요', '재난문자·라디오로 소식 확인', '공식 안내가 있으면 그대로 따라요'];
+  const CHECKLIST = ['비상 산소 (1인 1솔 0.84kg)', '비상 산소마스크 · 휴대용 산소통', '비상 식수 (1인 1솔 3L)', '비상식 (1인 1솔 1.8kg)', 'CO₂ 흡착 카트리지', '고휘도 헤드램프 · 비상 배터리', '조난 신호 비콘', '여압복 · 헬멧 (점검일 기록)', '저중력 응급 의료 키트', '이 카드 사본'];
+  const COMMON = ['마스크 먼저, 짐은 나중에', '닫힌 해치는 혼자 다시 열지 않아요', '기지 관제의 지시를 그대로 따라요'];
   const fields = ['cName', 'cAddress', 'cHousing', 'cBlood', 'cMedical', 'cShelterName', 'cShelterAddr', 'cMeet', 'cNotes', 'c1Name', 'c1Phone', 'c2Name', 'c2Phone', 'c3Name', 'c3Phone'];
   const $ = (id) => document.getElementById(id);
   const e = (v) => RO.esc(v);
@@ -34,10 +34,10 @@
           <div><dt>혈액형</dt><dd>${v(d.cBlood)}</dd></div>
           <div class="wl-wide"><dt>연락처 1</dt><dd>${v([contacts[0]?.[0], contacts[0]?.[1]].filter(Boolean).join(' '))}</dd></div>
           <div class="wl-wide"><dt>연락처 2</dt><dd>${v([contacts[1]?.[0], contacts[1]?.[1]].filter(Boolean).join(' '))}</dd></div>
-          <div class="wl-wide"><dt>대피소</dt><dd>${v(d.cShelterName)}</dd></div>
-          <div class="wl-wide"><dt>만남 장소</dt><dd>${v(d.cMeet)}</dd></div>
+          <div class="wl-wide"><dt>대피 모듈</dt><dd>${v(d.cShelterName)}</dd></div>
+          <div class="wl-wide"><dt>만남 모듈</dt><dd>${v(d.cMeet)}</dd></div>
         </dl>
-        <p class="wl-foot">위급하면 <b>119</b> · 경찰 <b>112</b></p>
+        <p class="wl-foot">비상 <b>CH 1</b> 관제 · <b>CH 9</b> 구조 로봇</p>
       </div>`;
   }
 
@@ -46,14 +46,14 @@
     const rows = [...contacts, ...Array(Math.max(0, 5 - contacts.length)).fill(['', ''])].slice(0, 5);
     return `
       <article class="sheet" aria-label="대피 카드 앞면">
-        ${head('1 / 2 · 앞면', '비상 대피 카드')}
-        <p class="sh-lead">인터넷이 끊겨도 이 카드를 보고 움직여요. 냉장고나 현관 등 잘 보이는 곳에 붙여 두세요.</p>
+        ${head('1 / 2 · 앞면', '화성 거주구 비상 카드')}
+        <p class="sh-lead">기지망이 끊겨도 이 카드를 보고 움직여요. 해치 옆, 침실 벽처럼 잘 보이는 곳에 붙여 두세요.</p>
 
         <section class="sh-calls" aria-label="긴급 전화">
-          <div><b>119</b><span>불 · 구조 · 구급</span></div>
-          <div><b>112</b><span>경찰</span></div>
-          <div><b>123</b><span>정전 (한국전력)</span></div>
-          <div class="sh-calls-note"><span>재난 소식은</span><b>TV·라디오 재난방송 · 재난문자</b></div>
+          <div><b>CH 1</b><span>기지 관제</span></div>
+          <div><b>CH 9</b><span>구조 로봇</span></div>
+          <div><b>CH 16</b><span>이웃 거주구</span></div>
+          <div class="sh-calls-note"><span>통신이 끊기면</span><b>비콘 켜고 가까운 대피 모듈로</b></div>
         </section>
 
         <section class="sh-block">
@@ -62,21 +62,21 @@
             <div><dt>이름</dt><dd>${v(d.cName)}</dd></div>
             <div><dt>혈액형</dt><dd>${v(d.cBlood)}</dd></div>
             <div><dt>거주 형태</dt><dd>${v(d.cHousing)}</dd></div>
-            <div class="wide"><dt>주소</dt><dd>${v(d.cAddress)}</dd></div>
+            <div class="wide"><dt>거주 구역 · 모듈 번호</dt><dd>${v(d.cAddress)}</dd></div>
             <div class="wide"><dt>지병 · 알레르기 · 복용 약</dt><dd>${v(d.cMedical)}</dd></div>
           </dl>
         </section>
 
         <section class="sh-block">
-          <h4>대피 장소</h4>
+          <h4>대피 모듈</h4>
           <div class="sh-places">
             <div class="sh-place">
               <span class="sh-num">1</span>
-              <div><p class="k">주요 대피소</p><p class="big">${v(d.cShelterName)}</p><p class="sub">${v(d.cShelterAddr)}</p></div>
+              <div><p class="k">가장 가까운 대피 모듈</p><p class="big">${v(d.cShelterName)}</p><p class="sub">${v(d.cShelterAddr)}</p></div>
             </div>
             <div class="sh-place">
               <span class="sh-num">2</span>
-              <div><p class="k">가족 만남 장소</p><p class="big">${v(d.cMeet)}</p><p class="sub">연락이 안 되면 여기서 기다려요</p></div>
+              <div><p class="k">가족 만남 모듈</p><p class="big">${v(d.cMeet)}</p><p class="sub">통신이 끊기면 여기서 기다려요</p></div>
             </div>
           </div>
         </section>
@@ -92,9 +92,9 @@
           <div class="sh-block">
             <h4>대피 경로 그리기</h4>
             <div class="sh-route">
-              <span class="pin-home">우리 집</span>
-              <span class="pin-dest">대피소</span>
-              <p>집에서 대피소까지 가는 길을 직접 그려 보세요.<br>계단 위치와 위험한 곳(공사장·하천)도 표시해요.</p>
+              <span class="pin-home">내 거주구</span>
+              <span class="pin-dest">대피 모듈</span>
+              <p>거주구에서 대피 모듈까지 가는 길을 그려 보세요.<br>해치·에어록 위치와 여압복 보관 장소도 표시해요.</p>
             </div>
           </div>
         </section>
@@ -112,10 +112,10 @@
     const recipes = RO.recipes.forCard();
     return `
       <article class="sheet" aria-label="대피 카드 뒷면">
-        ${head('2 / 2 · 뒷면', '재난이 나면 이렇게')}
+        ${head('2 / 2 · 뒷면', '경보가 울리면 이렇게')}
 
         <section class="sh-block">
-          <h4>재난별 행동 순서</h4>
+          <h4>경보별 행동 순서</h4>
           <div class="sh-rules">
             ${Object.entries(RO.disaster.CORE).map(([k, lines]) => `
               <div class="sh-rule">
@@ -130,7 +130,7 @@
         </section>
 
         <section class="sh-block">
-          <h4>내가 만든 조합법</h4>
+          <h4>내가 만든 거주구 DIY</h4>
           <div class="sh-makes">
             ${recipes.map((r) => `
               <div class="sh-make">
@@ -141,7 +141,7 @@
               </div>`).join('')}
             ${Array.from({ length: 4 - recipes.length }, () => `
               <div class="sh-make sh-make-blank">
-                <p class="sh-make-name">직접 적어 보세요<span>내 조합법</span></p>
+                <p class="sh-make-name">직접 적어 보세요<span>내 DIY</span></p>
                 <p class="sh-make-need">재료:</p>
                 <ol><li></li><li></li><li></li></ol>
               </div>`).join('')}
@@ -150,11 +150,11 @@
 
         <section class="sh-two">
           <div class="sh-block">
-            <h4>비상용품 체크리스트</h4>
+            <h4>비상 장비 체크리스트</h4>
             <ul class="sh-check">${CHECKLIST.map((c) => `<li><span class="box"></span>${c}</li>`).join('')}</ul>
           </div>
           <div class="sh-block">
-            <h4>우리 집 메모</h4>
+            <h4>우리 거주구 메모</h4>
             <p class="sh-notes">${d.cNotes ? e(d.cNotes).replace(/\n/g, '<br>') : '<span class="lines"></span>'}</p>
             ${result?.gaps.length ? `<p class="sh-gaps"><b>테스트 결과 먼저 채울 것</b> ${result.gaps.map((g) => e(g.label)).join(' · ')}</p>` : ''}
             <p class="sh-review"><b>점검한 날</b><span></span><span></span><span></span></p>
@@ -162,7 +162,7 @@
         </section>
 
         <footer class="sh-foot">
-          실제 재난이 나면 정부·지자체·소방의 공식 안내와 현장 지침을 먼저 따르세요. · 만든 날 ${new Date().toLocaleDateString('ko-KR')} · BLACK-OUT
+          실제 상황에서는 기지 관제와 구조팀의 지시를 먼저 따르세요. · 만든 날 ${new Date().toLocaleDateString('ko-KR')} · BLACK-OUT
         </footer>
       </article>`;
   }
@@ -174,8 +174,8 @@
     fit();
     const rs = RO.recipes.forCard();
     $('cardRecipes').innerHTML = rs.length
-      ? `${rs.map((r) => `<span>${r.name}</span>`).join('')}<a class="text-link" href="make.html">조합법 바꾸기 →</a>`
-      : '<em>아직 만든 조합법이 없어요. 카드에는 직접 적을 수 있는 빈칸이 들어가요.</em><a class="text-link" href="make.html">조합하러 가기 →</a>';
+      ? `${rs.map((r) => `<span>${r.name}</span>`).join('')}<a class="text-link" href="make.html">DIY 바꾸기 →</a>`
+      : '<em>아직 만든 DIY가 없어요. 카드에는 직접 적을 수 있는 빈칸이 들어가요.</em><a class="text-link" href="make.html">DIY 하러 가기 →</a>';
   }
 
   // 실제 A4 크기로 그린 시트를 미리보기 너비에 맞게 축소
@@ -191,7 +191,7 @@
   function printCard() {
     const name = $('cName').value.trim();
     const title = document.title;
-    document.title = `BLACKOUT_대피카드${name ? '_' + name : ''}`; // PDF 파일 이름
+    document.title = `BLACKOUT-MARS_비상카드${name ? '_' + name : ''}`; // PDF 파일 이름
     window.addEventListener('afterprint', () => { document.title = title; }, { once: true });
     RO.print('print-card');
   }

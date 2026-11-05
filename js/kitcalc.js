@@ -1,124 +1,143 @@
-/* BLACK-OUT — 우리 동네 맞춤 키트 계산 (대피소 화면의 '필요 물품' 탭)
-   계산의 뼈대는 팀원 readykit/dist/engine.mjs의 calculateKit를 그대로 씁니다.
-   - 비축 기간: 시·구 3일 / 군 7일 / 울릉군 14일 / 지역 미확인 임시 7일 (서비스 계획 가정, 재난 예측 아님)
-   - 여러 재난을 골라도 같은 물품은 큰 값 하나만 (중복 합산 안 함)
-   - 소모품만 기간에 비례, 공동 장비(라디오·소화기 등)는 기간·인원과 무관
-   이 파일이 더하는 것: 인원 수, 이미 있는 수량 차감, 구매 단위(팩) 변환, 추천과 구매의 차이, 장바구니 연결
-   가격·무게는 MVP용 가상 값입니다. */
+/* BLACK-OUT : MARS — 거주구 맞춤 키트 계산 (정착지 지도 화면의 '필요 물품' 탭)
+   계산 구조는 팀원 readykit 엔진과 같습니다: 공통 기본 + 재난별 모듈, 같은 물품은 큰 값 하나만(중복 합산 없음),
+   소모품만 기간에 비례하고 공동 장비는 기간·인원과 무관.
+   1인 1솔(화성의 하루, 약 24시간 40분) 소비량은 NASA 생명유지 기준 문서(BVAD)의 대표값을 참고한 계획값입니다.
+     산소 0.84kg · 물 3L(마실 물 + 음식 조리) · 식량 1.8kg(포장 포함)
+   비축 기간은 shelter.js의 정착지 거리 정책(3/7/14/30솔). 가격·무게는 시연용 가상 값. */
 (function (RO) {
-  // 구매 단위(SKU): pack = 한 개 살 때 들어 있는 양(engine 단위 기준), price(원)·kg은 가상 값
-  const SKU = {
-    water: { pack: 2, label: '생수 2L', price: 1000, kg: 2.05 },
-    food: { pack: 0.5, label: '건조식량 500g', price: 6000, kg: 0.55 },
-    bottle: { pack: 1, label: '접이식 물통 10L', price: 8000, kg: 0.3 },
-    torch: { pack: 1, label: 'LED 손전등', price: 12000, kg: 0.2 },
-    cells: { pack: 1, label: '건전지 세트(AA 4개)', price: 4000, kg: 0.1 },
-    powerbank: { pack: 1, label: '보조배터리 20,000mAh', price: 29000, kg: 0.4 },
-    radio: { pack: 1, label: '휴대용 라디오', price: 25000, kg: 0.4 },
-    cable: { pack: 1, label: '충전 케이블', price: 5000, kg: 0.05 },
-    firstaid: { pack: 1, label: '구급용품 세트', price: 15000, kg: 0.4 },
-    wipes: { pack: 80, label: '물티슈 80매', price: 2000, kg: 0.5 },
-    bags: { pack: 20, label: '폐기물 봉투 20매', price: 2000, kg: 0.2 },
-    mask: { pack: 10, label: '분진용 마스크 10개', price: 8000, kg: 0.1 },
-    gloves: { pack: 1, label: '작업용 장갑', price: 3000, kg: 0.1 },
-    blanket: { pack: 1, label: '보온 담요', price: 9000, kg: 0.3 },
-    whistle: { pack: 1, label: '호루라기', price: 3000, kg: 0.02 },
-    pouch: { pack: 1, label: '방수 파우치', price: 4000, kg: 0.05 },
-    extinguisher: { pack: 1, label: '가정용 소화기 3.3kg', price: 28000, kg: 4.5 },
-    raincoat: { pack: 1, label: '우의', price: 7000, kg: 0.2 },
-    waterproof: { pack: 1, label: '방수 보관함', price: 15000, kg: 1.0 },
-    helmet: { pack: 1, label: '안전모', price: 14000, kg: 0.4 },
-    goggles: { pack: 1, label: '보호안경', price: 6000, kg: 0.05 },
-    fireblanket: { pack: 1, label: '소화포', price: 18000, kg: 0.6 },
-    warmers: { pack: 10, label: '보온팩 10개', price: 5000, kg: 0.5 },
-    sleeping: { pack: 1, label: '침낭', price: 39000, kg: 1.2 },
-    hat: { pack: 1, label: '차양 모자', price: 9000, kg: 0.1 },
-    toilet: { pack: 10, label: '비상 화장실 처리팩 10개', price: 12000, kg: 0.6 }
-  };
-  const RULE_LABEL = { 소모품: '소모품', 개인: '개인 장비', 기간: '기간 장비', 공동: '공동 장비' };
-  const PID = (id) => 'sk-' + id; // 장바구니 상품 id
+  const HAZARDS = [
+    { id: 'all', name: '종합 대비' },
+    { id: 'depress', name: '기압 손실' },
+    { id: 'solar', name: '태양폭풍' },
+    { id: 'fire', name: '거주구 화재' },
+    { id: 'dust', name: '먼지폭풍' },
+    { id: 'life', name: '생명유지 고장' }
+  ];
+  const CATS = { air: '산소·물·식량', power: '전력·조명', care: '생명유지·응급', protect: '보호 장비', leak: '누출·화재 대응' };
 
-  // 장바구니가 이 상품들을 알 수 있도록 등록 (페이지 로드 시)
+  // [id, 이름, 단위, 분류, 규칙, 값, 설명]  규칙: 소모품(1인 1솔당) / 개인(1인당) / 공동(가구당 고정) / 공동기간(가구당, N솔마다 1개)
+  const COMMON = [
+    ['o2', '비상 산소', 'kg', 'air', '소모품', 0.84, 'NASA 기준 1인 1솔 0.84kg'],
+    ['water', '비상 식수', 'L', 'air', '소모품', 3, '마실 물·음식 조리용 계획값'],
+    ['food', '비상식', 'kg', 'air', '소모품', 1.8, '조리 없이 먹는 식품, 포장 포함'],
+    ['co2', 'CO₂ 흡착 카트리지', '개', 'care', '소모품', 1, '1인 1솔 1개 계획값'],
+    ['o2mask', '비상 산소마스크', '개', 'care', '개인', 1, '침실·작업 공간 가까이'],
+    ['headlamp', '고휘도 헤드램프', '개', 'power', '개인', 1, '두 손을 쓸 수 있게'],
+    ['firstaid', '저중력 응급 의료 키트', '세트', 'care', '공동', 1, '고정 끈 정리형'],
+    ['beacon', '조난 신호 비콘', '개', 'care', '공동', 1, '기지망이 끊겨도 위치 송신'],
+    ['battery', '비상 배터리팩 2kWh', '개', 'power', '공동기간', 7, '7솔마다 1개 계획값']
+  ];
+  const MODULES = {
+    depress: [['o2cyl', '휴대용 산소통(6시간)', '개', 'care', '개인', 1, '대피 모듈까지 이동용'], ['gauge', '휴대용 기압계', '개', 'leak', '공동', 1, '새는 속도 확인'], ['leak', '초음파 누출 탐지기', '개', 'leak', '공동', 1, '새는 곳 찾기'], ['patch', '누출 패치 키트', '세트', 'leak', '공동기간', 7, '7솔마다 1세트'], ['suit', '비상 여압복', '벌', 'protect', '개인', 1, '내부용, 체형 조절']],
+    solar: [['dosimeter', '개인 선량계', '개', 'protect', '개인', 1, '누적 방사선 기록'], ['vest', '방사선 차폐 조끼', '벌', 'protect', '개인', 1, '가슴·배 장기 보호'], ['waterbag', '물 차폐 팩 세트', '세트', 'protect', '개인', 1, '누울 자리 주변 차폐']],
+    fire: [['extinguisher', '거주구용 CO₂ 소화기', '대', 'leak', '공동', 1, '작은 초기 화재용'], ['comask', '일산화탄소·연기 측정기', '개', 'leak', '공동', 1, '마스크 벗기 전 확인']],
+    dust: [['dustmask', '먼지 필터 마스크', '개', 'protect', '개인', 1, '과염소산염 먼지 차단'], ['battery', '비상 배터리팩 2kWh', '개', 'power', '공동기간', 3.5, '먼지폭풍 시 3.5솔마다 1개']],
+    life: [['o2candle', '비상 산소 발생 캔들', '개', 'care', '공동', 2, '산소 발생 장치 고장 대비'], ['co2', 'CO₂ 흡착 카트리지', '개', 'care', '소모품', 1.5, '고장 시 1인 1솔 1.5개']]
+  };
+
+  // 구매 단위(SKU): pack = 한 개에 든 양, price(원)·kg은 시연용 가상 값
+  const SKU = {
+    o2: { pack: 1.68, label: '산소 캐니스터 1.68kg (1인 2솔분)', price: 45000, kg: 3.5 },
+    water: { pack: 3, label: '비상 식수 팩 3L', price: 3000, kg: 3.1 },
+    food: { pack: 1.8, label: '비상식 1솔분 1.8kg', price: 9000, kg: 1.8 },
+    co2: { pack: 1, label: 'CO₂ 흡착 카트리지', price: 9000, kg: 1.2 },
+    o2mask: { pack: 1, label: '비상 산소마스크', price: 39000, kg: 0.6 },
+    headlamp: { pack: 1, label: '고휘도 헤드램프', price: 19000, kg: 0.2 },
+    firstaid: { pack: 1, label: '저중력 응급 의료 키트', price: 99000, kg: 1.4 },
+    beacon: { pack: 1, label: '조난 신호 비콘', price: 79000, kg: 0.8 },
+    battery: { pack: 1, label: '비상 배터리팩 2kWh', price: 149000, kg: 12 },
+    o2cyl: { pack: 1, label: '휴대용 산소통 6시간', price: 59000, kg: 3 },
+    gauge: { pack: 1, label: '휴대용 기압계', price: 24000, kg: 0.3 },
+    leak: { pack: 1, label: '초음파 누출 탐지기', price: 69000, kg: 0.5 },
+    patch: { pack: 1, label: '누출 패치 키트', price: 18000, kg: 0.4 },
+    suit: { pack: 1, label: '비상 여압복', price: 890000, kg: 8 },
+    dosimeter: { pack: 1, label: '개인 선량계', price: 49000, kg: 0.1 },
+    vest: { pack: 1, label: '방사선 차폐 조끼', price: 259000, kg: 12 },
+    waterbag: { pack: 1, label: '물 차폐 팩 6개 세트', price: 29000, kg: 0.6 },
+    extinguisher: { pack: 1, label: '거주구용 CO₂ 소화기', price: 59000, kg: 4.5 },
+    comask: { pack: 1, label: '일산화탄소·연기 측정기', price: 39000, kg: 0.2 },
+    dustmask: { pack: 1, label: '먼지 필터 마스크', price: 22000, kg: 0.3 },
+    o2candle: { pack: 1, label: '비상 산소 발생 캔들', price: 35000, kg: 1.2 }
+  };
+  const RULE_LABEL = { 소모품: '소모품', 개인: '개인 장비', 공동: '공동 장비', 공동기간: '공동 장비' };
+  const PID = (id) => 'sk-' + id;
   RO.products.addItems(Object.entries(SKU).map(([id, s]) => ({ id: PID(id), name: s.label, price: s.price, icon: 'package-check' })));
+
+  // 계산 엔진 (순수 함수): 1인 기준 required, 공동은 가구 기준
+  function calculate({ hazards, days }) {
+    const active = hazards.includes('all') ? Object.keys(MODULES) : hazards;
+    const items = new Map();
+    const add = ([id, name, unit, category, rule, value, spec], reason) => {
+      const required = rule === '소모품' ? value * days : rule === '공동기간' ? Math.ceil(days / value) : value;
+      const ex = items.get(id);
+      if (ex) { // 같은 물품은 큰 값 하나만 (중복 합산 안 함)
+        if (required > ex.required) Object.assign(ex, { required, rule, value, spec });
+        ex.reasons.push(reason);
+        return;
+      }
+      items.set(id, { id, name, unit, category, rule, value, spec, required, storage: rule.startsWith('공동') ? '거주구 비치' : '개인 휴대', reasons: [reason] });
+    };
+    COMMON.forEach((row) => add(row, '공통 기본'));
+    active.forEach((h) => (MODULES[h] || []).forEach((row) => add(row, HAZARDS.find((x) => x.id === h).name)));
+    return [...items.values()];
+  }
 
   const $ = (id) => document.getElementById(id);
   const state = {
-    hazards: RO.store.get('kitHazards', ['all']),
+    hazards: RO.store.get('kitHazards', ['all']).filter((h) => HAZARDS.some((x) => x.id === h)),
     people: RO.store.get('kitPeople', 1),
-    extraDays: RO.store.get('kitDays', 0), // 0 = 자동
-    owned: RO.store.get('kitOwned', {}),   // { itemId: 보유량(engine 단위) }
-    buy: {},                               // { itemId: 구매 팩 수 } (사용자가 바꾼 것만)
-    loc: null, kit: null, regionNote: null, HAZARDS: []
+    extraDays: RO.store.get('kitDays', 0),
+    owned: RO.store.get('kitOwned', {}),
+    buy: {}, loc: null, kit: null
   };
+  if (!state.hazards.length) state.hazards = ['all'];
   const save = () => { RO.store.set('kitHazards', state.hazards); RO.store.set('kitPeople', state.people); RO.store.set('kitDays', state.extraDays); RO.store.set('kitOwned', state.owned); };
   const num = (n) => (Math.round(n * 100) / 100).toLocaleString('ko-KR');
 
-  /* ---------- 계산 ---------- */
-  // engine 결과(1인)를 인원 수에 맞추고 보유량·구매 팩을 붙임
   function lines(kit) {
     const people = state.people;
     return kit.items.map((it) => {
-      const perPerson = it.rule !== '공동';
-      const need = perPerson ? it.required * people : it.required;           // 계획 필요량
-      const owned = Math.max(0, +state.owned[it.id] || 0);                    // 유효 보유량
-      const lack = Math.max(0, need - owned);                                 // 추가로 필요한 양
-      const sku = SKU[it.id] || { pack: 1, label: it.name, price: 0, kg: 0 };
-      const recPacks = Math.ceil(lack / sku.pack - 1e-9);                     // 추천 구매 팩
-      const packs = state.buy[it.id] ?? recPacks;                              // 실제 구매 팩
-      const formula = it.rule === '소모품' ? `1인 하루 ${num(it.required / kit.days)}${it.unit} × ${kit.days}일 × ${people}명`
-        : it.rule === '기간' ? `${kit.days}일 기준 ${num(it.required)}${it.unit} × ${people}명`
-        : it.rule === '개인' ? `1인 ${num(it.required)}${it.unit} × ${people}명`
-        : `가구당 ${num(it.required)}${it.unit} · 기간·인원과 무관`;
+      const shared = it.rule.startsWith('공동');
+      const need = shared ? it.required : it.required * people;
+      const owned = Math.max(0, +state.owned[it.id] || 0);
+      const lack = Math.max(0, need - owned);
+      const sku = SKU[it.id];
+      const recPacks = Math.ceil(lack / sku.pack - 1e-9);
+      const packs = state.buy[it.id] ?? recPacks;
+      const formula = it.rule === '소모품' ? `1인 1솔 ${num(it.value)}${it.unit} × ${kit.days}솔 × ${people}명`
+        : it.rule === '개인' ? `1인 ${num(it.value)}${it.unit} × ${people}명`
+        : it.rule === '공동기간' ? `${kit.days}솔 ÷ ${num(it.value)}솔마다 1개 · 가구 공용`
+        : `가구당 ${num(it.value)}${it.unit} · 기간·인원과 무관`;
       return { ...it, need, owned, lack, sku, recPacks, packs, formula, diff: packs - recPacks };
     });
   }
 
-  async function compute() {
+  function compute() {
     if (!state.loc) return;
-    const panel = $('kitResult');
-    panel.innerHTML = '<p class="kit-loading"><span class="spinner" aria-hidden="true"></span>지역을 확인하고 필요한 물품을 계산하고 있어요…</p>';
-    let m;
-    try { m = await RO.readykit.engine; } catch { panel.innerHTML = '<p class="kit-error">계산 엔진을 불러오지 못했어요. 새로고침해 주세요.</p>'; return; }
-    state.HAZARDS = m.HAZARDS;
-    // 지역: 시·군·구를 직접 고른 경우 그 지역, 아니면 좌표로 경계 판정. 경계 자료 실패는 '임시 기준'으로 따로 표시.
-    let region = null, approximate = false, regionError = false;
-    try {
-      const list = await RO.readykit.regions();
-      if (state.loc.regionCode) region = list.find((r) => r.code === state.loc.regionCode) || null;
-      else ({ region, approximate } = m.resolveRegion({ lat: state.loc.lat, lng: state.loc.lng }, list));
-    } catch { regionError = true; }
-    state.kit = m.calculateKit({ hazards: state.hazards, region, policy: state.extraDays ? { minimumDays: state.extraDays } : {} });
-    state.regionNote = { region, approximate, regionError };
+    const plan = state.loc.plan;
+    const days = Math.max(plan.days, state.extraDays || 0);
+    state.kit = { days, plan, items: calculate({ hazards: state.hazards, days }) };
     render();
   }
 
-  /* ---------- 화면 ---------- */
   function renderHazards() {
-    const H = state.HAZARDS.length ? state.HAZARDS : [{ id: 'all', name: '종합 대비' }];
-    $('hazardChips').innerHTML = H.map((h) => `
+    $('hazardChips').innerHTML = HAZARDS.map((h) => `
       <button type="button" class="hz-chip ${state.hazards.includes(h.id) ? 'is-on' : ''}" data-hz="${h.id}" aria-pressed="${state.hazards.includes(h.id)}">${h.name}</button>`).join('');
   }
 
   function render() {
     const kit = state.kit;
     const L = lines(kit);
-    const { region, approximate, regionError } = state.regionNote;
-    const plan = kit.plan;
-    const recDays = plan.days;
     const cost = L.reduce((s, l) => s + l.packs * l.sku.price, 0);
     const kg = L.reduce((s, l) => s + l.packs * l.sku.kg, 0);
     const changed = L.filter((l) => l.diff !== 0).length;
-    const cats = Object.entries({ food: '식량·물', power: '조명·전원', care: '응급·위생', protect: '보온·보호', fire: '화재 대비' });
-
     $('kitResult').innerHTML = `
       <div class="kit-basis">
-        <p class="kb-days"><b>${kit.days}일</b> 대비 · ${state.people}명 ${state.extraDays && state.extraDays > recDays ? `<em>추천 ${recDays}일에서 직접 늘림</em>` : ''}</p>
-        <p class="kb-why">${regionError
-          ? '<span class="tag-temp">임시 기준</span> 지역 경계 자료를 불러오지 못해 임시 7일 기준을 적용했어요.'
-          : `${region ? `<b>${RO.esc(region.label || region.name)}</b> · ` : ''}${RO.esc(plan.label)} — ${RO.esc(plan.reason)}${approximate ? ' (경계 자료 기준 추정)' : ''}`}</p>
-        <p class="kb-note">서비스 계획 가정이에요. 재난 발생 확률이나 구조 시간을 예측한 값이 아니에요.</p>
+        <p class="kb-days"><b>${kit.days}솔</b> 대비 · ${state.people}명 ${state.extraDays > kit.plan.days ? `<em>추천 ${kit.plan.days}솔에서 직접 늘림</em>` : ''}</p>
+        <p class="kb-why"><b>${RO.esc(state.loc.label)}</b> · ${kit.plan.label} — ${kit.plan.reason}</p>
+        <p class="kb-note">1솔 = 화성의 하루(약 24시간 40분). 서비스 계획 가정이며 재난 확률이나 구조 시간을 예측한 값이 아니에요.</p>
       </div>
-      ${cats.map(([cat, label]) => {
+      ${Object.entries(CATS).map(([cat, label]) => {
         const rows = L.filter((l) => l.category === cat);
         if (!rows.length) return '';
         return `
@@ -130,11 +149,11 @@
                   <p class="kl-name">${l.name}<span class="kl-rule">${RULE_LABEL[l.rule]} · ${l.storage}</span></p>
                   <p class="kl-need"><b>${num(l.need)}${l.unit}</b> 필요</p>
                 </div>
-                <p class="kl-formula">${l.formula}${l.reasons.length > 1 || l.reasons[0] !== '공통 기본 물품' ? ` · 반영: ${[...new Set(l.reasons)].join(', ')}` : ''}</p>
+                <p class="kl-formula">${l.formula}${l.reasons.length > 1 || l.reasons[0] !== '공통 기본' ? ` · 반영: ${[...new Set(l.reasons)].join(', ')}` : ''}</p>
                 <div class="kl-row">
                   <label class="kl-own">있어요 <input type="number" min="0" step="any" inputmode="decimal" value="${l.owned || ''}" placeholder="0" data-own="${l.id}" aria-label="${l.name} 이미 있는 양(${l.unit})">${l.unit}</label>
                   <div class="kl-buy">
-                    <span class="kl-sku">${RO.esc(l.sku.label)}</span>
+                    <span class="kl-sku">${l.sku.label}</span>
                     <div class="qty" role="group" aria-label="${l.name} 구매 수량">
                       <button type="button" data-buy="${l.id}" data-d="-1" aria-label="줄이기"><i data-lucide="minus" aria-hidden="true"></i></button>
                       <span class="kl-packs">${l.packs}</span>
@@ -148,9 +167,12 @@
               </li>`).join('')}</ul>
           </section>`;
       }).join('')}
-      <ul class="kit-notes">${kit.notes.map((n) => `<li>${RO.esc(n.replace('1인분 계획용 기본값이며', `${state.people}명분으로 늘린 계획값이며`))}</li>`).join('')}</ul>`;
-
-    $('kitTotal').innerHTML = `<span>${L.reduce((s, l) => s + l.packs, 0)}개 · 약 ${num(kg)}kg</span><b>${RO.won(cost)}</b>${changed ? `<em>추천에서 ${changed}개 품목 바꿈</em>` : '<em>추천 그대로</em>'}`;
+      <ul class="kit-notes">
+        <li>${state.people}명 기준 계획값이에요. 개인 장비는 인원만큼, 공동 장비는 가구당 고정이에요.</li>
+        <li>재난을 여러 개 골라도 같은 물품은 가장 큰 필요량 하나만 반영해요.</li>
+        <li>산소 0.84kg·식량 1.8kg은 NASA 생명유지 기준 문서의 1인 하루 대표값을 참고했어요. 나머지는 서비스 가정값이에요.</li>
+      </ul>`;
+    $('kitTotal').innerHTML = `<span>${L.reduce((s, l) => s + l.packs, 0)}개 · 약 ${num(kg)}kg (지구 무게 기준)</span><b>${RO.won(cost)}</b>${changed ? `<em>추천에서 ${changed}개 품목 바꿈</em>` : '<em>추천 그대로</em>'}`;
     $('kitToCart').disabled = !L.some((l) => l.packs > 0);
     RO.icons();
   }
@@ -163,7 +185,6 @@
 
   function init() {
     if (!$('kitResult')) return;
-    RO.readykit.engine.then((m) => { state.HAZARDS = m.HAZARDS; renderHazards(); }).catch(() => {});
     renderHazards();
     $('kitPeople').textContent = state.people;
     $('kitDays').value = String(state.extraDays);
@@ -212,5 +233,5 @@
     RO.emit('hazards', state.hazards);
   }
 
-  RO.kitcalc = { init, lines: () => (state.kit ? lines(state.kit) : []), state, SKU };
+  RO.kitcalc = { init, lines: () => (state.kit ? lines(state.kit) : []), state, SKU, calculate };
 })(window.RO);
