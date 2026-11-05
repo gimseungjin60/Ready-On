@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>READY : ON — 재난이 닥치기 전, 준비를 켜다</title>
+  <meta name="description" content="READY : ON은 재난 대비력 테스트, 재난별 행동수칙, 맞춤형 안전키트, 대피소 확인, 오프라인 대피 카드를 제공하는 재난 대비 플랫폼입니다.">
+  <meta name="theme-color" content="#25282B">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+</head>
+<body>
+  <a class="skip" href="#main">본문 바로가기</a>
+
+  <!-- 01 HEADER -->
+  <header class="header" id="header">
+    <div class="container header-inner">
+      <a class="logo" href="#top" aria-label="READY : ON 홈">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="logo-text">READY<span class="logo-colon">:</span>ON</span>
+      </a>
+
+      <nav class="nav" id="nav" aria-label="주요 메뉴">
+        <ul class="nav-links">
+          <li><a href="#test">재난 대비 테스트</a></li>
+          <li><a href="#guide">재난 행동수칙</a></li>
+          <li><a href="#kit">안전키트</a></li>
+          <li><a href="#shelter">대피소 찾기</a></li>
+          <li><a href="#offline-card">대피 카드</a></li>
+          <li class="nav-intro"><a href="#why">소개</a></li>
+        </ul>
+        <button class="btn btn-primary nav-cta-mobile" data-action="start-test">내 대비력 확인하기</button>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn cart-btn" data-action="open-cart" aria-label="장바구니 열기">
+          <i data-lucide="shopping-bag" aria-hidden="true"></i>
+          <span class="cart-count" hidden>0</span>
+        </button>
+        <button class="btn btn-primary btn-sm header-cta" data-action="start-test">내 대비력 확인하기</button>
+        <button class="icon-btn nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav" aria-label="메뉴 열기">
+          <span class="burger" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 02 HERO -->
+    <section class="hero view" id="top" data-name="홈" aria-labelledby="heroTitle">
+      <div class="hero-media" aria-hidden="true"><img class="hero-bg" src="assets/images/hero.jpg" alt="" fetchpriority="high"></div>
+      <canvas class="hero-fx" id="heroFx" aria-hidden="true"></canvas>
+      <div class="hero-siren" aria-hidden="true"></div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-dark" aria-hidden="true"></div>
+      <div class="hero-noise" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <p class="hero-status"><span class="dot" aria-hidden="true"></span><span class="hero-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span>인터넷 연결 끊김 · <b>신호 없음</b></p>
+        <h1 class="hero-title" id="heroTitle" lang="en">
+          <span>WHAT IF</span>
+          <span>THE WORLD</span>
+          <span>GOES <em class="glitch" data-text="OFFLINE?">OFFLINE?</em></span>
+        </h1>
+        <div class="hero-bottom">
+          <p class="hero-sub">인터넷이 끊기고 AI가 멈춰도,<br>당신은 스스로를 지킬 준비가 되어 있나요?</p>
+          <div class="hero-ctas">
+            <button class="btn btn-primary btn-lg" data-action="start-test">
+              내 재난 대비력 테스트하기 <i data-lucide="arrow-right" aria-hidden="true"></i>
+            </button>
+            <a class="btn btn-ghost-dark btn-lg" href="#guide">재난 대비 가이드 보기</a>
+          </div>
+        </div>
+        <p class="hero-note"><span>재난은 예고 없이 찾아오지만, 준비는 미리 할 수 있어요.</span><span class="key-hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> 키로 화면을 넘길 수 있어요</span></p>
+      </div>
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <span>지진</span><span>화재</span><span>정전</span><span>침수</span><span>태풍</span><span class="ticker-em">미리 준비하면 나를 지킬 수 있어요</span>
+          <span>지진</span><span>화재</span><span>정전</span><span>침수</span><span>태풍</span><span class="ticker-em">미리 준비하면 나를 지킬 수 있어요</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 03 PROBLEM -->
+    <div class="view" id="why" data-name="서비스 소개"><section class="section section-light" aria-labelledby="whyTitle">
+      <div class="container">
+        <p class="eyebrow reveal">WHY READY : ON</p>
+        <h2 class="section-title reveal" id="whyTitle">재난이 발생한 순간,<br><b>당신이 믿었던 모든 것이 멈춘다면?</b></h2>
+        <div class="problem-grid stagger">
+          <article class="problem-card">
+            <div class="problem-media"><img src="assets/images/problem-network.jpg" alt="통신 기지국 안테나" loading="lazy" width="800" height="1000"></div>
+            <p class="problem-no">01</p>
+            <h3 class="problem-title">NETWORK DOWN</h3>
+            <p class="problem-ko">인터넷이 끊겨요</p>
+            <p class="problem-desc">인터넷과 전화가 안 되면 궁금한 것을 찾아볼 수 없어요.</p>
+          </article>
+          <article class="problem-card">
+            <div class="problem-media"><img src="assets/images/problem-ai.jpg" alt="어두운 실내에서 손전등을 든 사람" loading="lazy" width="800" height="1000"></div>
+            <p class="problem-no">02</p>
+            <h3 class="problem-title">AI UNAVAILABLE</h3>
+            <p class="problem-ko">AI가 멈춰요</p>
+            <p class="problem-desc">AI에게 물어볼 수 없으니 내가 스스로 판단해야 해요.</p>
+          </article>
+          <article class="problem-card">
+            <div class="problem-media"><img src="assets/images/problem-unprepared.jpg" alt="물건이 비어 있는 마트 진열대" loading="lazy" width="800" height="1000"></div>
+            <p class="problem-no">03</p>
+            <h3 class="problem-title">UNPREPARED</h3>
+            <p class="problem-ko">준비물이 없어요</p>
+            <p class="problem-desc">물, 먹을 것, 손전등, 구급약이 없으면 버티기 어려워요.</p>
+          </article>
+        </div>
+        <p class="problem-msg reveal">그래서 재난이 오기 <b>전에</b> 미리 준비하는 방법을 알려 드려요.</p>
+        <ol class="flow reveal stagger" aria-label="READY : ON 이용 흐름">
+          <li><span>01</span>대비력 테스트</li>
+          <li><span>02</span>유형 진단</li>
+          <li><span>03</span>행동수칙·부족 물품</li>
+          <li><span>04</span>맞춤 안전키트</li>
+          <li><span>05</span>대피소·오프라인 카드</li>
+        </ol>
+      </div>
+    </section></div>
+
+    <!-- 04 SURVIVAL TEST -->
+    <div class="view" id="test" data-name="대비력 테스트"><section class="section section-dark test-section" aria-labelledby="testSecTitle">
+      <div class="container test-intro">
+        <div>
+          <p class="eyebrow eyebrow-red reveal">재난 대비력 테스트</p>
+          <h2 class="display reveal" id="testSecTitle">HOW READY<br>ARE <em>YOU?</em></h2>
+        </div>
+        <div class="test-intro-side reveal">
+          <p class="lead">질문 10개에 답하면 나의 재난 대비 점수와<br>꼭 필요한 준비물을 알려 드려요.</p>
+          <ul class="test-facts">
+            <li><b data-count="10">10</b><span>개 질문</span></li>
+            <li><b data-count="2">2</b><span>분이면 끝</span></li>
+            <li><b data-count="4">4</b><span>가지 유형</span></li>
+          </ul>
+          <div class="btn-row">
+            <button class="btn btn-primary btn-lg btn-pulse" data-action="start-test">테스트 시작하기 <i data-lucide="arrow-right" aria-hidden="true"></i></button>
+            <a class="btn btn-ghost-dark btn-lg" href="#result" id="testReview" hidden>지난 결과 다시 보기</a>
+          </div>
+          <p class="fine">응답은 이 브라우저에만 저장되며 서버로 전송되지 않습니다.</p>
+        </div>
+      </div>
+    </section></div>
+
+    <!-- 04-2 RESULT (테스트 완료 시 표시) -->
+    <div class="view" id="result" data-name="나의 결과" hidden><section class="section section-ink result-section" aria-labelledby="resultTitle">
+      <div class="container">
+        <p class="eyebrow eyebrow-red">나의 결과</p>
+        <h2 class="sr-only" id="resultTitle">나의 재난 대비 결과</h2>
+        <div id="resultBody"></div>
+      </div>
+    </section></div>
+
+    <!-- 05 DISASTER ACTION GUIDE -->
+    <div class="view" id="guide" data-name="재난 행동수칙"><section class="section section-light" aria-labelledby="guideTitle">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow reveal">재난 행동수칙</p>
+            <h2 class="display display-ink reveal" id="guideTitle">KNOW WHAT<br>TO <em>DO.</em></h2>
+          </div>
+          <p class="lead lead-ink reveal">재난이 일어나면 가장 중요한 건<br>순서대로 침착하게 움직이는 거예요.</p>
+        </div>
+        <div class="guide-tabs" id="guideTabs" role="tablist" aria-label="재난 종류"></div>
+        <div class="guide-panel" id="guidePanel" role="tabpanel" tabindex="0"></div>
+        <p class="source-note"><i data-lucide="book-open" aria-hidden="true"></i>행정안전부 국민재난안전포털 「국민행동요령」, 소방청 화재 대피 안내를 바탕으로 요약했습니다. 현장에서는 관계기관의 안내를 우선 따르세요.</p>
+      </div>
+    </section></div>
+
+    <!-- 06 CUSTOM SAFETY KIT -->
+    <div class="view" id="kit" data-name="안전키트"><section class="section section-soft" aria-labelledby="kitTitle">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow reveal">맞춤 안전키트</p>
+            <h2 class="display display-ink reveal" id="kitTitle">PREPARE<br>YOUR OWN <em>KIT.</em></h2>
+          </div>
+          <p class="lead lead-ink reveal">모두에게 같은 가방이 필요한 건 아니에요.<br>나에게 꼭 필요한 것만 챙겨요.</p>
+        </div>
+        <div id="kitRecBanner"></div>
+        <div class="chips" id="kitTabs" role="tablist" aria-label="키트 카테고리"></div>
+        <div class="kit-grid" id="kitGrid"></div>
+        <p class="fine fine-ink">※ 표시된 가격은 MVP 시연용 가상 가격이며 실제 판매가가 아닙니다.</p>
+      </div>
+    </section></div>
+
+    <!-- 07 SHELTER MAP -->
+    <div class="view" id="shelter" data-name="대피소 찾기"><section class="section section-light" aria-labelledby="shelterTitle">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow reveal">대피소 찾기</p>
+            <h2 class="display display-ink reveal" id="shelterTitle">KNOW YOUR<br>WAY <em>OUT.</em></h2>
+          </div>
+          <p class="lead lead-ink reveal">위험한 순간에 어디로 가야 하는지<br>미리 알아 두어요.</p>
+        </div>
+
+        <div class="shelter-wrap">
+          <div class="shelter-side">
+            <form class="search" id="shelterForm" role="search">
+              <label class="sr-only" for="shelterQuery">주소 또는 장소 검색</label>
+              <i data-lucide="search" aria-hidden="true"></i>
+              <input id="shelterQuery" type="search" placeholder="도로명 주소, 동 이름 (예: 세종대로 110)" autocomplete="street-address">
+              <button class="btn btn-primary btn-sm" type="submit">검색</button>
+            </form>
+            <div class="shelter-tools">
+              <button class="btn btn-outline btn-sm" id="shelterGeo" type="button"><i data-lucide="locate-fixed" aria-hidden="true"></i>내 위치 사용</button>
+              <button class="btn btn-outline btn-sm" id="shelterDemo" type="button"><i data-lucide="flask-conical" aria-hidden="true"></i>DEMO 예시 보기</button>
+              <button class="btn btn-outline btn-sm" id="shelterPrint" type="button" disabled><i data-lucide="printer" aria-hidden="true"></i>목록 인쇄</button>
+            </div>
+            <p class="fine fine-ink">주소 검색 시 검색어만 OpenStreetMap(Nominatim)으로 전송됩니다. 위치 정보는 동의 후에만 이 기기에서 사용합니다.</p>
+            <div class="shelter-status" id="shelterStatus" role="status" aria-live="polite"></div>
+            <ul class="shelter-list" id="shelterList" aria-label="대피소 목록"></ul>
+          </div>
+          <div class="shelter-map" id="shelterMap" aria-label="대피소 지도"></div>
+        </div>
+      </div>
+    </section></div>
+
+    <!-- 08 OFFLINE SURVIVAL CARD -->
+    <div class="view" id="offline-card" data-name="오프라인 대피 카드"><section class="section section-dark" aria-labelledby="cardTitle">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow eyebrow-red reveal">오프라인 대피 카드</p>
+            <h2 class="display reveal" id="cardTitle">WHEN THE INTERNET<br>GOES <em>OFFLINE.</em></h2>
+          </div>
+          <p class="lead reveal">종이 카드로 뽑아서 냉장고나 현관에 붙여 두세요.<br>재난 중에는 이 사이트에 들어오지 못할 수도 있어요.</p>
+        </div>
+
+        <div class="card-wrap">
+          <form class="card-form" id="cardForm" novalidate>
+            <fieldset>
+              <legend>기본 정보</legend>
+              <label>이름 또는 별칭<input id="cName" maxlength="30" placeholder="예: 김준비"></label>
+              <label>거주 주소<input id="cAddress" maxlength="80" placeholder="예: 서울시 OO구 OO로 12, 302호"></label>
+              <label>거주 형태
+                <select id="cHousing">
+                  <option value="">선택</option>
+                  <option>아파트</option><option>오피스텔</option><option>원룸</option><option>단독주택</option><option>기타</option>
+                </select>
+              </label>
+            </fieldset>
+            <fieldset>
+              <legend>대피 정보</legend>
+              <label>주요 대피소<input id="cShelterName" maxlength="60" placeholder="대피소 찾기에서 저장하거나 직접 입력"></label>
+              <label>대피소 주소<input id="cShelterAddr" maxlength="80" placeholder="대피소 주소"></label>
+              <label>가족·지인 만남 장소<input id="cMeet" maxlength="60" placeholder="예: OO초등학교 정문"></label>
+            </fieldset>
+            <fieldset>
+              <legend>비상 연락처</legend>
+              <div class="contact-row"><input id="c1Name" maxlength="20" placeholder="이름·관계" aria-label="비상 연락처 1 이름"><input id="c1Phone" type="tel" maxlength="20" placeholder="010-0000-0000" aria-label="비상 연락처 1 전화번호"></div>
+              <div class="contact-row"><input id="c2Name" maxlength="20" placeholder="이름·관계" aria-label="비상 연락처 2 이름"><input id="c2Phone" type="tel" maxlength="20" placeholder="010-0000-0000" aria-label="비상 연락처 2 전화번호"></div>
+              <div class="contact-row"><input id="c3Name" maxlength="20" placeholder="이름·관계" aria-label="비상 연락처 3 이름"><input id="c3Phone" type="tel" maxlength="20" placeholder="010-0000-0000" aria-label="비상 연락처 3 전화번호"></div>
+            </fieldset>
+            <fieldset>
+              <legend>개인별 주의사항</legend>
+              <label class="sr-only" for="cNotes">개인별 주의사항</label>
+              <textarea id="cNotes" rows="3" maxlength="200" placeholder="예: 천식 흡입기 휴대, 반려견 1마리, 2층 창문 쪽 비상계단"></textarea>
+            </fieldset>
+            <div class="card-actions">
+              <button class="btn btn-primary" type="submit"><i data-lucide="printer" aria-hidden="true"></i>A4로 인쇄하기</button>
+              <button class="btn btn-ghost-dark" type="button" id="cardSave"><i data-lucide="save" aria-hidden="true"></i>이 브라우저에 저장</button>
+              <button class="link-btn link-btn-light" type="button" id="cardReset">입력 초기화</button>
+            </div>
+            <p class="fine">입력 정보는 서버로 전송되지 않습니다. 저장 버튼을 누를 때만 이 기기의 브라우저에 보관됩니다.</p>
+          </form>
+
+          <div class="card-preview" aria-label="오프라인 대피 카드 미리보기">
+            <p class="preview-label">A4 미리보기</p>
+            <div class="card-sheet" id="cardSheet"></div>
+          </div>
+        </div>
+      </div>
+    </section></div>
+
+    <!-- 09 FINAL CTA -->
+    <div class="view" id="end" data-name="마무리"><section class="final" aria-labelledby="finalTitle">
+      <img class="final-bg" src="assets/images/cta.jpg" alt="" loading="lazy">
+      <div class="final-ring" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="container final-inner">
+        <h2 class="final-title reveal" id="finalTitle" lang="en">THE BEST TIME<br>TO PREPARE IS<br><em>BEFORE IT HAPPENS.</em></h2>
+        <p class="final-sub reveal">준비된 하루가 위기의 순간을 바꿔요.</p>
+        <div class="btn-row reveal">
+          <button class="btn btn-primary btn-lg btn-pulse" data-action="start-test">지금 대비력 테스트하기</button>
+          <a class="btn btn-ghost-dark btn-lg" href="#kit">안전키트 둘러보기</a>
+        </div>
+      </div>
+    </section>
+
+  <!-- 10 FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <a class="logo" href="#top" aria-label="READY : ON 맨 위로">
+          <span class="logo-mark" aria-hidden="true"></span>
+          <span class="logo-text">READY<span class="logo-colon">:</span>ON</span>
+        </a>
+        <nav class="footer-nav" aria-label="푸터 메뉴">
+          <a href="#why">서비스 소개</a>
+          <a href="#guide">재난 행동수칙</a>
+          <a href="#kit">안전키트</a>
+          <a href="#shelter">대피소 정보</a>
+          <button class="link-btn link-btn-light" data-action="privacy">개인정보 처리 안내</button>
+        </nav>
+      </div>
+      <div class="footer-sources">
+        <p class="footer-label">공식 재난 정보 출처</p>
+        <ul>
+          <li><a href="https://www.safekorea.go.kr" target="_blank" rel="noopener">국민재난안전포털</a></li>
+          <li><a href="https://www.mois.go.kr" target="_blank" rel="noopener">행정안전부</a></li>
+          <li><a href="https://www.nfa.go.kr" target="_blank" rel="noopener">소방청</a></li>
+          <li><a href="https://www.weather.go.kr" target="_blank" rel="noopener">기상청</a></li>
+          <li><a href="https://www.data.go.kr" target="_blank" rel="noopener">공공데이터포털</a></li>
+        </ul>
+      </div>
+      <p class="footer-disclaimer">READY : ON은 평상시 재난 대비를 돕는 서비스입니다. 실제 재난 상황에서는 정부와 관계기관의 공식 안내 및 현장 지침을 우선적으로 따르세요.</p>
+      <p class="footer-copy">© <span id="year"></span> READY : ON · MVP 시연 버전 · 사진: 퍼블릭 도메인(Openverse · Wikimedia Commons)</p>
+    </div>
+  </footer>
+  </div>
+  </main>
+
+  <!-- 발표용 페이지 이동 -->
+  <div class="view-progress" id="viewProgress" aria-hidden="true"></div>
+  <nav class="pager" id="pager" aria-label="페이지 이동">
+    <button type="button" id="pagerPrev" aria-label="이전 화면"><i data-lucide="arrow-left" aria-hidden="true"></i></button>
+    <div class="pager-info" aria-live="polite">
+      <span class="pager-count" id="pagerCount"></span>
+      <span class="pager-name" id="pagerName"></span>
+      <span class="pager-dots" id="pagerDots" aria-hidden="true"></span>
+    </div>
+    <button type="button" id="pagerNext" aria-label="다음 화면"><i data-lucide="arrow-right" aria-hidden="true"></i></button>
+  </nav>
+  <div class="curtain" id="curtain" aria-hidden="true"><span class="curtain-logo">READY<b> : </b>ON</span></div>
+
+  <!-- 테스트 모달 -->
+  <dialog class="test-dialog" id="testDialog" aria-labelledby="testTitle">
+    <div class="test-shell">
+      <div class="test-top">
+        <span class="test-brand"><span class="logo-mark" aria-hidden="true"></span>재난 대비력 테스트</span>
+        <button class="icon-btn icon-btn-light" data-close aria-label="테스트 닫기"><i data-lucide="x" aria-hidden="true"></i></button>
+      </div>
+      <div class="progress" role="progressbar" aria-label="진행률" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1"><span></span></div>
+      <div class="test-body">
+        <p class="test-count"><b id="qNum">01</b> / 10</p>
+        <h2 class="test-q" id="testTitle"></h2>
+        <div class="test-options" role="radiogroup" aria-labelledby="testTitle"></div>
+      </div>
+      <div class="test-nav">
+        <button class="btn btn-ghost-dark" id="testPrev" type="button"><i data-lucide="arrow-left" aria-hidden="true"></i>이전</button>
+        <button class="btn btn-primary" id="testNext" type="button" disabled>다음</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 장바구니 드로어 -->
+  <dialog class="drawer" id="cartDrawer" aria-labelledby="cartTitle">
+    <div class="drawer-inner">
+      <header class="drawer-head">
+        <h2 id="cartTitle">장바구니 <span id="cartItemsCount">0개</span></h2>
+        <button class="icon-btn" data-close aria-label="장바구니 닫기"><i data-lucide="x" aria-hidden="true"></i></button>
+      </header>
+      <div class="drawer-body">
+        <div class="cart-empty" id="cartEmpty">
+          <i data-lucide="shopping-bag" aria-hidden="true"></i>
+          <p><b>장바구니가 비어 있어요</b></p>
+          <p>테스트 결과로 나에게 필요한 키트를 찾아보세요.</p>
+          <a class="btn btn-primary btn-sm" href="#kit" data-close>안전키트 보러 가기</a>
+        </div>
+        <ul class="cart-list" id="cartList"></ul>
+      </div>
+      <footer class="drawer-foot" id="cartFoot" hidden>
+        <div class="cart-total"><span>총 상품 금액</span><b id="cartTotal">0원</b></div>
+        <p class="fine fine-ink">가상 가격 기준 · 배송비 별도</p>
+        <button class="btn btn-primary btn-block" id="cartCheckout">구매하기</button>
+        <button class="link-btn" id="cartClear">장바구니 비우기</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- 주문 요약 -->
+  <dialog class="modal" id="checkoutDialog" aria-labelledby="checkoutTitle">
+    <div class="modal-box">
+      <h2 id="checkoutTitle">주문 요약</h2>
+      <div id="checkoutBody"></div>
+      <div class="notice"><i data-lucide="info" aria-hidden="true"></i><p><b>결제 준비 중입니다.</b> 현재 MVP 버전으로 실제 결제는 진행되지 않습니다. 정식 오픈 시 결제 연동 후 주문이 가능합니다.</p></div>
+      <div class="modal-actions"><button class="btn btn-primary" data-close>확인</button></div>
+    </div>
+  </dialog>
+
+  <!-- 위치 정보 동의 -->
+  <dialog class="modal" id="geoDialog" aria-labelledby="geoTitle">
+    <div class="modal-box">
+      <h2 id="geoTitle">위치 정보를 사용할까요?</h2>
+      <p>주변 대피소를 찾기 위해 현재 위치를 <b>이 기기 안에서만</b> 1회 사용합니다. 위치는 저장하거나 서버로 전송하지 않습니다.</p>
+      <p class="fine fine-ink">다음 단계에서 브라우저가 권한을 한 번 더 묻습니다.</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="geoDeny" type="button">주소로 직접 찾기</button>
+        <button class="btn btn-primary" id="geoAllow" type="button">위치 사용 동의</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 개인정보 처리 안내 -->
+  <dialog class="modal" id="privacyDialog" aria-labelledby="privacyTitle">
+    <div class="modal-box">
+      <h2 id="privacyTitle">개인정보 처리 안내</h2>
+      <ul class="plain-list">
+        <li>READY : ON MVP는 별도 서버에 개인정보를 저장하지 않습니다.</li>
+        <li>테스트 응답, 장바구니, 대피 카드 입력값은 이 브라우저의 localStorage에만 보관됩니다.</li>
+        <li>위치 정보는 동의한 경우에만 대피소 검색에 1회 사용하며 저장하지 않습니다.</li>
+        <li>주소 검색 시 입력한 검색어는 좌표 변환을 위해 OpenStreetMap Nominatim으로 전송되며, 지도 이미지는 OpenStreetMap 서버에서 불러옵니다.</li>
+        <li>브라우저 설정에서 사이트 데이터를 삭제하면 저장된 정보가 모두 지워집니다.</li>
+      </ul>
+      <div class="modal-actions"><button class="btn btn-primary" data-close>확인</button></div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- 인쇄 전용 영역 -->
+  <div class="print-only" id="shelterPrintArea"></div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/storage.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/disaster.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/test.js"></script>
+  <script src="js/shelter.js"></script>
+  <script src="js/offline-card.js"></script>
+  <script src="js/hero.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

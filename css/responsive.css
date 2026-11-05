@@ -1,0 +1,85 @@
+/* READY : ON — 반응형 */
+
+@media (max-width: 1280px) {
+  .kit-grid { grid-template-columns: repeat(2, 1fr); }
+  .kit-cta { min-height: 0; }
+  .mini-kits { grid-template-columns: 1fr; }
+  .shelter-wrap { grid-template-columns: 360px 1fr; }
+}
+
+/* 태블릿 이하: 햄버거 메뉴 */
+@media (max-width: 1080px) {
+  .header-cta { display: none; }
+  .nav-toggle { display: inline-grid; }
+  .header-actions { margin-left: auto; }
+  .nav {
+    position: fixed; inset: var(--header-h) 0 auto 0; height: calc(100dvh - var(--header-h));
+    background: var(--ink-deep); padding: 24px var(--gutter) 40px;
+    display: flex; flex-direction: column; gap: 24px;
+    visibility: hidden; opacity: 0; transform: translateY(-8px);
+    transition: opacity .25s, transform .25s, visibility .25s; overflow-y: auto;
+  }
+  .header.is-open .nav { visibility: visible; opacity: 1; transform: none; }
+  .nav-links { flex-direction: column; gap: 0; }
+  .nav-links a { font-size: 24px; font-weight: 700; padding: 18px 0; border-bottom: 1px solid var(--line-dark); border-radius: 0; opacity: 1; }
+  .nav-links a:hover { background: none; color: var(--red); }
+  .nav-links a.is-current { box-shadow: none; color: var(--red); }
+  .nav-cta-mobile { display: inline-flex; min-height: 56px; }
+
+  .stages { grid-template-columns: 1fr; gap: 40px; }
+  .stage-cards { grid-template-columns: repeat(2, 1fr); }
+  .test-intro { grid-template-columns: 1fr; }
+  .result-hero { grid-template-columns: 1fr; justify-items: start; }
+  .result-grid { grid-template-columns: 1fr; }
+  .shelter-wrap { grid-template-columns: 1fr; min-height: 0; }
+  .shelter-map { height: 420px; order: -1; }
+  .shelter-list { max-height: none; }
+  .card-wrap { grid-template-columns: 1fr; }
+  .card-preview { position: static; }
+  .flow { grid-template-columns: repeat(3, 1fr); row-gap: 18px; }
+}
+
+@media (max-width: 760px) {
+  :root { --header-h: 64px; }
+  .logo { font-size: 19px; }
+  .hero-inner { padding-bottom: 28px; }
+  .hero-bottom { margin-top: 32px; flex-direction: column; align-items: stretch; }
+  .hero-ctas { flex-direction: column; }
+  .hero-ctas .btn { width: 100%; }
+  .hero-note { margin-top: 32px; }
+  .problem-grid { grid-template-columns: 1fr; gap: 40px; margin-top: 40px; }
+  .problem-media { aspect-ratio: 16 / 10; }
+  .problem-msg { margin-top: 56px; }
+  .flow { grid-template-columns: 1fr 1fr; }
+  .section-head { margin-bottom: 36px; }
+  .lead br { display: none; }
+  .btn-row .btn { flex: 1 1 100%; }
+  .kit-grid { grid-template-columns: 1fr; }
+  .stage-cards { grid-template-columns: 1fr; }
+  .result-actions .btn { flex: 1 1 100%; }
+  .mini-kit { grid-template-columns: 72px 1fr auto; }
+  .mini-kit img { width: 72px; height: 60px; }
+  .test-facts b { font-size: 32px; }
+  .test-nav .btn { min-width: 0; flex: 1; }
+  .opt { padding: 16px; }
+  .opt-label { font-size: 16px; }
+  .shelter-map { height: 340px; }
+  .search { padding-left: 42px; }
+  .search > svg { left: 15px; }
+  .contact-row { grid-template-columns: 1fr; }
+  .card-actions .btn { flex: 1 1 100%; }
+  /* 모바일 미리보기: A4 비율 대신 자연 높이 */
+  .card-sheet { aspect-ratio: auto; padding: 20px; }
+  .oc-rules { grid-template-columns: 1fr 1fr; }
+  .oc-split { grid-template-columns: 1fr; }
+  .modal-box { padding: 24px; }
+  .modal-actions .btn { flex: 1; }
+  .footer-top { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 420px) {
+  .oc-row { grid-template-columns: 1fr; }
+  .oc-rules { grid-template-columns: 1fr; }
+  .oc-head { flex-direction: column; }
+  .oc-emer { text-align: left; }
+}
