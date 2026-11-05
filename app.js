@@ -55,6 +55,8 @@
       p.hidden = !on;
       p.classList.toggle('active', on);
     });
+    /* 캐릭터가 탭마다 한마디 — game.js가 등록한다 */
+    if (typeof window.BLACKOUT_ONTAB === 'function') window.BLACKOUT_ONTAB(name);
   }
 
   function goTab(name) {
@@ -677,5 +679,15 @@
   renderCart();
   bindCard();
   renderSheet();
+
+  /* game.js(60초 훈련 · 72시간 시뮬레이터)가 쓰는 API */
+  window.BLACKOUT_APP = {
+    state: S, save: save, setTab: setTab, goTab: goTab,
+    addCart: addCart, openGuide: openGuide,
+    item: item, recipe: recipe, dis: dis, evalRecipe: evalRecipe,
+    won: won, esc: esc, el: el,
+    refresh: function () { renderCart(); renderItems(); renderSheet(); matchAll(); renderKits(); }
+  };
+
   setTab('home');
 })();
