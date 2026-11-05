@@ -6,6 +6,15 @@
   const CHECKLIST = ['비상 산소 (1인 1솔 0.84kg)', '비상 산소마스크 · 휴대용 산소통', '비상 식수 (1인 1솔 3L)', '비상식 (1인 1솔 1.8kg)', 'CO₂ 흡착 카트리지', '고휘도 헤드램프 · 비상 배터리', '조난 신호 비콘', '여압복 · 헬멧 (점검일 기록)', '저중력 응급 의료 키트', '이 카드 사본'];
   const COMMON = ['마스크 먼저, 짐은 나중에', '닫힌 해치는 혼자 다시 열지 않아요', '기지 관제의 지시를 그대로 따라요'];
   const fields = ['cName', 'cAddress', 'cHousing', 'cBlood', 'cMedical', 'cShelterName', 'cShelterAddr', 'cMeet', 'cNotes', 'c1Name', 'c1Phone', 'c2Name', 'c2Phone', 'c3Name', 'c3Phone'];
+  // 거주 형태별로 비상 카드 뒷면에 넣을 재난 5가지
+  const BY_HOUSING = {
+    '돔 도시': ['depress', 'meteor', 'solar', 'fire', 'dust'],
+    '지하 거주 구역': ['quake', 'fire', 'life', 'power', 'depress'],
+    '개인 거주 모듈': ['depress', 'fire', 'life', 'cold', 'power'],
+    '이동형 로버': ['dust', 'solar', 'power', 'cold', 'depress'],
+    '외곽 연구 기지': ['dust', 'solar', 'cold', 'power', 'life']
+  };
+  const DEFAULT_HZ = ['depress', 'solar', 'fire', 'dust', 'life'];
   const $ = (id) => document.getElementById(id);
   const e = (v) => RO.esc(v);
 
@@ -41,9 +50,23 @@
       </div>`;
   }
 
+  // 가까운 대피·구조 수단: 정착지 지도에서 고른 위치, 없으면 거주 형태의 대표 구역 기준
+  function rescue(d) {
+    const loc = RO.shelter.getLocation() || RO.shelter.zoneLoc(d.cHousing);
+    const rows = RO.shelter.nearestAll(loc);
+    if (!rows.length) return '';
+    return `
+        <section class="sh-block">
+          <h4>가까운 대피·구조 수단 <small>${e(loc.label)} 기준 · 직선거리</small></h4>
+          <table class="sh-rescue"><tbody>
+            ${rows.map((r) => `<tr><th>${r.type}</th><td>${r.name}</td><td>${RO.shelter.fmtKm(r.km)} · 우주복 도보 ${r.walk}</td></tr>`).join('')}
+          </tbody></table>
+        </section>`;
+  }
+
   function front(d) {
     const contacts = [[d.c1Name, d.c1Phone], [d.c2Name, d.c2Phone], [d.c3Name, d.c3Phone]].filter(([n, p]) => n || p);
-    const rows = [...contacts, ...Array(Math.max(0, 5 - contacts.length)).fill(['', ''])].slice(0, 5);
+    const rows = [...contacts, ...Array(Math.max(0, 3 - contacts.length)).fill(['', ''])].slice(0, 3);
     return `
       <article class="sheet" aria-label="대피 카드 앞면">
         ${head('1 / 2 · 앞면', '화성 거주구 비상 카드')}
@@ -81,6 +104,8 @@
           </div>
         </section>
 
+        ${rescue(d)}
+
         <section class="sh-two">
           <div class="sh-block">
             <h4>비상 연락처</h4>
@@ -115,9 +140,9 @@
         ${head('2 / 2 · 뒷면', '경보가 울리면 이렇게')}
 
         <section class="sh-block">
-          <h4>경보별 행동 순서</h4>
+          <h4>경보별 행동 순서 <small>${d.cHousing ? e(d.cHousing) + ' 기준' : '대표 재난'}</small></h4>
           <div class="sh-rules">
-            ${Object.entries(RO.disaster.CORE).map(([k, lines]) => `
+            ${(BY_HOUSING[d.cHousing] || DEFAULT_HZ).map((k) => [k, RO.disaster.CORE[k]]).map(([k, lines]) => `
               <div class="sh-rule">
                 <p class="sh-rule-name"><i data-lucide="${D[k].icon}" aria-hidden="true"></i>${D[k].label}</p>
                 <ol>${lines.map((l) => `<li>${l}</li>`).join('')}</ol>
@@ -222,6 +247,7 @@
     });
     RO.on('result', (r) => { if (r && !$('cHousing').value) $('cHousing').value = r.housing; preview(); });
     RO.on('recipes', preview);
+    RO.on('location', () => preview());
     RO.on('view', (id) => id === 'offline-card' && requestAnimationFrame(fit));
     window.addEventListener('resize', fit);
     preview();

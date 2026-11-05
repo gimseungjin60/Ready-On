@@ -7,11 +7,15 @@
 (function (RO) {
   const HAZARDS = [
     { id: 'all', name: '종합 대비' },
-    { id: 'depress', name: '기압 손실' },
-    { id: 'solar', name: '태양폭풍' },
-    { id: 'fire', name: '거주구 화재' },
-    { id: 'dust', name: '먼지폭풍' },
-    { id: 'life', name: '생명유지 고장' }
+    { id: 'dust', name: '먼지 폭풍' },
+    { id: 'solar', name: '태양 방사선' },
+    { id: 'quake', name: '화성 지진' },
+    { id: 'meteor', name: '운석 충돌' },
+    { id: 'depress', name: '공기 누출' },
+    { id: 'fire', name: '내부 화재' },
+    { id: 'life', name: '생명유지 고장' },
+    { id: 'power', name: '전력 차단' },
+    { id: 'cold', name: '난방 고장' }
   ];
   const CATS = { air: '산소·물·식량', power: '전력·조명', care: '생명유지·응급', protect: '보호 장비', leak: '누출·화재 대응' };
 
@@ -21,17 +25,21 @@
     ['water', '비상 식수', 'L', 'air', '소모품', 3, '마실 물·음식 조리용 계획값'],
     ['food', '비상식', 'kg', 'air', '소모품', 1.8, '조리 없이 먹는 식품, 포장 포함'],
     ['co2', 'CO₂ 흡착 카트리지', '개', 'care', '소모품', 1, '1인 1솔 1개 계획값'],
-    ['o2mask', '비상 산소마스크', '개', 'care', '개인', 1, '침실·작업 공간 가까이'],
-    ['headlamp', '고휘도 헤드램프', '개', 'power', '개인', 1, '두 손을 쓸 수 있게'],
+    ['o2mask', '산소호흡기', '개', 'care', '개인', 1, '침실·작업 공간 가까이'],
+    ['headlamp', '초고휘도 비상 라이트', '개', 'power', '개인', 1, '두 손을 쓸 수 있는 머리띠형'],
     ['firstaid', '저중력 응급 의료 키트', '세트', 'care', '공동', 1, '고정 끈 정리형'],
     ['beacon', '조난 신호 비콘', '개', 'care', '공동', 1, '기지망이 끊겨도 위치 송신'],
     ['battery', '비상 배터리팩 2kWh', '개', 'power', '공동기간', 7, '7솔마다 1개 계획값']
   ];
   const MODULES = {
-    depress: [['o2cyl', '휴대용 산소통(6시간)', '개', 'care', '개인', 1, '대피 모듈까지 이동용'], ['gauge', '휴대용 기압계', '개', 'leak', '공동', 1, '새는 속도 확인'], ['leak', '초음파 누출 탐지기', '개', 'leak', '공동', 1, '새는 곳 찾기'], ['patch', '누출 패치 키트', '세트', 'leak', '공동기간', 7, '7솔마다 1세트'], ['suit', '비상 여압복', '벌', 'protect', '개인', 1, '내부용, 체형 조절']],
-    solar: [['dosimeter', '개인 선량계', '개', 'protect', '개인', 1, '누적 방사선 기록'], ['vest', '방사선 차폐 조끼', '벌', 'protect', '개인', 1, '가슴·배 장기 보호'], ['waterbag', '물 차폐 팩 세트', '세트', 'protect', '개인', 1, '누울 자리 주변 차폐']],
+    depress: [['o2cyl', '휴대용 산소통(6시간)', '개', 'care', '개인', 1, '대피 구역까지 이동용'], ['regulator', '휴대용 압력 조절기', '개', 'leak', '개인', 1, '산소 공급 압력 조절'], ['gauge', '휴대용 기압계', '개', 'leak', '공동', 1, '새는 속도 확인'], ['leak', '초음파 누출 탐지기', '개', 'leak', '공동', 1, '새는 곳 찾기'], ['patch', '누출 패치 키트', '세트', 'leak', '공동기간', 7, '7솔마다 1세트'], ['suit', '비상 우주복', '벌', 'protect', '개인', 1, '내부용 여압복']],
+    quake: [['helmet', '충격 보호 헬멧', '개', 'protect', '개인', 1, '낙하물 대비'], ['gauge', '휴대용 기압계', '개', 'leak', '공동', 1, '흔들린 뒤 누출 확인']],
+    meteor: [['patch', '누출 패치 키트', '세트', 'leak', '공동기간', 7, '7솔마다 1세트'], ['gauge', '휴대용 기압계', '개', 'leak', '공동', 1, '충격 뒤 누출 확인'], ['helmet', '충격 보호 헬멧', '개', 'protect', '개인', 1, '파편 대비']],
+    power: [['battery', '비상 배터리팩 2kWh', '개', 'power', '공동기간', 3.5, '전력 차단 시 3.5솔마다 1개']],
+    cold: [['blanket', '비상 보온 담요(은박)', '장', 'protect', '개인', 2, '1인 2장'], ['warmers', '보온팩', '개', 'protect', '소모품', 2, '1인 1솔 2개']],
+    solar: [['dosimeter', '개인 선량계', '개', 'protect', '개인', 1, '누적 방사선 기록'], ['vest', '방사선 차폐 조끼', '벌', 'protect', '개인', 1, '가슴·배 장기 보호'], ['waterbag', '물 차폐 팩 세트', '세트', 'protect', '개인', 1, '누울 자리 주변 차폐'], ['cream', '방사선 피부 케어 크림 (보조)', '개', 'protect', '개인', 1, '피부 건조·자극 완화용, 입자 차단 효과 없음']],
     fire: [['extinguisher', '거주구용 CO₂ 소화기', '대', 'leak', '공동', 1, '작은 초기 화재용'], ['comask', '일산화탄소·연기 측정기', '개', 'leak', '공동', 1, '마스크 벗기 전 확인']],
-    dust: [['dustmask', '먼지 필터 마스크', '개', 'protect', '개인', 1, '과염소산염 먼지 차단'], ['battery', '비상 배터리팩 2kWh', '개', 'power', '공동기간', 3.5, '먼지폭풍 시 3.5솔마다 1개']],
+    dust: [['dustmask', '방진 필터 마스크', '개', 'protect', '개인', 1, '과염소산염 먼지 차단'], ['battery', '비상 배터리팩 2kWh', '개', 'power', '공동기간', 3.5, '먼지폭풍 시 3.5솔마다 1개']],
     life: [['o2candle', '비상 산소 발생 캔들', '개', 'care', '공동', 2, '산소 발생 장치 고장 대비'], ['co2', 'CO₂ 흡착 카트리지', '개', 'care', '소모품', 1.5, '고장 시 1인 1솔 1.5개']]
   };
 
@@ -41,8 +49,8 @@
     water: { pack: 3, label: '비상 식수 팩 3L', price: 3000, kg: 3.1 },
     food: { pack: 1.8, label: '비상식 1솔분 1.8kg', price: 9000, kg: 1.8 },
     co2: { pack: 1, label: 'CO₂ 흡착 카트리지', price: 9000, kg: 1.2 },
-    o2mask: { pack: 1, label: '비상 산소마스크', price: 39000, kg: 0.6 },
-    headlamp: { pack: 1, label: '고휘도 헤드램프', price: 19000, kg: 0.2 },
+    o2mask: { pack: 1, label: '산소호흡기', price: 39000, kg: 0.6 },
+    headlamp: { pack: 1, label: '초고휘도 비상 라이트', price: 19000, kg: 0.2 },
     firstaid: { pack: 1, label: '저중력 응급 의료 키트', price: 99000, kg: 1.4 },
     beacon: { pack: 1, label: '조난 신호 비콘', price: 79000, kg: 0.8 },
     battery: { pack: 1, label: '비상 배터리팩 2kWh', price: 149000, kg: 12 },
@@ -50,13 +58,18 @@
     gauge: { pack: 1, label: '휴대용 기압계', price: 24000, kg: 0.3 },
     leak: { pack: 1, label: '초음파 누출 탐지기', price: 69000, kg: 0.5 },
     patch: { pack: 1, label: '누출 패치 키트', price: 18000, kg: 0.4 },
-    suit: { pack: 1, label: '비상 여압복', price: 890000, kg: 8 },
+    suit: { pack: 1, label: '비상 우주복', price: 890000, kg: 8 },
+    regulator: { pack: 1, label: '휴대용 압력 조절기', price: 89000, kg: 0.7 },
+    helmet: { pack: 1, label: '충격 보호 헬멧', price: 39000, kg: 0.6 },
+    blanket: { pack: 1, label: '비상 보온 담요(은박)', price: 9000, kg: 0.1 },
+    warmers: { pack: 10, label: '보온팩 10개', price: 6000, kg: 0.5 },
+    cream: { pack: 1, label: '방사선 피부 케어 크림 (보조)', price: 19000, kg: 0.15 },
     dosimeter: { pack: 1, label: '개인 선량계', price: 49000, kg: 0.1 },
     vest: { pack: 1, label: '방사선 차폐 조끼', price: 259000, kg: 12 },
     waterbag: { pack: 1, label: '물 차폐 팩 6개 세트', price: 29000, kg: 0.6 },
     extinguisher: { pack: 1, label: '거주구용 CO₂ 소화기', price: 59000, kg: 4.5 },
     comask: { pack: 1, label: '일산화탄소·연기 측정기', price: 39000, kg: 0.2 },
-    dustmask: { pack: 1, label: '먼지 필터 마스크', price: 22000, kg: 0.3 },
+    dustmask: { pack: 1, label: '방진 필터 마스크', price: 22000, kg: 0.3 },
     o2candle: { pack: 1, label: '비상 산소 발생 캔들', price: 35000, kg: 1.2 }
   };
   const RULE_LABEL = { 소모품: '소모품', 개인: '개인 장비', 공동: '공동 장비', 공동기간: '공동 장비' };

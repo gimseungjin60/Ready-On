@@ -46,3 +46,7 @@ body.print-guides #guidePrintArea { display: block !important; font-size: 11pt; 
 #guidePrintArea ol { margin: 0; padding-left: 5mm; }
 #guidePrintArea .gp-tip, #guidePrintArea .gp-src, #guidePrintArea .gp-foot { margin: 1mm 0 0; font-size: 8.5pt; }
 body:not(.print-guides) #guidePrintArea { display: none !important; }
+
+/* 우주 배경·별·행성은 인쇄하지 않음 */
+html { background: #fff !important; }
+body::before, body::after, .planet { display: none !important; }

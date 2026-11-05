@@ -3,34 +3,34 @@
 (function (RO) {
   // 화성 거주자용. id는 내부 키(예: food=비상 산소, quake=기압 손실 행동요령)로 결과·대피 카드와 연결됩니다.
   const QUESTIONS = [
-    { id: 'housing', q: '지금 어디에서 살고 있나요?', opts: ['지표 돔 거주구', '지하 용암동굴 거주구', '이동식 로버 거주 모듈', '궤도 정거장 (포보스 기지)', '연구 전초기지'] },
+    { id: 'housing', q: '화성 어디에서 살고 있나요?', opts: ['돔 도시', '지하 거주 구역', '개인 거주 모듈', '이동형 로버', '외곽 연구 기지'] },
     { id: 'living', q: '누구와 함께 살고 있나요?', opts: ['혼자', '가족과 함께', '연구팀 동료와 함께'] },
-    { id: 'floor', q: '거주 공간 위에 방사선을 막아 주는 차폐층이 얼마나 있나요?', opts: ['얇음 (지표 돔·모듈 외벽만)', '레골리스(화성 흙) 덮개 1m 이상', '두꺼운 암반 (지하)', '잘 모름'] },
-    { id: 'food', q: '비상 산소(휴대용 산소통·마스크)가 몇 시간분 있나요?', opts: ['1인당 24시간 이상', '몇 시간분만 있음', '없음'], scores: [2, 1, 0] },
-    { id: 'power', q: '전력이 끊길 때 쓸 비상 배터리와 아주 밝은 조명이 있나요?', opts: ['둘 다 있음', '하나만 있음', '둘 다 없음'], scores: [2, 1, 0] },
-    { id: 'info', q: '지구·기지와 통신이 끊기면 비상 절차를 어디서 확인하나요?', opts: ['종이 비상 매뉴얼이 있음', '이웃에게 물어볼 것', '잘 모르겠음'], scores: [2, 1, 0] },
-    { id: 'shelter', q: '가장 가까운 차폐 대피 모듈의 위치를 알고 있나요?', opts: ['정확히 알고 있음', '대략 알고 있음', '전혀 모름'], scores: [2, 1, 0] },
-    { id: 'quake', q: '기압 손실(공기 누출) 경보가 울리면 무엇부터 해야 하는지 알고 있나요?', opts: ['정확히 알고 있음', '일부 알고 있음', '잘 모름'], scores: [2, 1, 0] },
-    { id: 'contact', q: '구조 로봇·AI 도우미 호출 방법과 이웃과의 비상 연락 순서를 정해 두었나요?', opts: ['정해 두었음', '일부만 정했음', '정하지 않았음'], scores: [2, 1, 0] },
-    { id: 'kit', q: '비상 여압복을 포함한 개인 비상 키트가 있나요?', opts: ['완성된 키트가 있음', '일부만 있음', '전혀 없음'], scores: [2, 1, 0] }
+    { id: 'floor', q: '주변에 구조 로봇이나 AI 보조 도우미가 있나요?', opts: ['둘 다 있음', '하나만 있음', '없음'] },
+    { id: 'food', q: '산소호흡기(비상 산소)가 몇 시간분 있나요?', opts: ['1인당 24시간 이상', '몇 시간분만 있음', '없음'], scores: [2, 1, 0] },
+    { id: 'power', q: '전력이 끊길 때 쓸 비상 전원과 초고휘도 비상 라이트가 있나요?', opts: ['둘 다 있음', '하나만 있음', '둘 다 없음'], scores: [2, 1, 0] },
+    { id: 'info', q: '비상 우주복을 바로 꺼내 입을 수 있나요?', opts: ['바로 입을 수 있음', '있지만 점검을 안 했음', '없음'], scores: [2, 1, 0] },
+    { id: 'shelter', q: '가장 가까운 대피소와 대피 경로를 알고 있나요?', opts: ['정확히 알고 있음', '대략 알고 있음', '전혀 모름'], scores: [2, 1, 0] },
+    { id: 'quake', q: '공기 누출 경보가 울리면 무엇부터 해야 하는지 알고 있나요?', opts: ['정확히 알고 있음', '일부 알고 있음', '잘 모름'], scores: [2, 1, 0] },
+    { id: 'contact', q: '구조 로봇 호출 방법과 이웃과의 비상 연락 순서를 정해 두었나요?', opts: ['정해 두었음', '일부만 정했음', '정하지 않았음'], scores: [2, 1, 0] },
+    { id: 'kit', q: '나만의 화성 비상 키트가 있나요?', opts: ['완성된 키트가 있음', '일부만 있음', '전혀 없음'], scores: [2, 1, 0] }
   ];
 
   const TYPES = [
-    { min: 90, name: '화성 생존 마스터형', en: 'MARTIAN MASTER', desc: '통신이 끊긴 먼지폭풍 속에서도 스스로 판단하고 움직일 수 있어요. 이제 이웃 거주구의 준비를 도와줄 차례예요.' },
+    { min: 90, name: '레드 플래닛 생존 마스터', en: 'RED PLANET MASTER', desc: '통신이 끊긴 먼지 폭풍 속에서도 스스로 판단하고 움직일 수 있어요. 이제 이웃 거주민의 준비를 도와줄 차례예요.' },
     { min: 70, name: '준비된 개척자형', en: 'READY PIONEER', desc: '기본은 갖췄어요. 빈틈 몇 가지만 채우면 거주구 경보가 울려도 흔들리지 않을 거예요.' },
     { min: 40, name: '적응 중인 정착민형', en: 'SETTLING IN', desc: '준비를 시작했지만 경보가 울리는 순간 빠진 것이 생길 수 있어요. 부족한 것부터 하나씩 채워요.' },
-    { min: 0, name: '갓 착륙한 신참형', en: 'FRESH LANDER', desc: '지구에 물어볼 수 없는 22분 동안 판단이 멈출 수 있어요. 오늘 하나만 준비해도 결과는 달라져요.' }
+    { min: 0, name: '화성 미아형', en: 'LOST ON MARS', desc: '지구에 물어볼 수 없는 22분 동안 길을 잃을 수 있어요. 오늘 하나만 준비해도 결과는 달라져요.' }
   ];
 
   // 점수 문항별 "부족할 때" 안내. kits: 추천 가중치
   const GAPS = {
-    food: { label: '비상 산소', icon: 'wind', action: '1인당 24시간분 이상의 휴대용 산소와 비상 마스크를 침실과 작업 공간 가까이에 두세요.', kits: { 'kit-depress': 3, 'kit-suit': 2, 'kit-solo': 1 }, link: '#kit', linkLabel: '기압 손실 대응 키트 보기' },
-    power: { label: '비상 전원·조명', icon: 'battery-charging', action: '먼지폭풍으로 태양광 발전이 몇 주 줄어도 버틸 비상 배터리와 고휘도 조명을 준비하세요.', kits: { 'kit-dust': 3 }, link: '#kit', linkLabel: '먼지폭풍 대비 키트 보기' },
-    info: { label: '오프라인 매뉴얼', icon: 'wifi-off', action: '지구와의 통신은 편도 최대 22분 걸려요. 비상 절차를 종이 카드로 출력해 거주구 벽에 붙여 두세요.', kits: { 'kit-comm': 2 }, link: '#offline-card', linkLabel: '비상 카드 만들기' },
-    shelter: { label: '대피 모듈 위치', icon: 'map-pin', action: '가장 가까운 차폐 대피 모듈과 기압 대피 모듈까지 가는 길을 미리 걸어 보세요.', kits: { 'kit-solar': 1 }, link: '#shelter', linkLabel: '정착지 지도 보기' },
-    quake: { label: '기압 손실 행동요령', icon: 'gauge', action: '경보가 울리면 마스크 착용 → 사람 모으기 → 해치 닫아 격리. 이 순서를 몸에 익혀 두세요.', kits: { 'kit-depress': 2 }, link: '#guide', linkLabel: '기압 손실 행동수칙 보기' },
-    contact: { label: '구조 로봇·연락 계획', icon: 'bot', action: '구조 로봇 호출 코드와 이웃 거주구 연락 순서를 정하고, 통신이 끊기면 만날 대피 모듈을 약속하세요.', kits: { 'kit-comm': 3 }, link: '#offline-card', linkLabel: '비상 연락 카드 만들기' },
-    kit: { label: '개인 비상 키트', icon: 'backpack', action: '여압복·산소·조명이 든 개인 비상 키트를 해치 가까이에 두세요.', kits: { 'kit-suit': 2, 'kit-solo': 2, 'kit-aid': 2 }, link: '#kit', linkLabel: '맞춤 키트 보기' }
+    food: { label: '산소호흡기', icon: 'wind', action: '1인당 24시간분 이상의 산소호흡기와 휴대용 산소를 침실과 작업 공간 가까이에 두세요.', kits: { 'kit-depress': 3, 'kit-suit': 1, 'kit-solo': 1 }, link: '#kit', linkLabel: '공기 누출 대응 키트 보기' },
+    power: { label: '비상 전원·라이트', icon: 'battery-charging', action: '먼지 폭풍으로 태양광 발전이 몇 주 줄어도 버틸 비상 배터리와 초고휘도 비상 라이트를 준비하세요.', kits: { 'kit-dust': 3 }, link: '#kit', linkLabel: '먼지 폭풍 대비 키트 보기' },
+    info: { label: '비상 우주복', icon: 'shirt', action: '비상 우주복은 한 달에 한 번 꺼내 입어 보고, 산소 연결부와 헬멧 씰을 점검하세요.', kits: { 'kit-suit': 3 }, link: '#kit', linkLabel: '비상 우주복 세트 보기' },
+    shelter: { label: '대피소·대피 경로', icon: 'map-pin', action: '가장 가까운 지하 방사선 대피소와 돔 비상 대피 구역까지 가는 길을 미리 걸어 보세요.', kits: { 'kit-solar': 1 }, link: '#shelter', linkLabel: '정착지 지도 보기' },
+    quake: { label: '공기 누출 행동요령', icon: 'gauge', action: '경보가 울리면 산소호흡기 착용 → 사람 모으기 → 해치 닫아 격리. 이 순서를 몸에 익혀 두세요.', kits: { 'kit-depress': 2 }, link: '#guide', linkLabel: '공기 누출 행동수칙 보기' },
+    contact: { label: '구조 로봇·이웃 연락', icon: 'bot', action: '구조 로봇 호출 코드와 이웃 거주민 연락 순서를 정하고, 통신이 끊기면 만날 대피소를 약속하세요.', kits: { 'kit-comm': 3 }, link: '#offline-card', linkLabel: '비상 연락 카드 만들기' },
+    kit: { label: '개인 비상 키트', icon: 'backpack', action: '산소호흡기·라이트·보온 담요가 든 개인 비상 키트를 해치 가까이에 두세요.', kits: { 'kit-solo': 2, 'kit-aid': 2, 'kit-suit': 1 }, link: '#kit', linkLabel: '맞춤 키트 보기' }
   };
 
   let answers = RO.store.get('testAnswers', {}) || {};
@@ -60,19 +60,22 @@
     scored.forEach((q) => { if (q.scores[ans[q.id]] < 2) addW(GAPS[q.id].kits); });
 
     const tips = [];
-    if (housing === '지표 돔 거주구' || floor === 0) { tips.push({ t: '차폐가 얇은 지표 거주', d: '태양폭풍(고에너지 입자) 경보가 오면 물탱크·레골리스로 둘러싼 차폐 대피 모듈로 바로 이동하세요. 몇 시간에서 하루까지 머물 수 있게 준비해요.' }); addW({ 'kit-solar': 3 }); }
-    if (housing === '지하 용암동굴 거주구' || floor === 2) { tips.push({ t: '지하 거주', d: '방사선에는 유리하지만 출구가 하나면 위험해요. 지상으로 나가는 비상 통로 두 곳과 기압 대피 모듈 위치를 꼭 확인하세요.' }); addW({ 'kit-depress': 1 }); }
-    if (housing === '이동식 로버 거주 모듈' || housing === '연구 전초기지') { tips.push({ t: '기지와 멀리 떨어진 거주', d: '보급과 구조가 오기까지 며칠이 걸릴 수 있어요. 산소·물·전력은 귀환에 필요한 날수보다 넉넉히 실어 두세요.' }); addW({ 'kit-dust': 2, 'kit-comm': 1 }); }
-    if (housing === '궤도 정거장 (포보스 기지)') { tips.push({ t: '궤도 정거장 거주', d: '선외활동 중 줄이 끊어지면 스스로 돌아와야 해요. 자가구조 추진기 사용법을 훈련하고, 귀환선 위치를 늘 확인하세요.' }); addW({ 'kit-orbit': 3 }); }
-    if (living === 0) { tips.push({ t: '혼자 거주', d: '쓰러지면 알려 줄 사람이 없어요. 구조 로봇의 자동 안부 확인을 켜 두고, 이웃 1명과 하루 한 번 체크인을 약속하세요.' }); addW({ 'kit-solo': 3 }); }
-    if (living === 1) { tips.push({ t: '가족과 거주', d: '아이에게 맞는 소형 비상 마스크를 따로 준비하고, 경보가 울리면 모일 모듈을 가족 모두가 알게 하세요.' }); addW({ 'kit-suit': 1 }); }
+    const H = { '돔 도시': ['돔 도시 거주', '돔에 구멍이 나면 넓은 공간의 공기가 한꺼번에 빠져요. 가장 가까운 돔 비상 대피 구역과 산소호흡기 위치를 꼭 알아 두세요.', { 'kit-depress': 3 }],
+      '지하 거주 구역': ['지하 거주', '방사선에는 가장 안전하지만 화성 지진 때 출구가 막힐 수 있어요. 지상으로 나가는 비상 통로 두 곳을 확인하세요.', { 'kit-aid': 1, 'kit-comm': 1 }],
+      '개인 거주 모듈': ['개인 거주 모듈', '공간이 작아 산소가 빨리 줄어요. 산소호흡기를 손 닿는 곳에 두고, 이웃 모듈과 체크인을 약속하세요.', { 'kit-solo': 3, 'kit-depress': 1 }],
+      '이동형 로버': ['이동형 로버 거주', '로버는 차폐가 얇아요. 태양 방사선 경보가 오면 가까운 지하 대피소로 가고, 산소·전력은 귀환 거리보다 넉넉히 실어 두세요.', { 'kit-solar': 2, 'kit-dust': 2 }],
+      '외곽 연구 기지': ['외곽 연구 기지', '구조가 오기까지 며칠이 걸릴 수 있어요. 통신 비콘과 선외활동 자가구조 장비를 준비하고, 비축은 14솔 이상으로 잡으세요.', { 'kit-comm': 2, 'kit-orbit': 2, 'kit-dust': 1 }] };
+    if (H[housing]) { tips.push({ t: H[housing][0], d: H[housing][1] }); addW(H[housing][2]); }
+    if (floor === 2) { tips.push({ t: '구조 로봇·AI 도우미 없음', d: '도와줄 로봇이 없으면 모든 판단을 내가 해야 해요. 조난 신호 비콘을 늘 충전해 두고, 이웃 1명과 하루 한 번 체크인하세요.' }); addW({ 'kit-comm': 2 }); }
+    if (living === 0) { tips.push({ t: '혼자 거주', d: '쓰러지면 알려 줄 사람이 없어요. 구조 로봇의 자동 안부 확인을 켜 두고, 이웃과 체크인을 약속하세요.' }); addW({ 'kit-solo': 2 }); }
+    if (living === 1) { tips.push({ t: '가족과 거주', d: '아이에게 맞는 소형 산소호흡기를 따로 준비하고, 경보가 울리면 모일 대피소를 가족 모두가 알게 하세요.' }); addW({ 'kit-suit': 1 }); }
     if (living === 2) { tips.push({ t: '연구팀 동료와 거주', d: '누가 해치를 닫고 누가 인원을 확인할지 역할을 미리 나눠 두면 경보 때 우왕좌왕하지 않아요.' }); }
 
     // 기본 응급처치 키트는 항상 후보
     addW({ 'kit-aid': 0.5 });
     const kits = Object.entries(weights).sort((a, b) => b[1] - a[1]).map(([k]) => k).slice(0, 3);
 
-    return { score, type, gaps, checks, tips: tips.slice(0, 3), kits, housing, livingLabel: QUESTIONS[1].opts[living], floorLabel: QUESTIONS[2].opts[floor], date: new Date().toISOString() };
+    return { score, type, gaps, checks, tips: tips.slice(0, 3), kits, housing, robot: floor !== 2, livingLabel: QUESTIONS[1].opts[living], floorLabel: '구조 로봇·AI ' + QUESTIONS[2].opts[floor], date: new Date().toISOString() };
   }
 
   const getResult = () => {

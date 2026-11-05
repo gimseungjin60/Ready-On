@@ -3,57 +3,57 @@
 (function (RO) {
   const CATEGORIES = [
     { id: 'all', label: '전체' },
-    { id: 'depress', label: '기압 손실' },
-    { id: 'dust', label: '먼지폭풍' },
-    { id: 'solar', label: '태양폭풍' },
-    { id: 'fire', label: '거주구 화재' },
-    { id: 'life', label: '생명유지' },
+    { id: 'depress', label: '공기 누출' },
+    { id: 'dust', label: '먼지 폭풍' },
+    { id: 'solar', label: '태양 방사선' },
+    { id: 'fire', label: '내부 화재' },
+    { id: 'life', label: '생명유지·전력·난방' },
     { id: 'solo', label: '1인 모듈' }
   ];
 
   // 화성 거주자용 키트. 구성은 NASA·ISS에서 실제로 쓰거나 시험한 장비를 본떴고, 가격은 시연용 가상 가격입니다.
   const kits = [
     {
-      id: 'kit-depress', cats: ['depress', 'life'], name: '기압 손실 대응 키트', price: 189000,
+      id: 'kit-depress', cats: ['depress', 'life'], name: '공기 누출 대응 키트', price: 189000,
       img: 'assets/mars/kit-depress.svg',
       desc: '공기가 새는 순간 숨을 지키고, 새는 곳을 찾아 막고, 대피를 판단하는 세트.',
-      items: ['비상 산소마스크 2개', '휴대용 산소통(1인 6시간)', '휴대용 기압계', '초음파 누출 탐지기', '누출 패치 시트·고압 테이프'],
-      target: '지표 돔·모듈 거주자, 기압 손실 행동요령이 익숙하지 않은 분'
+      items: ['산소호흡기 2개', '휴대용 산소통(1인 6시간)', '휴대용 압력 조절기', '초음파 누출 탐지기', '누출 패치 시트·고압 테이프'],
+      target: '돔 도시·개인 거주 모듈 거주자, 공기 누출 행동요령이 익숙하지 않은 분'
     },
     {
-      id: 'kit-dust', cats: ['dust', 'life'], name: '먼지폭풍 대비 30솔 키트', price: 249000,
+      id: 'kit-dust', cats: ['dust', 'life'], name: '먼지 폭풍 대비 30솔 키트', price: 249000,
       img: 'assets/mars/kit-dust.svg',
       desc: '태양광 발전이 몇 주 줄어드는 동안 조명·전력·공기를 지키는 장기전 세트.',
-      items: ['비상 배터리팩 2kWh', '고휘도 LED 헤드램프', '먼지 필터 반면 마스크', 'CO₂ 흡착 카트리지 30개(1인 1솔 1개)', '전력 사용 계획 카드'],
-      target: '태양광 의존 거주구, 기지와 멀리 떨어진 분'
+      items: ['비상 배터리팩 2kWh', '초고휘도 비상 라이트', '방진 필터 마스크', 'CO₂ 흡착 카트리지 30개(1인 1솔 1개)', '비상 보온 담요'],
+      target: '이동형 로버·외곽 연구 기지 거주자, 태양광 의존 거주구'
     },
     {
-      id: 'kit-solar', cats: ['solar'], name: '태양폭풍 대피 키트', price: 329000,
+      id: 'kit-solar', cats: ['solar'], name: '태양 방사선 대피 키트', price: 329000,
       img: 'assets/mars/kit-solar.svg',
       desc: '고에너지 입자가 쏟아지는 몇 시간에서 하루, 차폐 대피 모듈에서 버티는 세트.',
-      items: ['방사선 차폐 조끼', '개인 선량계', '물 차폐 팩 6개(채우면 몸 주위 차폐벽)', '비상식 2솔분'],
-      target: '차폐가 얇은 지표 거주자, 선외활동이 잦은 분'
+      items: ['방사선 차폐 조끼', '개인 선량계', '물 차폐 팩 6개(채우면 몸 주위 차폐벽)', '방사선 피부 케어 크림 (보조: 입자 차단 효과 없음)', '비상식 2솔분'],
+      target: '이동형 로버·돔 도시 거주자, 선외활동이 잦은 분'
     },
     {
-      id: 'kit-suit', cats: ['depress', 'life'], name: '비상 여압복 세트', price: 890000,
+      id: 'kit-suit', cats: ['depress', 'life'], name: '비상 우주복 세트', price: 890000,
       img: 'assets/mars/kit-suit.svg',
-      desc: '거주구 전체가 기압을 잃어도 대피 모듈까지 갈 수 있게 몸을 감싸는 여압복.',
-      items: ['내부용 비상 여압복', '헬멧·헬멧 라이트', '휴대 산소팩(6시간)', '체형 조절 키트'],
-      target: '가족 거주자, 기압 대피 모듈과 거리가 먼 분'
+      desc: '거주구 전체가 기압을 잃어도 대피소까지 갈 수 있게 몸을 감싸는 비상 우주복.',
+      items: ['비상 우주복(내부용 여압복)', '헬멧·초고휘도 헬멧 라이트', '휴대 산소팩(6시간)', '휴대용 압력 조절기'],
+      target: '가족 거주자, 돔 비상 대피 구역과 거리가 먼 분'
     },
     {
-      id: 'kit-solo', cats: ['solo', 'life'], name: '1인 거주 모듈 미니 키트', price: 129000,
+      id: 'kit-solo', cats: ['solo', 'life'], name: '개인 거주 모듈 미니 키트', price: 129000,
       img: 'assets/mars/kit-solo.svg',
       desc: '좁은 1인 모듈에도 들어가는 크기로 첫 10분을 버틸 것만 담았어요.',
-      items: ['소형 산소마스크(2시간)', '헤드램프', '비상식 3솔분', '위치 신호 비콘', '접이식 물 파우치'],
+      items: ['소형 산소호흡기(2시간)', '초고휘도 비상 라이트', '비상 보온 담요', '비상식 3솔분', '위치 신호 비콘'],
       target: '혼자 사는 분, 보관 공간이 좁은 분'
     },
     {
-      id: 'kit-orbit', cats: ['life'], name: '궤도 정거장 자가구조 키트', price: 1290000,
+      id: 'kit-orbit', cats: ['life'], name: '선외활동 자가구조 키트', price: 1290000,
       img: 'assets/mars/kit-orbit.svg',
-      desc: '선외활동 중 줄이 끊어졌을 때 스스로 돌아오기 위한 소형 추진 장치 세트.',
+      desc: '외곽 기지·궤도 작업 중 안전줄이 끊어졌을 때 스스로 돌아오기 위한 소형 추진기 세트.',
       items: ['자가구조 추진 장치(NASA SAFER 방식)', '예비 안전줄·후크', '손목 제어기', '사용 훈련 카드'],
-      target: '궤도 정거장(포보스 기지) 거주자, 선외활동 작업자'
+      target: '외곽 연구 기지 거주자, 선외활동 작업자'
     },
     {
       id: 'kit-aid', cats: ['fire', 'life'], name: '저중력 응급 의료 키트', price: 99000,
@@ -73,7 +73,7 @@
 
   // 행동수칙 카드의 '키트에 담기'에서 쓰는 개별 물품
   const items = [
-    { id: 'item-o2mask', name: '비상 산소마스크', price: 39000, icon: 'wind' },
+    { id: 'item-o2mask', name: '산소호흡기', price: 39000, icon: 'wind' },
     { id: 'item-o2cyl', name: '휴대용 산소통(6시간)', price: 59000, icon: 'cylinder' },
     { id: 'item-gauge', name: '휴대용 기압계', price: 24000, icon: 'gauge' },
     { id: 'item-leak', name: '초음파 누출 탐지기', price: 69000, icon: 'radar' },
@@ -81,15 +81,21 @@
     { id: 'item-dosimeter', name: '개인 선량계', price: 49000, icon: 'radiation' },
     { id: 'item-vest', name: '방사선 차폐 조끼', price: 259000, icon: 'shield' },
     { id: 'item-waterbag', name: '물 차폐 팩 6개', price: 29000, icon: 'droplets' },
-    { id: 'item-headlamp', name: '고휘도 LED 헤드램프', price: 19000, icon: 'flashlight' },
+    { id: 'item-headlamp', name: '초고휘도 비상 라이트', price: 19000, icon: 'flashlight' },
     { id: 'item-battery', name: '비상 배터리팩 2kWh', price: 149000, icon: 'battery-charging' },
-    { id: 'item-dustmask', name: '먼지 필터 반면 마스크', price: 22000, icon: 'shield-half' },
+    { id: 'item-dustmask', name: '방진 필터 마스크', price: 22000, icon: 'shield-half' },
     { id: 'item-co2', name: 'CO₂ 흡착 카트리지', price: 9000, icon: 'filter' },
     { id: 'item-o2candle', name: '비상 산소 발생 캔들', price: 35000, icon: 'flame-kindling' },
     { id: 'item-extinguisher', name: '거주구용 CO₂ 소화기', price: 59000, icon: 'fire-extinguisher' },
     { id: 'item-comask', name: '일산화탄소·연기 측정기', price: 39000, icon: 'activity' },
     { id: 'item-beacon', name: '조난 신호 비콘', price: 79000, icon: 'radio-tower' },
-    { id: 'item-ration', name: '비상식 3솔분', price: 27000, icon: 'package' }
+    { id: 'item-ration', name: '비상식 3솔분', price: 27000, icon: 'package' },
+    { id: 'item-cream', name: '방사선 피부 케어 크림 (보조)', price: 19000, icon: 'droplet' },
+    { id: 'item-regulator', name: '휴대용 압력 조절기', price: 89000, icon: 'gauge' },
+    { id: 'item-helmet', name: '충격 보호 헬멧', price: 39000, icon: 'hard-hat' },
+    { id: 'item-blanket', name: '비상 보온 담요 (은박)', price: 9000, icon: 'layers' },
+    { id: 'item-suit', name: '비상 우주복', price: 890000, icon: 'shirt' },
+    { id: 'item-aid', name: '저중력 응급 의료 키트', price: 99000, icon: 'cross' }
   ];
 
   const all = [...kits, ...items];
