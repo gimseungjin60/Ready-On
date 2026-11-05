@@ -4,7 +4,7 @@
   .kit-grid { grid-template-columns: repeat(2, 1fr); }
   .kit-cta { min-height: 0; }
   .mini-kits { grid-template-columns: 1fr; }
-  .map-panel { width: 360px; }
+  .map-panel { width: 420px; }
 }
 
 /* 태블릿 이하: 햄버거 메뉴 */
@@ -35,7 +35,8 @@
   .shelter-full .shelter-map { position: relative; inset: auto; height: 52vh; order: 1; }
   .map-title { position: static; max-width: none; border-radius: 0; order: 0; }
   .map-panel { position: static; width: auto; order: 2; border-radius: 0; box-shadow: none; }
-  .shelter-list { max-height: none; overflow: visible; }
+  .shelter-list, .kit-result { max-height: none; overflow: visible; }
+  .mp-more-body { width: min(300px, calc(100vw - 64px)); }
   .card-wrap { grid-template-columns: 1fr; }
   .mk-hero-inner, .mk-lab-inner { grid-template-columns: 1fr; }
   .mk-bench { position: static; order: -1; }

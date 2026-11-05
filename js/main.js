@@ -165,6 +165,7 @@
       RO.disaster.init();
       RO.cart.init();
       RO.shelter.init();
+      RO.kitcalc.init();
       RO.card.init();
       RO.hero.init();
       initTilt();

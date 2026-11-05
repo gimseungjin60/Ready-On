@@ -181,5 +181,8 @@
     });
   }
 
-  RO.products = { kits, items, find, init };
+  // 다른 모듈(우리 동네 키트 계산)이 구매 단위 상품을 등록할 때 사용
+  const addItems = (list) => list.forEach((p) => { if (!find(p.id)) all.push(p); });
+
+  RO.products = { kits, items, find, init, addItems };
 })(window.RO);

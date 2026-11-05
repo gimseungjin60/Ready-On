@@ -35,7 +35,7 @@
           <li><a href="#test">재난 대비 테스트</a></li>
           <li><a href="#guide">재난 행동수칙</a></li>
           <li><a href="#kit">안전키트</a></li>
-          <li><a href="#shelter">대피소 찾기</a></li>
+          <li><a href="#shelter">우리 동네 키트</a></li>
           <li><a href="make.html">우리집 만들기</a></li>
           <li><a href="#offline-card">대피 카드</a></li>
         </ul>
@@ -189,32 +189,83 @@
       </div>
     </section></div>
 
-    <!-- 07 SHELTER MAP — 전체 화면 지도 + 오른쪽 위 패널 -->
-    <div class="view" id="shelter" data-name="대피소 찾기"><section class="shelter-full" aria-labelledby="shelterTitle">
-      <div class="shelter-map" id="shelterMap" aria-label="대피시설 지도"></div>
+    <!-- 07 우리 동네 맞춤 키트 + 대피소 — 전체 화면 지도 + 오른쪽 패널 (팀원 readykit 확장) -->
+    <div class="view" id="shelter" data-name="우리 동네 키트·대피소"><section class="shelter-full" aria-labelledby="shelterTitle">
+      <div class="shelter-map" id="shelterMap" aria-label="대비 장소 지도 (누르면 그 자리로 지정)"></div>
 
       <div class="map-title">
-        <p class="eyebrow eyebrow-red">대피소 찾기</p>
+        <p class="eyebrow eyebrow-red">우리 동네 맞춤 키트 · 대피소</p>
         <h2 class="map-title-h" id="shelterTitle">KNOW YOUR<br>WAY <em>OUT.</em></h2>
-        <p>위험한 순간에 어디로 가야 하는지 미리 알아 두어요.</p>
+        <p>위치를 확인하고 재난만 고르세요. 우리 동네에 맞춰 필요한 물품과 수량을 계산해요.</p>
       </div>
 
-      <aside class="map-panel" aria-label="대피시설 검색">
-        <form class="search" id="shelterForm" role="search">
-          <label class="sr-only" for="shelterQuery">주소 또는 장소 검색</label>
-          <i data-lucide="search" aria-hidden="true"></i>
-          <input id="shelterQuery" type="search" placeholder="도로명 주소, 동 이름 (예: 세종대로 110)" autocomplete="street-address">
-          <button class="btn btn-primary btn-sm" type="submit">검색</button>
-        </form>
-        <div class="shelter-tools">
-          <button class="tool-btn" id="shelterGeo" type="button"><i data-lucide="locate-fixed" aria-hidden="true"></i>내 위치</button>
-          <button class="tool-btn" id="shelterSample" type="button"><i data-lucide="landmark" aria-hidden="true"></i>서울시청 예시</button>
-          <button class="tool-btn" id="shelterPrint" type="button" disabled><i data-lucide="printer" aria-hidden="true"></i>목록 인쇄</button>
+      <aside class="map-panel" aria-label="대비 장소와 맞춤 키트">
+        <section class="mp-loc" aria-label="대비 장소">
+          <form class="search" id="shelterForm" role="search">
+            <label class="sr-only" for="shelterQuery">주소 또는 장소 검색</label>
+            <i data-lucide="search" aria-hidden="true"></i>
+            <input id="shelterQuery" type="search" placeholder="주소·장소 검색 (예: 세종대로 110)" autocomplete="street-address">
+            <button class="btn btn-primary btn-sm" type="submit">검색</button>
+          </form>
+          <div class="shelter-tools">
+            <button class="tool-btn" id="shelterGeo" type="button"><i data-lucide="locate-fixed" aria-hidden="true"></i>현재 위치</button>
+            <details class="mp-more">
+              <summary class="tool-btn"><i data-lucide="sliders-horizontal" aria-hidden="true"></i>좌표·시군구</summary>
+              <div class="mp-more-body">
+                <form class="coord-form" id="coordForm">
+                  <input id="coordLat" inputmode="decimal" placeholder="위도 37.5663" aria-label="위도">
+                  <input id="coordLng" inputmode="decimal" placeholder="경도 126.9779" aria-label="경도">
+                  <button class="btn btn-outline btn-xs" type="submit">적용</button>
+                </form>
+                <select id="regionSelect" aria-label="시·군·구로 지정 (상세 위치 없이)"><option>지역 목록 불러오는 중…</option></select>
+              </div>
+            </details>
+          </div>
+          <div class="loc-now">
+            <i data-lucide="map-pin" aria-hidden="true"></i>
+            <p><b id="locLabel">위치를 지정해 주세요</b><span id="locMeta">지도를 누르거나 핀을 끌어서 옮길 수도 있어요</span></p>
+          </div>
+          <div class="loc-status" id="locStatus" role="status" aria-live="polite" hidden></div>
+        </section>
+
+        <div class="hz-chips" id="hazardChips" role="group" aria-label="대비할 재난 (여러 개 선택 가능)"></div>
+
+        <div class="mp-tabs" role="tablist" aria-label="결과 보기">
+          <button type="button" role="tab" class="is-active" aria-selected="true" data-tab="kit" aria-controls="tabKit">필요 물품</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="shelter" aria-controls="tabShelter">대피소</button>
         </div>
-        <div class="type-chips" id="shelterTypes" role="group" aria-label="재난 종류별 대피시설"></div>
-        <div class="shelter-status" id="shelterStatus" role="status" aria-live="polite"></div>
-        <ul class="shelter-list" id="shelterList" aria-label="가까운 대피시설 목록"></ul>
-        <p class="map-source">출처: 행정안전부 국민안전24 안전지도 공개 데이터(<span id="shelterDate">2026-11-05</span> 수집) · <a id="shelterSource" href="https://www.safekorea.go.kr" target="_blank" rel="noopener">공식 안전지도에서 확인 ↗</a><br>주소 검색어만 OpenStreetMap으로 보내고, 위치는 동의 후 이 기기에서만 써요.</p>
+
+        <div class="mp-tab" id="tabKit" role="tabpanel">
+          <div class="kit-controls">
+            <div class="kit-people" id="kitPeopleBox" role="group" aria-label="인원">
+              <span>인원</span>
+              <button type="button" data-people="-1" aria-label="인원 줄이기"><i data-lucide="minus" aria-hidden="true"></i></button>
+              <b id="kitPeople">1</b><span>명</span>
+              <button type="button" data-people="1" aria-label="인원 늘리기"><i data-lucide="plus" aria-hidden="true"></i></button>
+            </div>
+            <label class="kit-days">기간
+              <select id="kitDays">
+                <option value="0">자동 추천</option><option value="7">7일 이상</option><option value="14">14일 이상</option><option value="30">30일 이상</option>
+              </select>
+            </label>
+          </div>
+          <div class="kit-result" id="kitResult" aria-live="polite"></div>
+          <div class="kit-foot">
+            <p class="kit-total" id="kitTotal"></p>
+            <button class="btn btn-primary" id="kitToCart" type="button" disabled><i data-lucide="shopping-bag" aria-hidden="true"></i>이대로 담기</button>
+            <p class="kit-fine">가격·무게는 시연용 가상 값 · 실제 결제 미연결</p>
+          </div>
+        </div>
+
+        <div class="mp-tab" id="tabShelter" role="tabpanel" hidden>
+          <div class="type-chips" id="shelterTypes" role="group" aria-label="대피시설 종류"></div>
+          <div class="shelter-status" id="shelterStatus" role="status" aria-live="polite"></div>
+          <ul class="shelter-list" id="shelterList" aria-label="가까운 대피시설 목록"></ul>
+          <div class="mp-shelter-foot">
+            <button class="tool-btn" id="shelterPrint" type="button" disabled><i data-lucide="printer" aria-hidden="true"></i>목록 인쇄</button>
+            <p class="map-source">출처: 행정안전부 국민안전24 안전지도(<span id="shelterDate">2026-11-05</span> 수집) · <a id="shelterSource" href="https://www.safekorea.go.kr" target="_blank" rel="noopener">공식 안전지도 ↗</a></p>
+          </div>
+        </div>
       </aside>
     </section></div>
 
@@ -389,8 +440,8 @@
     <div class="modal-box">
       <h2 id="checkoutTitle">주문 요약</h2>
       <div id="checkoutBody"></div>
-      <div class="notice"><i data-lucide="info" aria-hidden="true"></i><p><b>결제 준비 중입니다.</b> 현재 MVP 버전으로 실제 결제는 진행되지 않습니다. 정식 오픈 시 결제 연동 후 주문이 가능합니다.</p></div>
-      <div class="modal-actions"><button class="btn btn-primary" data-close>확인</button></div>
+      <div class="notice"><i data-lucide="info" aria-hidden="true"></i><p><b>실제 결제는 연결되어 있지 않아요.</b> 시연용 MVP예요. "테스트 주문"을 눌러도 돈이 나가거나 물건이 배송되지 않아요.</p></div>
+      <div class="modal-actions"><button class="btn btn-outline" data-close>닫기</button><button class="btn btn-primary" id="testOrderBtn" type="button">테스트 주문하기</button></div>
     </div>
   </dialog>
 
@@ -435,6 +486,7 @@
   <script src="js/cart.js"></script>
   <script src="js/test.js"></script>
   <script src="js/shelter.js"></script>
+  <script src="js/kitcalc.js"></script>
   <script src="js/recipes.js"></script>
   <script src="js/offline-card.js"></script>
   <script src="js/hero.js"></script>

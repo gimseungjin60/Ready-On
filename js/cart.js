@@ -63,6 +63,32 @@
     btn._t = setTimeout(() => { btn.classList.remove('is-added'); btn.innerHTML = btn.dataset.html; delete btn.dataset.html; RO.icons(); }, 1300);
   }
 
+  // 여러 상품을 수량과 함께 한 번에 담기 (맞춤 키트 → 장바구니)
+  function addMany(list, btn) {
+    list.forEach(({ id, qty }) => {
+      if (!RO.products.find(id) || qty <= 0) return;
+      const line = lines.find((l) => l.id === id);
+      if (line) line.qty = Math.min(MAX_QTY, line.qty + qty);
+      else lines.push({ id, qty: Math.min(MAX_QTY, qty) });
+    });
+    save();
+    if (btn) feedback(btn);
+  }
+
+  // 테스트 주문: 실제 결제·배송 없음. 주문번호에 TEST를 붙여 실제 주문과 구분
+  function testOrder() {
+    const no = 'TEST-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    document.getElementById('checkoutBody').innerHTML = `
+      <div class="test-order">
+        <p class="to-badge">테스트 주문 · 실제 주문 아님</p>
+        <p>주문번호 <b>${no}</b></p>
+        <p>결제·배송은 일어나지 않아요. 시연을 위해 장바구니만 비웠어요.</p>
+      </div>`;
+    document.getElementById('testOrderBtn').hidden = true;
+    lines = [];
+    save();
+  }
+
   function setQty(id, qty) {
     const line = lines.find((l) => l.id === id);
     if (!line) return;
@@ -133,6 +159,7 @@
         <tbody>${rows}</tbody>
         <tfoot><tr><th scope="row" colspan="2">총 결제 예정 금액</th><td>${RO.won(total())}</td></tr></tfoot>
       </table>`;
+    document.getElementById('testOrderBtn').hidden = false;
     dlg.showModal();
   }
 
@@ -159,8 +186,9 @@
     });
     document.getElementById('cartClear').addEventListener('click', () => { lines = []; save(); });
     document.getElementById('cartCheckout').addEventListener('click', checkout);
+    document.getElementById('testOrderBtn').addEventListener('click', testOrder);
     render();
   }
 
-  RO.cart = { init, add, count, total };
+  RO.cart = { init, add, addMany, count, total };
 })(window.RO);
