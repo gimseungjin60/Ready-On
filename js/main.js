@@ -163,6 +163,7 @@
     RO.disaster.init();
     RO.cart.init();
     RO.shelter.init();
+    RO.recipes.init();
     RO.card.init();
     RO.hero.init();
     initTilt();

@@ -36,6 +36,7 @@
           <li><a href="#guide">재난 행동수칙</a></li>
           <li><a href="#kit">안전키트</a></li>
           <li><a href="#shelter">대피소 찾기</a></li>
+          <li><a href="#make">우리집 만들기</a></li>
           <li><a href="#offline-card">대피 카드</a></li>
         </ul>
         <button class="btn btn-primary nav-cta-mobile" data-action="start-test">내 대비력 확인하기</button>
@@ -133,9 +134,9 @@
         <div class="test-intro-side reveal">
           <p class="lead">질문 10개에 답하면 나의 재난 대비 점수와<br>꼭 필요한 준비물을 알려 드려요.</p>
           <ul class="test-facts">
-            <li><b data-count="10">10</b><span>개 질문</span></li>
-            <li><b data-count="2">2</b><span>분이면 끝</span></li>
-            <li><b data-count="4">4</b><span>가지 유형</span></li>
+            <li><span class="fact-label">질문</span><b><span data-count="10">10</span><small>개</small></b></li>
+            <li><span class="fact-label">걸리는 시간</span><b><span data-count="2">2</span><small>분</small></b></li>
+            <li><span class="fact-label">결과 유형</span><b><span data-count="4">4</span><small>가지</small></b></li>
           </ul>
           <div class="btn-row">
             <button class="btn btn-primary btn-lg btn-pulse" data-action="start-test">테스트 시작하기 <i data-lucide="arrow-right" aria-hidden="true"></i></button>
@@ -221,6 +222,36 @@
       </div>
     </section></div>
 
+    <!-- 07-2 MAKE AT HOME -->
+    <div class="view" id="make" data-name="우리집 재료로 만들기"><section class="section section-soft" aria-labelledby="makeTitle">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow reveal">우리집 재료로 만들기</p>
+            <h2 class="display display-ink reveal" id="makeTitle">MAKE IT<br>AT <em>HOME.</em></h2>
+          </div>
+          <p class="lead lead-ink reveal">집에 있는 재료를 눌러 보세요.<br>인터넷 없이도 만들 수 있는 생존 용품을 알려 드려요.</p>
+        </div>
+        <div class="make-wrap">
+          <aside class="make-side">
+            <div class="make-side-head">
+              <h3>내 재료 상자</h3>
+              <div class="make-tools">
+                <button class="link-btn" type="button" id="pantryAll">모두 선택</button>
+                <button class="link-btn" type="button" id="pantryReset">비우기</button>
+              </div>
+            </div>
+            <div class="pantry" id="pantry" role="group" aria-label="우리 집에 있는 재료"></div>
+            <p class="make-rule"><i data-lucide="shield-check" aria-hidden="true"></i><span>모두 3단계 이하예요. 불과 칼은 쓰지 않아요. 가위가 필요하면 <b>어른과 함께</b> 만들어요.</span></p>
+          </aside>
+          <div class="make-main">
+            <p class="make-summary" id="makeSummary" aria-live="polite"></p>
+            <div class="recipe-grid" id="recipeGrid"></div>
+          </div>
+        </div>
+      </div>
+    </section></div>
+
     <!-- 08 OFFLINE SURVIVAL CARD -->
     <div class="view" id="offline-card" data-name="오프라인 대피 카드"><section class="section section-dark" aria-labelledby="cardTitle">
       <div class="container">
@@ -238,18 +269,27 @@
               <legend>기본 정보</legend>
               <label>이름 또는 별칭<input id="cName" maxlength="30" placeholder="예: 김준비"></label>
               <label>거주 주소<input id="cAddress" maxlength="80" placeholder="예: 서울시 OO구 OO로 12, 302호"></label>
-              <label>거주 형태
-                <select id="cHousing">
-                  <option value="">선택</option>
-                  <option>아파트</option><option>오피스텔</option><option>원룸</option><option>단독주택</option><option>기타</option>
-                </select>
-              </label>
+              <div class="form-row">
+                <label>거주 형태
+                  <select id="cHousing">
+                    <option value="">선택</option>
+                    <option>아파트</option><option>오피스텔</option><option>원룸</option><option>단독주택</option><option>기타</option>
+                  </select>
+                </label>
+                <label>혈액형
+                  <select id="cBlood">
+                    <option value="">모름</option>
+                    <option>A형</option><option>B형</option><option>O형</option><option>AB형</option>
+                  </select>
+                </label>
+              </div>
+              <label>지병·알레르기·복용 약<input id="cMedical" maxlength="60" placeholder="예: 천식(흡입기), 땅콩 알레르기"></label>
             </fieldset>
             <fieldset>
               <legend>대피 정보</legend>
               <label>주요 대피소<input id="cShelterName" maxlength="60" placeholder="대피소 찾기에서 저장하거나 직접 입력"></label>
               <label>대피소 주소<input id="cShelterAddr" maxlength="80" placeholder="대피소 주소"></label>
-              <label>가족·지인 만남 장소<input id="cMeet" maxlength="60" placeholder="예: OO초등학교 정문"></label>
+              <label>가족 만남 장소<input id="cMeet" maxlength="60" placeholder="예: OO초등학교 정문"></label>
             </fieldset>
             <fieldset>
               <legend>비상 연락처</legend>
@@ -258,21 +298,25 @@
               <div class="contact-row"><input id="c3Name" maxlength="20" placeholder="이름·관계" aria-label="비상 연락처 3 이름"><input id="c3Phone" type="tel" maxlength="20" placeholder="010-0000-0000" aria-label="비상 연락처 3 전화번호"></div>
             </fieldset>
             <fieldset>
-              <legend>개인별 주의사항</legend>
-              <label class="sr-only" for="cNotes">개인별 주의사항</label>
-              <textarea id="cNotes" rows="3" maxlength="200" placeholder="예: 천식 흡입기 휴대, 반려견 1마리, 2층 창문 쪽 비상계단"></textarea>
+              <legend>우리 집 메모</legend>
+              <label class="sr-only" for="cNotes">우리 집 메모</label>
+              <textarea id="cNotes" rows="3" maxlength="160" placeholder="예: 반려견 1마리, 비상계단은 복도 끝, 가스 밸브는 싱크대 아래"></textarea>
+            </fieldset>
+            <fieldset>
+              <legend>우리집에서 만들 수 있는 것</legend>
+              <p class="card-recipes" id="cardRecipes"></p>
             </fieldset>
             <div class="card-actions">
-              <button class="btn btn-primary" type="submit"><i data-lucide="printer" aria-hidden="true"></i>A4로 인쇄하기</button>
+              <button class="btn btn-primary" type="submit"><i data-lucide="file-down" aria-hidden="true"></i>PDF 저장 · 인쇄</button>
               <button class="btn btn-ghost-dark" type="button" id="cardSave"><i data-lucide="save" aria-hidden="true"></i>이 브라우저에 저장</button>
               <button class="link-btn link-btn-light" type="button" id="cardReset">입력 초기화</button>
             </div>
-            <p class="fine">입력 정보는 서버로 전송되지 않습니다. 저장 버튼을 누를 때만 이 기기의 브라우저에 보관됩니다.</p>
+            <p class="fine">인쇄 창에서 <b>대상: PDF로 저장</b>을 고르면 A4 2장짜리 PDF가 만들어져요. 입력 정보는 서버로 보내지 않고, 저장 버튼을 누를 때만 이 기기에 보관해요.</p>
           </form>
 
           <div class="card-preview" aria-label="오프라인 대피 카드 미리보기">
-            <p class="preview-label">A4 미리보기</p>
-            <div class="card-sheet" id="cardSheet"></div>
+            <p class="preview-label">미리보기 · 실제 출력과 같아요 (A4 2장)</p>
+            <div class="sheets" id="cardSheets"></div>
           </div>
         </div>
         <a class="next-link" href="#end">마무리 <i data-lucide="arrow-right" aria-hidden="true"></i></a>
@@ -397,6 +441,11 @@
     </div>
   </dialog>
 
+  <!-- 만들기 방법 -->
+  <dialog class="modal modal-recipe" id="recipeDialog" aria-labelledby="recipeTitle">
+    <div class="modal-box" id="recipeBody"></div>
+  </dialog>
+
   <!-- 개인정보 처리 안내 -->
   <dialog class="modal" id="privacyDialog" aria-labelledby="privacyTitle">
     <div class="modal-box">
@@ -425,6 +474,7 @@
   <script src="js/cart.js"></script>
   <script src="js/test.js"></script>
   <script src="js/shelter.js"></script>
+  <script src="js/recipes.js"></script>
   <script src="js/offline-card.js"></script>
   <script src="js/hero.js"></script>
   <script src="js/main.js"></script>
