@@ -18,15 +18,16 @@ VS Code의 Live Server 확장을 써도 됩니다.
 
 ## 웹 업로드 (실습 호스팅 FTP)
 
-`scripts/deploy-ftp.ps1`이 사이트에 필요한 파일만 지정한 팀 폴더에 올립니다. 비밀번호는 파일에 저장하지 않고 실행할 때 환경변수로 넣습니다.
+1. 사이트 파일만 `바탕 화면	eam2`로 내보냅니다 (index.html, make.html, css, js, assets, readykit 엔진·대피시설 데이터).
+2. `scripts/deploy_ftp.py`(Python ftplib)로 FTP `/www/team2/` 안에만 올립니다. 비밀번호는 실행할 때 환경변수로 넣습니다.
 
 ```powershell
-$env:FTP_PASS='비밀번호'; powershell -ExecutionPolicy Bypass -File scripts\deploy-ftp.ps1 team2
+$env:FTP_PASS='비밀번호'; python scripts/deploy_ftp.py
 ```
 
-- 팀 폴더(team1~team8)가 FTP 최상위나 `www/` 아래에 이미 있을 때만 올리고, 다른 조 폴더와 최상위 `index.html`은 건드리지 않습니다.
-- 올린 뒤 주소: `http://educnp.mycafe24.com/team2/`
-- "내 위치" 기능은 브라우저 정책상 HTTPS 주소에서만 동작합니다. HTTP로 열면 주소 검색을 사용하세요.
+- `/www/team2`가 없으면 아무것도 만들지 않고 멈추며, 삭제는 하지 않습니다. 다른 조 폴더와 최상위 파일은 건드리지 않습니다.
+- index.html이 없거나 .php·.py·.env·key.txt가 섞여 있거나 파일 이름에 한글·띄어쓰기가 있으면 올리지 않습니다.
+- 주소: https://educnp.mycafe24.com/team2/  ("내 위치" 기능은 https에서만 동작)
 
 ## 발표 모드 (페이지 넘기기)
 
