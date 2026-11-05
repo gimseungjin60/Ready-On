@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+ <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="theme-color" content="#244e40"><meta name="description" content="위치와 재난 종류를 선택하면 필요한 물품 수량과 가까운 대피시설을 확인할 수 있습니다.">
+ <meta name="referrer" content="strict-origin-when-cross-origin">
+ <title>준비 — 재난 대비 물품 계산기</title>
+ <link rel="icon" href="favicon.svg" type="image/svg+xml">
+ <link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="style.css">
+ <script src="config.js"></script><script src="vendor/leaflet.js" defer></script><script type="module" src="app.mjs"></script>
+</head>
+<body>
+ <a class="skip" href="#main">계산기로 바로가기</a>
+ <header class="topbar"><div class="top-inner"><a class="brand" href="./" aria-label="준비 홈"><span class="brand-mark">+</span><span>준비<span class="brand-en">READYKIT</span></span></a><span class="top-label"><i></i> 재난 대비, 필요한 만큼</span><span class="version">LOCATION-BASED PLANNER</span></div></header>
+ <main id="main" class="shell">
+  <div class="intro"><div><p class="eyebrow">A LITTLE PREPARATION, A LOT OF PEACE.</p><h1>지금 있는 곳에서,<br class="mobile-break"> 필요한 준비를.</h1><p class="intro-copy">재난 종류만 골라보세요. 물품 수량, 가까운 대피소와 마트를 한 번에 확인하세요.</p></div><div class="intro-emblem" aria-hidden="true"><span>+</span><small>BE<br>READY.</small></div></div>
+    <section class="panel location-panel"><div class="location-entry"><div class="section-title"><span class="step">01</span><h2>준비할 위치</h2><span class="small-label">직접 변경 가능</span></div>
+     <button id="locate" class="location-button"><span data-icon="locate"></span><span>현재 위치 사용</span><span class="button-arrow">↗</span></button>
+     <form id="location-form" class="search-form"><label class="sr-only" for="location-query">장소명, 주소 또는 위도, 경도</label><input id="location-query" placeholder="서울역, 도로명주소, 지역명 검색" autocomplete="off"><button type="submit" aria-label="위치 검색"><span data-icon="search"></span></button></form>
+     <p class="input-hint" id="search-hint">예: 서울역 · 부산시청 · 평창군 · 37.56, 126.98</p>
+     <div id="search-results" class="search-results" aria-label="검색 결과" hidden></div>
+     <div id="location-status" class="location-status" role="status"><span data-icon="pin"></span><div><strong id="location-name">아직 위치를 지정하지 않았어요</strong><span id="location-detail">먼저 기본 7일분으로 살펴보세요.</span></div></div>
+     <p class="privacy-note">검색어와 지정 위치는 지도·장소 조회에 사용되며 이 사이트에 저장하지 않아요.</p>
+</div><div class="location-map-area"><div class="map-heading"><span id="map-caption">위치 미선택 · 서울역 주변을 먼저 보여드려요.</span><button id="map-recenter" type="button">선택 위치로</button></div><div class="map-wrap"><div id="map" aria-label="지도를 눌러 위치 선택. 선택 위치와 대피소, 마트 표시"></div><div class="map-tip"><span data-icon="pin"></span> 원하는 곳을 누르면 바로 선택돼요.</div><div class="map-legend"><span><i class="user-dot"></i> 내 위치</span><span><i class="shelter-dot"></i> 대피소</span><span><i class="shop-dot"></i> 마트·편의점</span></div></div><p class="map-help">＋ / −로 확대·축소 · 지도를 끌어 주변 탐색</p></div></section>
+  <div class="workspace">
+   <aside class="controls" aria-label="계산 조건">
+    <section class="panel hazard-panel"><div class="section-title"><span class="step">02</span><h2>대비할 재난</h2><span class="small-label">여러 개 선택</span></div><div id="hazards" class="hazard-grid" role="group" aria-label="재난 종류"></div><p class="selection-hint"><span data-icon="check"></span> 공통 물품은 중복 없이 계산해요.</p></section>
+    <div class="side-note"><span data-icon="info"></span><p>물품은 <strong>1인분 기준</strong>이에요.<br>소화기·라디오는 공동 비치용으로 구분해요.</p></div>
+   </aside>
+   <div class="results-column">
+    <section class="panel kit-panel" aria-labelledby="kit-heading">
+     <div class="result-heading"><div><p class="eyebrow">YOUR PREPARATION KIT</p><h2 id="kit-heading">나의 준비물 목록 <span id="item-count" class="count-badge"></span></h2></div><span class="standard-badge">기본 1인분</span></div>
+     <div class="metrics"><div class="metric period"><span class="metric-label"><span data-icon="calendar"></span> 대비 기간</span><strong><span id="days">7</span><em>일</em></strong><span id="plan-label">기본 비축 기준</span></div><div class="metric"><span class="metric-label"><span data-icon="drop"></span> 식수</span><strong><span id="water">28</span><em>L</em></strong><span>음용·기본 생활용수</span></div><div class="metric"><span class="metric-label"><span data-icon="food"></span> 건조식량</span><strong><span id="food">3.5</span><em>kg</em></strong><span>조리 없이 먹는 식품 기준</span></div></div>
+     <div id="basis-line" class="basis-line"><span class="status-dot"></span><span id="basis-text">위치를 지정하면 지역 기준을 반영해요.</span></div>
+     <div class="list-toolbar"><div id="categories" class="category-tabs" role="group" aria-label="물품 분류"></div><span id="visible-count" class="small-label"></span></div>
+     <div id="items" class="item-list" tabindex="0" aria-label="물품과 수량"></div>
+     <div class="kit-actions"><span class="action-note"><span data-icon="box"></span> 개인용 + 비치용 구성</span><div><button id="copy" class="button secondary"><span data-icon="copy"></span> 목록 복사</button><button id="select-kit" class="button primary"><span data-icon="check"></span> 이 구성 선택</button></div></div>
+     <details class="calculation-details"><summary>수량은 어떻게 계산했나요? <span>＋</span></summary><div id="calculation-body"></div></details>
+    </section>
+   </div>
+  </div>
+  <div class="nearby-panels"><section class="panel shelters-panel" aria-labelledby="shelter-heading"><div class="shelter-header"><div><p class="eyebrow">KNOW WHERE TO GO</p><h2 id="shelter-heading">가까운 대피시설</h2></div><a id="official-link" class="text-link" href="https://www.safekorea.go.kr/safekorea-kor/flsm/flsm/facilitiesSafteyMap.do?menuSn=2" target="_blank" rel="noopener noreferrer">국민안전24에서 확인 <span>↗</span></a></div>
+   <div class="shelter-map-heading"><span>선택한 위치 주변 대피시설</span><button id="shelter-map-recenter" type="button">시설 전체 보기</button></div><div class="shelter-map-wrap"><div id="shelter-map" aria-label="가까운 대피시설 지도"></div><div class="map-legend"><span><i class="user-dot"></i> 선택 위치</span><span><i class="shelter-dot"></i> 대피시설</span></div></div><div class="shelter-layout"><div class="shelter-content"><div id="shelter-types" class="shelter-types" role="group" aria-label="대피시설 유형"></div><div class="shelter-list-heading"><span id="shelter-scope">위치 지정 후 조회</span><span>직선거리 기준</span></div><div id="shelter-list" class="shelter-list" aria-live="polite"></div></div></div>
+   <div class="shelter-footer"><p><span data-icon="info"></span> 시설마다 대피 목적이 달라요. 이동 전 개방 여부와 공식 대피 안내를 확인하세요.</p><span id="data-date">공식 공개자료 · 2026.11.05 수집</span></div>
+  </section>
+
+  <section class="panel shops-panel" aria-labelledby="shops-heading"><div class="shelter-header"><div><p class="eyebrow">FIND YOUR SUPPLIES</p><h2 id="shops-heading">주변 마트·편의점</h2></div><span class="nearby-badge">물품 구입처</span></div>
+   <p class="shop-description">식수·식량·생활용품을 구할 수 있는 주변 매장을 확인하세요.</p>
+   <div id="shop-types" class="shelter-types" role="group" aria-label="매장 종류"><button data-shop-type="all" aria-pressed="true">전체</button><button data-shop-type="supermarket" aria-pressed="false">마트·슈퍼</button><button data-shop-type="convenience" aria-pressed="false">편의점</button></div>
+   <div class="shelter-list-heading"><span id="shop-scope">위치 지정 후 조회</span><span>직선거리 기준</span></div><div id="shop-list" class="shelter-list" aria-live="polite"></div>
+   <div class="shelter-footer shop-footer"><p><span data-icon="info"></span> 재고와 영업 여부는 방문 전 매장에 확인하세요. 소화기 등 전문 장비 판매는 보장하지 않아요.</p><span id="shop-source">출처: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> / Photon</span></div>
+  </section></div>  <footer class="footer"><span class="footer-brand">준비<span>작은 준비가 만드는 여유</span></span><span>계획용 계산기 · 실시간 위험 예측 및 대피 경로 안내 제외</span></footer>
+ </main>
+ <div id="toast" class="toast" role="status" hidden></div>
+ <noscript><p class="noscript">계산기를 사용하려면 JavaScript를 허용해 주세요.</p></noscript>
+</body></html>
