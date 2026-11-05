@@ -296,3 +296,76 @@ path.hz-dust { animation: dustflow 3s ease-in-out infinite alternate; }
 .hud-alert { margin-top: 8px; padding: 6px 8px; border-radius: 6px; background: rgba(224, 64, 26, .25); font-size: 12px; color: #fff; }
 .hud-alert:empty { display: none; }
 .hud-alert b { color: #FF8A5C; margin-right: 4px; }
+
+/* ---------- 행동수칙: 읽기 쉽게 ---------- */
+.g-top { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; margin-bottom: 22px; }
+.g-what, .g-signs, .g-dont, .g-words { padding: 24px 26px; border-radius: var(--radius-lg); background: var(--glass); border: 1px solid var(--glass-line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.g-what { background: linear-gradient(160deg, rgba(224, 64, 26, .2), rgba(255, 255, 255, .03)); border-color: rgba(255, 106, 61, .4); }
+.g-en { font-family: var(--font-display); font-size: 12px; font-weight: 800; letter-spacing: .2em; color: var(--mars); }
+.g-title { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; font-size: clamp(26px, 2.6vw, 34px); font-weight: 900; letter-spacing: -.03em; color: #fff; }
+.g-title svg { width: 30px; height: 30px; color: var(--mars); }
+.g-desc { font-size: 17px; line-height: 1.7; color: var(--txt); max-width: 640px; }
+.g-key-label { margin-top: 20px; font-size: 13px; font-weight: 800; color: #5EEAD4; }
+.g-key { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px; }
+.g-key li { display: flex; align-items: center; gap: 10px; padding: 14px; border-radius: 12px; background: rgba(0, 0, 0, .3); border: 1px solid var(--glass-line); }
+.g-key-no { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--mars); color: #fff; font-family: var(--font-display); font-weight: 900; font-size: 14px; }
+.g-key li svg { flex: none; width: 20px; height: 20px; color: var(--txt-2); }
+.g-key b { font-size: 16px; font-weight: 800; line-height: 1.35; color: #fff; }
+.g-signs h4, .g-dont h4, .g-words h4 { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 18px; font-weight: 800; color: #fff; }
+.g-signs h4 svg { width: 20px; height: 20px; color: #5EEAD4; }
+.g-signs ul, .g-dont ul { display: grid; gap: 12px; }
+.g-signs li, .g-dont li { display: flex; gap: 10px; align-items: flex-start; font-size: 16px; line-height: 1.55; color: var(--txt); }
+.g-signs li svg { flex: none; width: 18px; height: 18px; margin-top: 3px; color: #5EEAD4; }
+.g-controls { display: flex; justify-content: flex-start; margin-bottom: 4px; }
+.g-controls .bot-toggle { margin-bottom: 14px; }
+.g-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+.g-dont { border-color: rgba(255, 59, 48, .35); background: linear-gradient(160deg, rgba(255, 59, 48, .12), rgba(255, 255, 255, .02)); }
+.g-dont h4 svg { width: 20px; height: 20px; color: #FF6B6B; }
+.g-dont li svg { flex: none; width: 18px; height: 18px; margin-top: 3px; color: #FF6B6B; }
+.g-words h4 svg { width: 20px; height: 20px; color: var(--txt-2); }
+.g-words dl { display: grid; gap: 12px; margin: 0; }
+.g-words dt { font-size: 15px; font-weight: 800; color: #fff; }
+.g-words dd { margin: 2px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--txt-2); }
+
+/* 행동 카드: 큼직하고 여유 있게 */
+.act-card { padding: 26px 26px 22px; gap: 14px; }
+.act-num { width: 36px; height: 36px; font-size: 16px; }
+.act-title { font-size: 21px; font-weight: 800; }
+.act-desc { font-size: 16.5px; line-height: 1.7; color: var(--txt); }
+.act-bot { font-size: 15px; line-height: 1.6; }
+.act-bot b { display: block; margin-bottom: 2px; font-size: 12.5px; }
+.act-caution { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255, 179, 71, .35); background: rgba(255, 179, 71, .1); font-size: 15px; line-height: 1.6; color: var(--txt); }
+.act-caution svg { flex: none; width: 18px; height: 18px; margin-top: 2px; color: #FFB347; }
+.act-caution b { display: block; font-size: 12.5px; color: #FFB347; }
+.act-items-label { font-size: 13px; }
+.act-items li { font-size: 14px; }
+.step-label { font-size: 19px; }
+.stage-title h3 { font-size: clamp(24px, 2.4vw, 32px); }
+
+/* 지금 정착지 상황 (DEMO): 한 줄 카드 + 펼쳐 보기 */
+.scn { grid-template-columns: 1fr; margin: 28px 0 0; }
+.scn-main { grid-template-columns: 1fr auto; column-gap: 20px; }
+.scn-main > * { grid-column: 1; }
+.scn-actions { grid-column: 2 !important; grid-row: 1 / span 5; align-self: center; }
+.scn-msg { font-size: 16px; }
+.scn-do b { display: block; margin-bottom: 2px; }
+.scn-more { border-radius: var(--radius-lg); background: var(--glass); border: 1px solid var(--glass-line); }
+.scn-more summary { cursor: pointer; padding: 14px 20px; font-size: 15px; font-weight: 800; color: var(--txt); list-style: none; display: flex; justify-content: space-between; }
+.scn-more summary::after { content: '+'; color: var(--mars); font-size: 20px; line-height: 1; }
+.scn-more[open] summary::after { content: '–'; }
+.scn-more summary::-webkit-details-marker { display: none; }
+.scn-more-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 14px 14px; }
+.scn-more-body .scn-metrics, .scn-more-body .scn-time { background: rgba(0, 0, 0, .25); }
+.scn-time li b { font-family: var(--font); font-size: 13px; }
+
+@media (max-width: 1080px) {
+  .g-top, .g-bottom { grid-template-columns: 1fr; }
+  .scn-main { grid-template-columns: 1fr; }
+  .scn-actions { grid-column: 1 !important; grid-row: auto; }
+}
+@media (max-width: 760px) {
+  .g-key { grid-template-columns: 1fr; }
+  .g-what, .g-signs, .g-dont, .g-words { padding: 20px; }
+  .scn-more-body { grid-template-columns: 1fr; }
+  .act-title { font-size: 19px; }
+}
